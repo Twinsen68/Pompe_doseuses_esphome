@@ -6,13 +6,13 @@ esp32:
 # Section commentée permettant l'importation d'une configuration complète depuis ESPHome.
 
 packages:  # Inclusion d'une configuration externe pour modularité et réutilisation.
-  twinsen68.enceinte_fil3d:  # Nom du package inclus.
+  twinsen68.pompe_doseuses_esphome:  # Nom du package inclus.
     url: https://github.com/Twinsen68/pompe_doseuses_esphome  # Lien vers le dépôt GitHub contenant la configuration de l’enceinte.
     file: pompe_doseuses_esphome.yaml  # Fichier YAML spécifique inclus depuis le dépôt GitHub.
     ref: v1.0.0  # Version spécifique du fichier à utiliser.
 
 esphome:  # Configuration générale d'ESPHome pour cet appareil.
-  name: Pompe_doseuses_esphome  # Nom de l'appareil défini dynamiquement via la variable "name".
+  name: pompe_doseuses_esphome  # Nom de l'appareil défini dynamiquement via la variable "name".
   name_add_mac_suffix: false  # Empêche l'ajout d'un suffixe MAC au nom pour éviter les doublons sur le réseau.
   friendly_name: "Pompes doseuses récifale"  # Nom convivial affiché dans Home Assistant.
 

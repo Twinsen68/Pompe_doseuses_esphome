@@ -1,85 +1,128 @@
-substitutions:
-  # Définition des pins pour chaque pompe (à adapter à votre câblage)
-  pump1_coil1_pin: GPIO12
-  pump1_coil2_pin: GPIO13
-  pump1_coil3_pin: GPIO14
-  pump1_coil4_pin: GPIO15
+esphome:
+  name: pompe_pereistaltique
+  platform: ESP32
+  board: esp32dev
 
-  pump2_coil1_pin: GPIO16
-  pump2_coil2_pin: GPIO17
-  pump2_coil3_pin: GPIO18
-  pump2_coil4_pin: GPIO19
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
 
-  pump3_coil1_pin: GPIO21
-  pump3_coil2_pin: GPIO22
-  pump3_coil3_pin: GPIO23
-  pump3_coil4_pin: GPIO25
+# Pour accéder à l’interface web intégrée et aux logs
+logger:
+api:
+ota:
+web_server:
 
-  pump4_coil1_pin: GPIO26
-  pump4_coil2_pin: GPIO27
-  pump4_coil3_pin: GPIO32
-  pump4_coil4_pin: GPIO33
+# Synchronisation de l'heure via SNTP
+time:
+  - platform: sntp
+    id: my_time
 
-# Déclaration des sorties pour les bobines de chaque moteur
+#####################################
+#            VARIABLES              #
+#####################################
+# Globales pour la gestion de la pompe 1
+globals:
+  # Activation de la pompe
+  - id: pump1_enabled
+    type: bool
+    restore_value: true
+    initial_value: 'true'
+  # Quantité quotidienne à distribuer (ml)
+  - id: pump1_daily_quantity
+    type: float
+    restore_value: true
+    initial_value: '50.0'
+  # Mode de distribution
+  # 0: Dose unique, 1: 24 doses (chaque heure), 2: 12 doses (toutes les 2h)
+  # (Les modes 3 et 4 pourront être implémentés ultérieurement)
+  - id: pump1_distribution_mode
+    type: int
+    restore_value: true
+    initial_value: '0'
+  # Pour le mode dose unique : heure et minute de la dose
+  - id: pump1_dose_time_hour
+    type: int
+    restore_value: true
+    initial_value: '12'
+  - id: pump1_dose_time_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  # Pour les modes horaires : minute d’offset (exemple : dose à Xh10)
+  - id: pump1_dose_offset_minute
+    type: int
+    restore_value: true
+    initial_value: '10'
+  # Volume restant dans le Falcon (ml)
+  - id: pump1_volume_remaining
+    type: float
+    restore_value: true
+    initial_value: '1000.0'
+  # Indique si la pompe est destinée à l’alimentation (pour déclencher d’autres scripts)
+  - id: pump1_is_alimentation
+    type: bool
+    restore_value: true
+    initial_value: 'false'
+  # Calibration
+  - id: pump1_last_calibration
+    type: long
+    restore_value: true
+    initial_value: '0'    # Timestamp (0 = jamais calibrée)
+  - id: pump1_calibration_frequency
+    type: int
+    restore_value: true
+    initial_value: '30'   # Fréquence de rappel en jours (modifiable)
+  - id: pump1_calibration_value
+    type: float
+    restore_value: true
+    initial_value: '5.0'  # Volume délivré lors du run de calibration (en ml)
+  - id: pump1_calibration_steps
+    type: int
+    restore_value: true
+    initial_value: '512'  # Nombre de pas pendant la calibration
+  - id: pump1_calibration_factor
+    type: float
+    restore_value: true
+    initial_value: '0.0098'  # Facteur = calibration_value / calibration_steps (ml par pas)
+  # Variable utilisée pour stocker temporairement le volume à dose (en ml) lors d’un dosage
+  - id: pump1_dose_ml
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+
+#####################################
+#         SORTIES PHYSIQUES         #
+#####################################
+# Sorties pour le moteur (28BYJ-48 piloté par ULN2003)
 output:
   - platform: gpio
     id: pump1_coil1
-    pin: ${pump1_coil1_pin}
+    pin: GPIO12
   - platform: gpio
     id: pump1_coil2
-    pin: ${pump1_coil2_pin}
+    pin: GPIO13
   - platform: gpio
     id: pump1_coil3
-    pin: ${pump1_coil3_pin}
+    pin: GPIO14
   - platform: gpio
     id: pump1_coil4
-    pin: ${pump1_coil4_pin}
+    pin: GPIO15
 
-  - platform: gpio
-    id: pump2_coil1
-    pin: ${pump2_coil1_pin}
-  - platform: gpio
-    id: pump2_coil2
-    pin: ${pump2_coil2_pin}
-  - platform: gpio
-    id: pump2_coil3
-    pin: ${pump2_coil3_pin}
-  - platform: gpio
-    id: pump2_coil4
-    pin: ${pump2_coil4_pin}
-
-  - platform: gpio
-    id: pump3_coil1
-    pin: ${pump3_coil1_pin}
-  - platform: gpio
-    id: pump3_coil2
-    pin: ${pump3_coil2_pin}
-  - platform: gpio
-    id: pump3_coil3
-    pin: ${pump3_coil3_pin}
-  - platform: gpio
-    id: pump3_coil4
-    pin: ${pump3_coil4_pin}
-
-  - platform: gpio
-    id: pump4_coil1
-    pin: ${pump4_coil1_pin}
-  - platform: gpio
-    id: pump4_coil2
-    pin: ${pump4_coil2_pin}
-  - platform: gpio
-    id: pump4_coil3
-    pin: ${pump4_coil3_pin}
-  - platform: gpio
-    id: pump4_coil4
-    pin: ${pump4_coil4_pin}
-
-# Scripts pour piloter chaque pompe
+#####################################
+#          SCRIPTS DE DOSAGE        #
+#####################################
+# Ce script exécute le moteur pour délivrer un volume dose_ml calculé
 script:
-  - id: run_pump1
+  - id: run_pump1_steps
     then:
       - lambda: |-
-          // Séquence de 8 demi-pas pour le 28BYJ-48
+          // Calcul du nombre de pas à effectuer selon la calibration
+          float dose_ml = id(pump1_dose_ml);
+          float factor = id(pump1_calibration_factor);
+          int steps_to_run = (int)(dose_ml / factor);
+          ESP_LOGD("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
+          // Séquence de 8 demi-pas du 28BYJ-48
           const int steps[8][4] = {
             {1,0,0,0},
             {1,1,0,0},
@@ -90,8 +133,7 @@ script:
             {0,0,0,1},
             {1,0,0,1}
           };
-          int num_steps = 512; // Ajustez le nombre de pas selon le mouvement désiré
-          for (int i = 0; i < num_steps; i++) {
+          for (int i = 0; i < steps_to_run; i++) {
             int seq = i % 8;
             if (steps[seq][0])
               id(pump1_coil1).turn_on();
@@ -109,132 +151,131 @@ script:
               id(pump1_coil4).turn_on();
             else
               id(pump1_coil4).turn_off();
-            delay(2); // Délai de 2 ms entre chaque demi-pas
-          }
-
-  - id: run_pump2
-    then:
-      - lambda: |-
-          const int steps[8][4] = {
-            {1,0,0,0},
-            {1,1,0,0},
-            {0,1,0,0},
-            {0,1,1,0},
-            {0,0,1,0},
-            {0,0,1,1},
-            {0,0,0,1},
-            {1,0,0,1}
-          };
-          int num_steps = 512;
-          for (int i = 0; i < num_steps; i++) {
-            int seq = i % 8;
-            if (steps[seq][0])
-              id(pump2_coil1).turn_on();
-            else
-              id(pump2_coil1).turn_off();
-            if (steps[seq][1])
-              id(pump2_coil2).turn_on();
-            else
-              id(pump2_coil2).turn_off();
-            if (steps[seq][2])
-              id(pump2_coil3).turn_on();
-            else
-              id(pump2_coil3).turn_off();
-            if (steps[seq][3])
-              id(pump2_coil4).turn_on();
-            else
-              id(pump2_coil4).turn_off();
             delay(2);
           }
 
-  - id: run_pump3
-    then:
-      - lambda: |-
-          const int steps[8][4] = {
-            {1,0,0,0},
-            {1,1,0,0},
-            {0,1,0,0},
-            {0,1,1,0},
-            {0,0,1,0},
-            {0,0,1,1},
-            {0,0,0,1},
-            {1,0,0,1}
-          };
-          int num_steps = 512;
-          for (int i = 0; i < num_steps; i++) {
-            int seq = i % 8;
-            if (steps[seq][0])
-              id(pump3_coil1).turn_on();
-            else
-              id(pump3_coil1).turn_off();
-            if (steps[seq][1])
-              id(pump3_coil2).turn_on();
-            else
-              id(pump3_coil2).turn_off();
-            if (steps[seq][2])
-              id(pump3_coil3).turn_on();
-            else
-              id(pump3_coil3).turn_off();
-            if (steps[seq][3])
-              id(pump3_coil4).turn_on();
-            else
-              id(pump3_coil4).turn_off();
-            delay(2);
-          }
-
-  - id: run_pump4
-    then:
-      - lambda: |-
-          const int steps[8][4] = {
-            {1,0,0,0},
-            {1,1,0,0},
-            {0,1,0,0},
-            {0,1,1,0},
-            {0,0,1,0},
-            {0,0,1,1},
-            {0,0,0,1},
-            {1,0,0,1}
-          };
-          int num_steps = 512;
-          for (int i = 0; i < num_steps; i++) {
-            int seq = i % 8;
-            if (steps[seq][0])
-              id(pump4_coil1).turn_on();
-            else
-              id(pump4_coil1).turn_off();
-            if (steps[seq][1])
-              id(pump4_coil2).turn_on();
-            else
-              id(pump4_coil2).turn_off();
-            if (steps[seq][2])
-              id(pump4_coil3).turn_on();
-            else
-              id(pump4_coil3).turn_off();
-            if (steps[seq][3])
-              id(pump4_coil4).turn_on();
-            else
-              id(pump4_coil4).turn_off();
-            delay(2);
-          }
-
-# Switches pour déclencher manuellement le mouvement de chaque pompe
+#####################################
+#            SWITCHES               #
+#####################################
 switch:
+  # Distribution manuelle (dose immédiate)
   - platform: template
-    name: "Activer Pompe 1"
+    name: "Doser manuellement Pompe 1"
+    lambda: |-
+      if (id(pump1_enabled)) {
+        // Ici, on peut définir la dose manuelle à utiliser (par défaut, dose égale à la quantité quotidienne)
+        id(pump1_dose_ml) = id(pump1_daily_quantity);
+        return true;
+      }
+      return false;
     turn_on_action:
-      - script.execute: run_pump1
+      - script.execute: run_pump1_steps
 
+  # Bouton virtuel pour amorcer la pompe en vue d'une calibration
   - platform: template
-    name: "Activer Pompe 2"
+    name: "Amorcer Pompe 1 (Calibration)"
+    lambda: |-
+      return true;
     turn_on_action:
-      - script.execute: run_pump2
+      - lambda: |-
+          ESP_LOGD("pump", "Amorçage de la pompe 1 pour calibration");
+          unsigned long start = millis();
+          // Lancer le moteur en continu pendant 20 secondes (run calibration)
+          while (millis() - start < 20000) {
+            const int steps[8][4] = {
+              {1,0,0,0},
+              {1,1,0,0},
+              {0,1,0,0},
+              {0,1,1,0},
+              {0,0,1,0},
+              {0,0,1,1},
+              {0,0,0,1},
+              {1,0,0,1}
+            };
+            for (int j = 0; j < 8; j++) {
+              if (steps[j][0])
+                id(pump1_coil1).turn_on();
+              else
+                id(pump1_coil1).turn_off();
+              if (steps[j][1])
+                id(pump1_coil2).turn_on();
+              else
+                id(pump1_coil2).turn_off();
+              if (steps[j][2])
+                id(pump1_coil3).turn_on();
+              else
+                id(pump1_coil3).turn_off();
+              if (steps[j][3])
+                id(pump1_coil4).turn_on();
+              else
+                id(pump1_coil4).turn_off();
+              delay(2);
+            }
+          }
+          ESP_LOGD("pump", "Fin de l’amorçage pour calibration. Mesurez le volume délivré (en ml) et mettez à jour pump1_calibration_value via l’API ou le web server.");
+  # Bouton virtuel pour valider la calibration
+  - platform: template
+    name: "Valider Calibration Pompe 1"
+    lambda: |-
+      // Mise à jour du facteur de calibration à partir de la valeur mesurée
+      id(pump1_calibration_factor) = id(pump1_calibration_value) / id(pump1_calibration_steps);
+      // Enregistrement de la date de calibration (timestamp)
+      id(pump1_last_calibration) = id(my_time).now().timestamp;
+      ESP_LOGD("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
+      return true;
+    turn_on_action:
+      - logger.log: "Calibration validée pour Pompe 1."
 
-  - platform: template
-    name: "Activer Pompe 3"
-    turn_on_action:
-      - script.execute: run_pump3
-
-  - platform: template
-    name: "Activer Pompe 4"
-    turn_on_action:
-      - script.execute: run_pump4
+#####################################
+#        AUTOMATISMES (SCHEDULE)     #
+#####################################
+interval:
+  - interval: 60s
+    then:
+      - lambda: |-
+          // Vérification uniquement si la pompe est activée
+          if (!id(pump1_enabled)) return;
+          // Récupération de l’heure actuelle
+          auto now = id(my_time).now();
+          int current_hour = now.hour;
+          int current_minute = now.minute;
+          // Mode de distribution
+          int mode = id(pump1_distribution_mode);
+          if (mode == 0) {
+            // Dose unique à l'heure définie
+            if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute)) {
+              static int last_dose_day = -1;
+              if (now.day != last_dose_day) {
+                last_dose_day = now.day;
+                id(pump1_dose_ml) = id(pump1_daily_quantity);
+                ESP_LOGD("pump", "Dose unique déclenchée: %.2f ml", id(pump1_dose_ml));
+                id(run_pump1_steps).execute();
+              }
+            }
+          } else if (mode == 1) {
+            // 24 doses : dose chaque heure à l’offset défini
+            if (current_minute == id(pump1_dose_offset_minute)) {
+              static int last_dose_hour = -1;
+              if (current_hour != last_dose_hour) {
+                last_dose_hour = current_hour;
+                id(pump1_dose_ml) = id(pump1_daily_quantity) / 24.0;
+                ESP_LOGD("pump", "Dose horaire (24 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
+                id(run_pump1_steps).execute();
+              }
+            }
+          } else if (mode == 2) {
+            // 12 doses : dose toutes les 2 heures à l’offset défini
+            if (current_minute == id(pump1_dose_offset_minute) && (current_hour % 2 == 0)) {
+              static int last_dose_hour = -1;
+              if (current_hour != last_dose_hour) {
+                last_dose_hour = current_hour;
+                id(pump1_dose_ml) = id(pump1_daily_quantity) / 12.0;
+                ESP_LOGD("pump", "Dose bimensuelle (12 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
+                id(run_pump1_steps).execute();
+              }
+            }
+          }
+          // Rappel de calibration si la dernière calibration date de plus de pump1_calibration_frequency jours
+          if (id(pump1_last_calibration) == 0 || ((id(my_time).now().timestamp - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) {
+            ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.", id(pump1_calibration_frequency));
+          }

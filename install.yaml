@@ -40,7 +40,6 @@ text_sensor:
 
 logger:
   level: DEBUG  # 
-api:
 ota:
 web_server:
   port: 80

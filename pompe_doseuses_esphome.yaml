@@ -12,6 +12,7 @@ logger:
 api:
 ota:
 web_server:
+  port: 80
 
 # Synchronisation de l'heure via SNTP
 time:
@@ -89,6 +90,260 @@ globals:
   - id: pump1_dose_ml
     type: float
     restore_value: false
+    initial_value: '0.0'
+  
+  # Mode 3 - Période personnalisée - Période 1
+  - id: pump1_period1_start_hour
+    type: int
+    restore_value: true
+    initial_value: '8'
+  - id: pump1_period1_start_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period1_end_hour
+    type: int
+    restore_value: true
+    initial_value: '10'
+  - id: pump1_period1_end_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period1_doses
+    type: int
+    restore_value: true
+    initial_value: '1'
+  
+  # Mode 3 - Période personnalisée - Période 2
+  - id: pump1_period2_start_hour
+    type: int
+    restore_value: true
+    initial_value: '12'
+  - id: pump1_period2_start_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period2_end_hour
+    type: int
+    restore_value: true
+    initial_value: '14'
+  - id: pump1_period2_end_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period2_doses
+    type: int
+    restore_value: true
+    initial_value: '1'
+  
+  # Mode 3 - Période personnalisée - Période 3
+  - id: pump1_period3_start_hour
+    type: int
+    restore_value: true
+    initial_value: '18'
+  - id: pump1_period3_start_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period3_end_hour
+    type: int
+    restore_value: true
+    initial_value: '19'
+  - id: pump1_period3_end_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period3_doses
+    type: int
+    restore_value: true
+    initial_value: '1'
+
+  # Mode 3 - Période personnalisée - Période 4
+  - id: pump1_period4_start_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period4_start_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period4_end_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period4_end_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period4_doses
+    type: int
+    restore_value: true
+    initial_value: '0'
+
+  # Mode 3 - Période personnalisée - Période 5
+  - id: pump1_period5_start_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period5_start_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period5_end_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period5_end_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period5_doses
+    type: int
+    restore_value: true
+    initial_value: '0'
+
+  # Mode 3 - Période personnalisée - Période 6
+  - id: pump1_period6_start_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period6_start_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period6_end_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period6_end_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_period6_doses
+    type: int
+    restore_value: true
+    initial_value: '0'
+
+  # Mode 4 - Minuteur : doses programmées individuellement pour dose 3 à 12
+  - id: pump1_minute_dose_3_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_3_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_3_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: pump1_minute_dose_4_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_4_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_4_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: pump1_minute_dose_5_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_5_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_5_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: pump1_minute_dose_6_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_6_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_6_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: pump1_minute_dose_7_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_7_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_7_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: pump1_minute_dose_8_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_8_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_8_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: pump1_minute_dose_9_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_9_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_9_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: pump1_minute_dose_10_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_10_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_10_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: pump1_minute_dose_11_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_11_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_11_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  - id: pump1_minute_dose_12_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_12_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_12_quantity
+    type: float
+    restore_value: true
     initial_value: '0.0'
 
 #####################################
@@ -171,16 +426,59 @@ switch:
     turn_on_action:
       - script.execute: run_pump1_steps
 
-  # Bouton virtuel pour amorcer la pompe en vue d'une calibration
+  # Bouton pour amorcer la pompe (Priming) : Remplit les tuyaux
   - platform: template
-    name: "Amorcer Pompe 1 (Calibration)"
+    name: "Amorcer Pompe 1 (Priming)"
     lambda: |-
       return true;
     turn_on_action:
       - lambda: |-
-          ESP_LOGD("pump", "Amorçage de la pompe 1 pour calibration");
+          ESP_LOGD("pump", "Amorçage (Priming) de la pompe 1 : remplissage des tuyaux");
           unsigned long start = millis();
-          // Lancer le moteur en continu pendant 20 secondes (run calibration)
+          // Lancer le moteur en continu pendant 5 secondes pour remplir les tuyaux
+          while (millis() - start < 5000) {
+            const int steps[8][4] = {
+              {1,0,0,0},
+              {1,1,0,0},
+              {0,1,0,0},
+              {0,1,1,0},
+              {0,0,1,0},
+              {0,0,1,1},
+              {0,0,0,1},
+              {1,0,0,1}
+            };
+            for (int j = 0; j < 8; j++) {
+              if (steps[j][0])
+                id(pump1_coil1).turn_on();
+              else
+                id(pump1_coil1).turn_off();
+              if (steps[j][1])
+                id(pump1_coil2).turn_on();
+              else
+                id(pump1_coil2).turn_off();
+              if (steps[j][2])
+                id(pump1_coil3).turn_on();
+              else
+                id(pump1_coil3).turn_off();
+              if (steps[j][3])
+                id(pump1_coil4).turn_on();
+              else
+                id(pump1_coil4).turn_off();
+              delay(2);
+            }
+          }
+          ESP_LOGD("pump", "Amorçage (Priming) terminé : tuyaux remplis");
+
+  # Bouton dédié au lancement de la calibration
+  - platform: template
+    name: "Lancer Calibration Pompe 1"
+    lambda: |-
+      return true;
+    turn_on_action:
+      - lambda: |-
+          ESP_LOGD("pump", "Lancement de la calibration de la pompe 1");
+          unsigned long start = millis();
+          // Lancer le moteur en continu pendant 20 secondes pour calibration
           while (millis() - start < 20000) {
             const int steps[8][4] = {
               {1,0,0,0},
@@ -212,7 +510,8 @@ switch:
               delay(2);
             }
           }
-          ESP_LOGD("pump", "Fin de l’amorçage pour calibration. Mesurez le volume délivré (en ml) et mettez à jour pump1_calibration_value via l’API ou le web server.");
+          ESP_LOGD("pump", "Fin de la calibration. Mesurez le volume délivré (en ml) et mettez à jour pump1_calibration_value via l’API ou le web server.");
+
   # Bouton virtuel pour valider la calibration
   - platform: template
     name: "Valider Calibration Pompe 1"
@@ -273,6 +572,89 @@ interval:
                 ESP_LOGD("pump", "Dose bimensuelle (12 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
                 id(run_pump1_steps).execute();
               }
+            }
+          } else if (mode == 3) {
+            // Mode 3 - Période personnalisée
+            // Implémentation des périodes 3 à 6
+            for (int period = 3; period <= 6; period++) {
+              if (current_hour == id("pump1_period" + String(period) + "_start_hour") && current_minute == id("pump1_period" + String(period) + "_start_minute")) {
+                for (int i = 0; i < id("pump1_period" + String(period) + "_doses"); i++) {
+                  id(pump1_dose_ml) = id(pump1_daily_quantity) / id("pump1_period" + String(period) + "_doses");
+                  ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
+                  id(run_pump1_steps).execute();
+                }
+              }
+            }
+          } else if (mode == 4) {
+            // Mode 4 - Minuteur : doses programmées individuellement
+            // Mise à jour de la quantité quotidienne en fonction de la somme des doses programmées
+            float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity)
+              + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity)
+              + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity)
+              + id(pump1_minute_dose_7_quantity) + id(pump1_minute_dose_8_quantity)
+              + id(pump1_minute_dose_9_quantity) + id(pump1_minute_dose_10_quantity)
+              + id(pump1_minute_dose_11_quantity) + id(pump1_minute_dose_12_quantity);
+            id(pump1_daily_quantity) = total;
+            
+            if (current_hour == id(pump1_minute_dose_1_hour) && current_minute == id(pump1_minute_dose_1_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_1_quantity);
+              ESP_LOGD("pump", "Minuteur dose 1 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_2_hour) && current_minute == id(pump1_minute_dose_2_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_2_quantity);
+              ESP_LOGD("pump", "Minuteur dose 2 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_3_hour) && current_minute == id(pump1_minute_dose_3_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_3_quantity);
+              ESP_LOGD("pump", "Minuteur dose 3 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_4_hour) && current_minute == id(pump1_minute_dose_4_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_4_quantity);
+              ESP_LOGD("pump", "Minuteur dose 4 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_5_hour) && current_minute == id(pump1_minute_dose_5_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_5_quantity);
+              ESP_LOGD("pump", "Minuteur dose 5 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_6_hour) && current_minute == id(pump1_minute_dose_6_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_6_quantity);
+              ESP_LOGD("pump", "Minuteur dose 6 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_7_hour) && current_minute == id(pump1_minute_dose_7_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_7_quantity);
+              ESP_LOGD("pump", "Minuteur dose 7 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_8_hour) && current_minute == id(pump1_minute_dose_8_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_8_quantity);
+              ESP_LOGD("pump", "Minuteur dose 8 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_9_hour) && current_minute == id(pump1_minute_dose_9_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_9_quantity);
+              ESP_LOGD("pump", "Minuteur dose 9 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_10_hour) && current_minute == id(pump1_minute_dose_10_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_10_quantity);
+              ESP_LOGD("pump", "Minuteur dose 10 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_11_hour) && current_minute == id(pump1_minute_dose_11_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_11_quantity);
+              ESP_LOGD("pump", "Minuteur dose 11 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_12_hour) && current_minute == id(pump1_minute_dose_12_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_12_quantity);
+              ESP_LOGD("pump", "Minuteur dose 12 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
             }
           }
           // Rappel de calibration si la dernière calibration date de plus de pump1_calibration_frequency jours

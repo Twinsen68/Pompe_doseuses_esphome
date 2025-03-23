@@ -1,23 +1,3 @@
-esphome:
-  name: pompe_pereistaltique
-  platform: ESP32
-  board: esp32dev
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-
-# Pour accéder à l’interface web intégrée et aux logs
-logger:
-api:
-ota:
-web_server:
-  port: 80
-
-# Synchronisation de l'heure via SNTP
-time:
-  - platform: sntp
-    id: my_time
 
 #####################################
 #            VARIABLES              #
@@ -113,8 +93,6 @@ globals:
     type: int
     restore_value: true
     initial_value: '1'
-  
-  # Mode 3 - Période personnalisée - Période 2
   - id: pump1_period2_start_hour
     type: int
     restore_value: true
@@ -135,8 +113,6 @@ globals:
     type: int
     restore_value: true
     initial_value: '1'
-  
-  # Mode 3 - Période personnalisée - Période 3
   - id: pump1_period3_start_hour
     type: int
     restore_value: true
@@ -157,8 +133,6 @@ globals:
     type: int
     restore_value: true
     initial_value: '1'
-
-  # Mode 3 - Période personnalisée - Période 4
   - id: pump1_period4_start_hour
     type: int
     restore_value: true
@@ -179,8 +153,6 @@ globals:
     type: int
     restore_value: true
     initial_value: '0'
-
-  # Mode 3 - Période personnalisée - Période 5
   - id: pump1_period5_start_hour
     type: int
     restore_value: true
@@ -201,8 +173,6 @@ globals:
     type: int
     restore_value: true
     initial_value: '0'
-
-  # Mode 3 - Période personnalisée - Période 6
   - id: pump1_period6_start_hour
     type: int
     restore_value: true
@@ -224,7 +194,7 @@ globals:
     restore_value: true
     initial_value: '0'
 
-  # Mode 4 - Minuteur : doses programmées individuellement pour dose 1
+  # Mode 4 - Minuteur : doses programmées individuellement pour 12 doses
   - id: pump1_minute_dose_1_hour
     type: int
     restore_value: true
@@ -237,8 +207,6 @@ globals:
     type: float
     restore_value: true
     initial_value: '0.0'
-  
-  # Mode 4 - Minuteur : doses programmées individuellement pour dose 2
   - id: pump1_minute_dose_2_hour
     type: int
     restore_value: true
@@ -251,8 +219,6 @@ globals:
     type: float
     restore_value: true
     initial_value: '0.0'
-  
-  # Mode 4 - Minuteur : doses programmées individuellement pour dose 3 à 12
   - id: pump1_minute_dose_3_hour
     type: int
     restore_value: true
@@ -568,6 +534,10 @@ interval:
           int current_minute = now.minute;
           // Mode de distribution
           int mode = id(pump1_distribution_mode);
+
+          // 🔹 Ajout du log de debug pour afficher le mode et l'heure actuelle
+          ESP_LOGD("pump", "Mode actif : %d - Heure actuelle : %02d:%02d", mode, current_hour, current_minute);
+
           if (mode == 0) {
             // Dose unique à l'heure définie
             if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute)) {

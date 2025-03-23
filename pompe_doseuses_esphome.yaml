@@ -224,6 +224,34 @@ globals:
     restore_value: true
     initial_value: '0'
 
+  # Mode 4 - Minuteur : doses programmées individuellement pour dose 1
+  - id: pump1_minute_dose_1_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_1_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_1_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  
+  # Mode 4 - Minuteur : doses programmées individuellement pour dose 2
+  - id: pump1_minute_dose_2_hour
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_2_minute
+    type: int
+    restore_value: true
+    initial_value: '0'
+  - id: pump1_minute_dose_2_quantity
+    type: float
+    restore_value: true
+    initial_value: '0.0'
+  
   # Mode 4 - Minuteur : doses programmées individuellement pour dose 3 à 12
   - id: pump1_minute_dose_3_hour
     type: int

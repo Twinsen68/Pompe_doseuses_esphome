@@ -8,7 +8,7 @@ packages:
   twinsen68.pompe_doseuses_esphome:
     url: https://github.com/Twinsen68/pompe_doseuses_esphome
     file: pompedoseuses_config.yaml
-    ref: v1.0.0
+    ref: v1.3.4
 
 esphome:
   name: pompe_doseuses_esphome

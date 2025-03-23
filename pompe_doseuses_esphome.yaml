@@ -1,0 +1,240 @@
+substitutions:
+  # Définition des pins pour chaque pompe (à adapter à votre câblage)
+  pump1_coil1_pin: GPIO12
+  pump1_coil2_pin: GPIO13
+  pump1_coil3_pin: GPIO14
+  pump1_coil4_pin: GPIO15
+
+  pump2_coil1_pin: GPIO16
+  pump2_coil2_pin: GPIO17
+  pump2_coil3_pin: GPIO18
+  pump2_coil4_pin: GPIO19
+
+  pump3_coil1_pin: GPIO21
+  pump3_coil2_pin: GPIO22
+  pump3_coil3_pin: GPIO23
+  pump3_coil4_pin: GPIO25
+
+  pump4_coil1_pin: GPIO26
+  pump4_coil2_pin: GPIO27
+  pump4_coil3_pin: GPIO32
+  pump4_coil4_pin: GPIO33
+
+# Déclaration des sorties pour les bobines de chaque moteur
+output:
+  - platform: gpio
+    id: pump1_coil1
+    pin: ${pump1_coil1_pin}
+  - platform: gpio
+    id: pump1_coil2
+    pin: ${pump1_coil2_pin}
+  - platform: gpio
+    id: pump1_coil3
+    pin: ${pump1_coil3_pin}
+  - platform: gpio
+    id: pump1_coil4
+    pin: ${pump1_coil4_pin}
+
+  - platform: gpio
+    id: pump2_coil1
+    pin: ${pump2_coil1_pin}
+  - platform: gpio
+    id: pump2_coil2
+    pin: ${pump2_coil2_pin}
+  - platform: gpio
+    id: pump2_coil3
+    pin: ${pump2_coil3_pin}
+  - platform: gpio
+    id: pump2_coil4
+    pin: ${pump2_coil4_pin}
+
+  - platform: gpio
+    id: pump3_coil1
+    pin: ${pump3_coil1_pin}
+  - platform: gpio
+    id: pump3_coil2
+    pin: ${pump3_coil2_pin}
+  - platform: gpio
+    id: pump3_coil3
+    pin: ${pump3_coil3_pin}
+  - platform: gpio
+    id: pump3_coil4
+    pin: ${pump3_coil4_pin}
+
+  - platform: gpio
+    id: pump4_coil1
+    pin: ${pump4_coil1_pin}
+  - platform: gpio
+    id: pump4_coil2
+    pin: ${pump4_coil2_pin}
+  - platform: gpio
+    id: pump4_coil3
+    pin: ${pump4_coil3_pin}
+  - platform: gpio
+    id: pump4_coil4
+    pin: ${pump4_coil4_pin}
+
+# Scripts pour piloter chaque pompe
+script:
+  - id: run_pump1
+    then:
+      - lambda: |-
+          // Séquence de 8 demi-pas pour le 28BYJ-48
+          const int steps[8][4] = {
+            {1,0,0,0},
+            {1,1,0,0},
+            {0,1,0,0},
+            {0,1,1,0},
+            {0,0,1,0},
+            {0,0,1,1},
+            {0,0,0,1},
+            {1,0,0,1}
+          };
+          int num_steps = 512; // Ajustez le nombre de pas selon le mouvement désiré
+          for (int i = 0; i < num_steps; i++) {
+            int seq = i % 8;
+            if (steps[seq][0])
+              id(pump1_coil1).turn_on();
+            else
+              id(pump1_coil1).turn_off();
+            if (steps[seq][1])
+              id(pump1_coil2).turn_on();
+            else
+              id(pump1_coil2).turn_off();
+            if (steps[seq][2])
+              id(pump1_coil3).turn_on();
+            else
+              id(pump1_coil3).turn_off();
+            if (steps[seq][3])
+              id(pump1_coil4).turn_on();
+            else
+              id(pump1_coil4).turn_off();
+            delay(2); // Délai de 2 ms entre chaque demi-pas
+          }
+
+  - id: run_pump2
+    then:
+      - lambda: |-
+          const int steps[8][4] = {
+            {1,0,0,0},
+            {1,1,0,0},
+            {0,1,0,0},
+            {0,1,1,0},
+            {0,0,1,0},
+            {0,0,1,1},
+            {0,0,0,1},
+            {1,0,0,1}
+          };
+          int num_steps = 512;
+          for (int i = 0; i < num_steps; i++) {
+            int seq = i % 8;
+            if (steps[seq][0])
+              id(pump2_coil1).turn_on();
+            else
+              id(pump2_coil1).turn_off();
+            if (steps[seq][1])
+              id(pump2_coil2).turn_on();
+            else
+              id(pump2_coil2).turn_off();
+            if (steps[seq][2])
+              id(pump2_coil3).turn_on();
+            else
+              id(pump2_coil3).turn_off();
+            if (steps[seq][3])
+              id(pump2_coil4).turn_on();
+            else
+              id(pump2_coil4).turn_off();
+            delay(2);
+          }
+
+  - id: run_pump3
+    then:
+      - lambda: |-
+          const int steps[8][4] = {
+            {1,0,0,0},
+            {1,1,0,0},
+            {0,1,0,0},
+            {0,1,1,0},
+            {0,0,1,0},
+            {0,0,1,1},
+            {0,0,0,1},
+            {1,0,0,1}
+          };
+          int num_steps = 512;
+          for (int i = 0; i < num_steps; i++) {
+            int seq = i % 8;
+            if (steps[seq][0])
+              id(pump3_coil1).turn_on();
+            else
+              id(pump3_coil1).turn_off();
+            if (steps[seq][1])
+              id(pump3_coil2).turn_on();
+            else
+              id(pump3_coil2).turn_off();
+            if (steps[seq][2])
+              id(pump3_coil3).turn_on();
+            else
+              id(pump3_coil3).turn_off();
+            if (steps[seq][3])
+              id(pump3_coil4).turn_on();
+            else
+              id(pump3_coil4).turn_off();
+            delay(2);
+          }
+
+  - id: run_pump4
+    then:
+      - lambda: |-
+          const int steps[8][4] = {
+            {1,0,0,0},
+            {1,1,0,0},
+            {0,1,0,0},
+            {0,1,1,0},
+            {0,0,1,0},
+            {0,0,1,1},
+            {0,0,0,1},
+            {1,0,0,1}
+          };
+          int num_steps = 512;
+          for (int i = 0; i < num_steps; i++) {
+            int seq = i % 8;
+            if (steps[seq][0])
+              id(pump4_coil1).turn_on();
+            else
+              id(pump4_coil1).turn_off();
+            if (steps[seq][1])
+              id(pump4_coil2).turn_on();
+            else
+              id(pump4_coil2).turn_off();
+            if (steps[seq][2])
+              id(pump4_coil3).turn_on();
+            else
+              id(pump4_coil3).turn_off();
+            if (steps[seq][3])
+              id(pump4_coil4).turn_on();
+            else
+              id(pump4_coil4).turn_off();
+            delay(2);
+          }
+
+# Switches pour déclencher manuellement le mouvement de chaque pompe
+switch:
+  - platform: template
+    name: "Activer Pompe 1"
+    turn_on_action:
+      - script.execute: run_pump1
+
+  - platform: template
+    name: "Activer Pompe 2"
+    turn_on_action:
+      - script.execute: run_pump2
+
+  - platform: template
+    name: "Activer Pompe 3"
+    turn_on_action:
+      - script.execute: run_pump3
+
+  - platform: template
+    name: "Activer Pompe 4"
+    turn_on_action:
+      - script.execute: run_pump4

@@ -7,7 +7,7 @@ esp32:
 packages:
   twinsen68.pompe_doseuses_esphome:
     url: https://github.com/Twinsen68/pompe_doseuses_esphome
-    file: pompe_doseuses_esphome.yaml
+    file: pompe_doseuses_config.yaml
     ref: v1.0.0
 
 esphome:

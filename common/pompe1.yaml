@@ -526,13 +526,16 @@ switch:
   - platform: template
     name: "Valider Calibration Pompe 1"
     lambda: |-
-      // Mise à jour du facteur de calibration à partir de la valeur mesurée
-      id(pump1_calibration_factor) = id(pump1_calibration_value) / id(pump1_calibration_steps);
-      // Enregistrement de la date de calibration (timestamp)
-      id(pump1_last_calibration) = id(my_time).now().timestamp;
-      ESP_LOGD("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
-      return true;
+      // On renvoie false pour que le switch soit OFF par défaut.
+      // Quand on clique, 'turn_on_action' se déclenche une seule fois.
+      return false;
     turn_on_action:
+      - lambda: |-
+          // Mise à jour du facteur de calibration
+          id(pump1_calibration_factor) = id(pump1_calibration_value) / id(pump1_calibration_steps);
+          // Enregistrement de la date de calibration
+          id(pump1_last_calibration) = id(my_time).now().timestamp;
+          ESP_LOGD("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
       - logger.log: "Calibration validée pour Pompe 1."
 
 #####################################

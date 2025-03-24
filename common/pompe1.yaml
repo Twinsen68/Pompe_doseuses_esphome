@@ -542,12 +542,15 @@ interval:
             // Dose unique à l'heure définie
             if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute)) {
               static int last_dose_day = -1;
-              if (now.day != last_dose_day) {
-                last_dose_day = now.day;
+              // Remplacer 'now.day' par 'now.day_of_month'
+              if (now.day_of_month != last_dose_day) {
+                last_dose_day = now.day_of_month;
                 id(pump1_dose_ml) = id(pump1_daily_quantity);
                 ESP_LOGD("pump", "Dose unique déclenchée: %.2f ml", id(pump1_dose_ml));
                 id(run_pump1_steps).execute();
               }
+            }
+          }
             }
           } else if (mode == 1) {
             // 24 doses : dose chaque heure à l’offset défini
@@ -573,16 +576,61 @@ interval:
             }
           } else if (mode == 3) {
             // Mode 3 - Période personnalisée
-            // Implémentation des périodes 3 à 6
-            for (int period = 3; period <= 6; period++) {
-              if (current_hour == id("pump1_period" + String(period) + "_start_hour") && current_minute == id("pump1_period" + String(period) + "_start_minute")) {
-                for (int i = 0; i < id("pump1_period" + String(period) + "_doses"); i++) {
-                  id(pump1_dose_ml) = id(pump1_daily_quantity) / id("pump1_period" + String(period) + "_doses");
+            // Implémentation des périodes 1 à 6 (à adapter selon vos besoins)
+            for (int period = 1; period <= 6; period++) {
+              int start_hour = 0;
+              int start_minute = 0;
+              int doses = 0;
+
+              // Association statique des variables en fonction de la période
+              if (period == 1) {
+                start_hour   = id(pump1_period1_start_hour);
+                start_minute = id(pump1_period1_start_minute);
+                doses        = id(pump1_period1_doses);
+              } else if (period == 2) {
+                start_hour   = id(pump1_period2_start_hour);
+                start_minute = id(pump1_period2_start_minute);
+                doses        = id(pump1_period2_doses);
+              } else if (period == 3) {
+                start_hour   = id(pump1_period3_start_hour);
+                start_minute = id(pump1_period3_start_minute);
+                doses        = id(pump1_period3_doses);
+              } else if (period == 4) {
+                start_hour   = id(pump1_period4_start_hour);
+                start_minute = id(pump1_period4_start_minute);
+                doses        = id(pump1_period4_doses);
+              } else if (period == 5) {
+                start_hour   = id(pump1_period5_start_hour);
+                start_minute = id(pump1_period5_start_minute);
+                doses        = id(pump1_period5_doses);
+              } else if (period == 6) {
+                start_hour   = id(pump1_period6_start_hour);
+                start_minute = id(pump1_period6_start_minute);
+                doses        = id(pump1_period6_doses);
+              }
+
+              // Si l'heure actuelle correspond au début de la période
+              if (current_hour == start_hour && current_minute == start_minute) {
+                // On effectue 'doses' fois la distribution (ex. pour répartir la dose)
+                for (int i = 0; i < doses; i++) {
+                  id(pump1_dose_ml) = id(pump1_daily_quantity) / doses;
                   ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
                   id(run_pump1_steps).execute();
                 }
               }
             }
+          }
+              // Si l'heure actuelle correspond au début de la période
+              if (current_hour == start_hour && current_minute == start_minute) {
+                // On effectue 'doses' fois la distribution (ex. pour répartir la dose)
+                for (int i = 0; i < doses; i++) {
+                  id(pump1_dose_ml) = id(pump1_daily_quantity) / doses;
+                  ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
+                  id(run_pump1_steps).execute();
+                }
+              }
+            }
+          }
           } else if (mode == 4) {
             // Mode 4 - Minuteur : doses programmées individuellement
             // Mise à jour de la quantité quotidienne en fonction de la somme des doses programmées

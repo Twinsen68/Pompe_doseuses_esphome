@@ -5,6 +5,5 @@ substitutions:
 packages:  # Inclut des fichiers YAML externes pour modularité et réutilisation.
   device_base: !include common/device_base.yaml  # Contient les configurations de base du périphérique.
   pompe_doseuses: !include common/pompe_doseuses.yaml  # Fichier spécifique au projet reefmonitor.
-  #substitutions: !include common/substitutions.yaml  # Centralise les variables réutilisées entre les fichiers.
   debug: !include common/debug.yaml  # Inclut une configuration pour le débogage (logs détaillés, etc.).
   pompe1: !include common/pompe1.yaml

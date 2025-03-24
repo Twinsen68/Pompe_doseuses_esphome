@@ -993,11 +993,17 @@ interval:
           } else if (mode == 4) {
             // Recalcule la dose quotidienne selon la somme de toutes les minute_dose_X
             float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity)
-              + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity)
-              + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity)
-              + id(pump1_minute_dose_7_quantity) + id(pump1_minute_dose_8_quantity)
-              + id(pump1_minute_dose_9_quantity) + id(pump1_minute_dose_10_quantity)
-              + id(pump1_minute_dose_11_quantity) + id(pump1_minute_dose_12_quantity);
+              id(pump1_minute_dose_2_quantity)
+              id(pump1_minute_dose_3_quantity)
+              id(pump1_minute_dose_4_quantity)
+              id(pump1_minute_dose_5_quantity)
+              id(pump1_minute_dose_6_quantity)
+              id(pump1_minute_dose_7_quantity)
+              id(pump1_minute_dose_8_quantity)
+              id(pump1_minute_dose_9_quantity)
+              id(pump1_minute_dose_10_quantity)
+              id(pump1_minute_dose_11_quantity)
+              id(pump1_minute_dose_12_quantity);
 
             id(pump1_daily_quantity) = total;
 
@@ -1019,6 +1025,7 @@ interval:
           // Rappel de calibration
           if (id(pump1_last_calibration) == 0 ||
               ((id(my_time).now().timestamp - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) {
-            ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.",
-                     id(pump1_calibration_frequency));
+             ESP_LOGW(\"pump\", \"Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.\",
+               id(pump1_calibration_frequency));
+           }
           }

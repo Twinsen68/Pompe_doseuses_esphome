@@ -361,369 +361,359 @@ output:
   - platform: gpio
     id: pump1_coil4
     pin: GPIO15
-#####################################
-#            VARIABLES              #
-#####################################
-# Globales pour la gestion de la pompe 1
-globals:
-  # Activation de la pompe
-  - id: pump1_enabled
-    type: bool
-    restore_value: true
-    initial_value: 'true'
-  # Quantité quotidienne à distribuer (ml)
-  - id: pump1_daily_quantity
-    type: float
-    restore_value: true
-    initial_value: '50.0'
-  # Mode de distribution
-  # 0: Dose unique, 1: 24 doses (chaque heure), 2: 12 doses (toutes les 2h)
-  # (Les modes 3 et 4 sont implémentés plus bas)
-  - id: pump1_distribution_mode
-    type: int
-    restore_value: true
-    initial_value: '0'
-  # Pour le mode dose unique : heure et minute de la dose
-  - id: pump1_dose_time_hour
-    type: int
-    restore_value: true
-    initial_value: '12'
-  - id: pump1_dose_time_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  # Pour les modes horaires : minute d’offset (exemple : dose à Xh10)
-  - id: pump1_dose_offset_minute
-    type: int
-    restore_value: true
-    initial_value: '10'
-  # Volume restant dans le Falcon (ml)
-  - id: pump1_volume_remaining
-    type: float
-    restore_value: true
-    initial_value: '1000.0'
-  # Indique si la pompe est destinée à l’alimentation (pour déclencher d’autres scripts)
-  - id: pump1_is_alimentation
-    type: bool
-    restore_value: true
-    initial_value: 'false'
-  # Calibration
-  - id: pump1_last_calibration
-    type: long
-    restore_value: true
-    initial_value: '0'    # Timestamp (0 = jamais calibrée)
-  - id: pump1_calibration_frequency
-    type: int
-    restore_value: true
-    initial_value: '30'   # Fréquence de rappel en jours (modifiable)
-  - id: pump1_calibration_value
-    type: float
-    restore_value: true
-    initial_value: '5.0'  # Volume délivré lors du run de calibration (en ml)
-  - id: pump1_calibration_steps
-    type: int
-    restore_value: true
-    initial_value: '512'  # Nombre de pas pendant la calibration
-  - id: pump1_calibration_factor
-    type: float
-    restore_value: true
-    initial_value: '0.0098'  # Facteur = calibration_value / calibration_steps (ml par pas)
-  # Variable utilisée pour stocker temporairement le volume à dose (en ml) lors d’un dosage
-  - id: pump1_dose_ml
-    type: float
-    restore_value: false
-    initial_value: '0.0'
-  
-  # Mode 3 - Périodes personnalisées (1 à 6)
-  - id: pump1_period1_start_hour
-    type: int
-    restore_value: true
-    initial_value: '8'
-  - id: pump1_period1_start_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period1_end_hour
-    type: int
-    restore_value: true
-    initial_value: '10'
-  - id: pump1_period1_end_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period1_doses
-    type: int
-    restore_value: true
-    initial_value: '1'
-  - id: pump1_period2_start_hour
-    type: int
-    restore_value: true
-    initial_value: '12'
-  - id: pump1_period2_start_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period2_end_hour
-    type: int
-    restore_value: true
-    initial_value: '14'
-  - id: pump1_period2_end_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period2_doses
-    type: int
-    restore_value: true
-    initial_value: '1'
 
-  - id: pump1_period3_start_hour
-    type: int
-    restore_value: true
-    initial_value: '18'
-  - id: pump1_period3_start_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period3_end_hour
-    type: int
-    restore_value: true
-    initial_value: '19'
-  - id: pump1_period3_end_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period3_doses
-    type: int
-    restore_value: true
-    initial_value: '1'
+################################################
+#     COMPOSANTS NUMBER & SELECT (UI)          #
+################################################
 
-  - id: pump1_period4_start_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period4_start_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period4_end_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period4_end_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period4_doses
-    type: int
-    restore_value: true
-    initial_value: '0'
+number:
+  # -------------------------------
+  #  PUMP1_DAILY_QUANTITY
+  # -------------------------------
+  - platform: template
+    name: "Pompe 1 - Volume quotidien (ml)"
+    id: pump1_daily_quantity_num
+    icon: mdi:beaker
+    min_value: 0
+    max_value: 500
+    step: 1
+    lambda: |-
+      // Retourne la valeur actuelle
+      return id(pump1_daily_quantity);
+    set_action:
+      - lambda: |-
+          // Met à jour la variable globale
+          id(pump1_daily_quantity) = x;
+          ESP_LOGD("pump", "Nouveau volume quotidien: %.1f ml", id(pump1_daily_quantity));
 
-  - id: pump1_period5_start_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period5_start_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period5_end_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period5_end_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period5_doses
-    type: int
-    restore_value: true
-    initial_value: '0'
+  # -------------------------------
+  #  PUMP1_DOSE_OFFSET_MINUTE
+  # -------------------------------
+  - platform: template
+    name: "Pompe 1 - Offset minute"
+    id: pump1_dose_offset_minute_num
+    icon: mdi:timer
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_dose_offset_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_dose_offset_minute) = (int)x;
+          ESP_LOGD("pump", "Nouvel offset minute: %d", id(pump1_dose_offset_minute));
 
-  - id: pump1_period6_start_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period6_start_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period6_end_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period6_end_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_period6_doses
-    type: int
-    restore_value: true
-    initial_value: '0'
 
-  # Mode 4 - Minuteur : doses programmées individuellement pour 12 doses
-  - id: pump1_minute_dose_1_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_1_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_1_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_2_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_2_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_2_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
+# -------------------------------------
+#  PERIODES PERSONNALISÉES (1 À 6)
+# -------------------------------------
+# Pour chaque période, on déclare Start Hour, Start Minute,
+# End Hour, End Minute et Doses
+# PÉRIODE 1
+  - platform: template
+    name: "Période 1 - Start Hour"
+    id: pump1_period1_start_hour_num
+    icon: mdi:clock-start
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_period1_start_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_period1_start_hour) = (int)x;
+          ESP_LOGD("pump", "Période 1 - Start Hour = %d", id(pump1_period1_start_hour));
 
-  - id: pump1_minute_dose_3_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_3_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_3_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_4_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_4_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_4_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_5_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_5_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_5_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_6_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_6_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_6_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_7_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_7_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_7_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_8_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_8_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_8_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_9_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_9_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_9_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_10_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_10_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_10_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_11_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_11_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_11_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
-  - id: pump1_minute_dose_12_hour
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_12_minute
-    type: int
-    restore_value: true
-    initial_value: '0'
-  - id: pump1_minute_dose_12_quantity
-    type: float
-    restore_value: true
-    initial_value: '0.0'
+  - platform: template
+    name: "Période 1 - Start Minute"
+    id: pump1_period1_start_minute_num
+    icon: mdi:clock-start
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_period1_start_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_period1_start_minute) = (int)x;
+          ESP_LOGD("pump", "Période 1 - Start Minute = %d", id(pump1_period1_start_minute));
 
-#####################################
-#         SORTIES PHYSIQUES         #
-#####################################
-# Sorties pour le moteur (28BYJ-48 piloté par ULN2003)
-output:
-  - platform: gpio
-    id: pump1_coil1
-    pin: GPIO12
-  - platform: gpio
-    id: pump1_coil2
-    pin: GPIO13
-  - platform: gpio
-    id: pump1_coil3
-    pin: GPIO14
-  - platform: gpio
-    id: pump1_coil4
-    pin: GPIO15
+  - platform: template
+    name: "Période 1 - End Hour"
+    id: pump1_period1_end_hour_num
+    icon: mdi:clock-end
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_period1_end_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_period1_end_hour) = (int)x;
+          ESP_LOGD("pump", "Période 1 - End Hour = %d", id(pump1_period1_end_hour));
+
+  - platform: template
+    name: "Période 1 - End Minute"
+    id: pump1_period1_end_minute_num
+    icon: mdi:clock-end
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_period1_end_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_period1_end_minute) = (int)x;
+          ESP_LOGD("pump", "Période 1 - End Minute = %d", id(pump1_period1_end_minute));
+
+  - platform: template
+    name: "Période 1 - Doses"
+    id: pump1_period1_doses_num
+    icon: mdi:counter
+    min_value: 0
+    max_value: 20
+    step: 1
+    lambda: |-
+      return id(pump1_period1_doses);
+    set_action:
+      - lambda: |-
+          id(pump1_period1_doses) = (int)x;
+          ESP_LOGD("pump", "Période 1 - Doses = %d", id(pump1_period1_doses));
+
+# PÉRIODE 2
+  - platform: template
+    name: "Période 2 - Start Hour"
+    id: pump1_period2_start_hour_num
+    icon: mdi:clock-start
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_period2_start_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_period2_start_hour) = (int)x;
+          ESP_LOGD("pump", "Période 2 - Start Hour = %d", id(pump1_period2_start_hour));
+
+  - platform: template
+    name: "Période 2 - Start Minute"
+    id: pump1_period2_start_minute_num
+    icon: mdi:clock-start
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_period2_start_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_period2_start_minute) = (int)x;
+          ESP_LOGD("pump", "Période 2 - Start Minute = %d", id(pump1_period2_start_minute));
+
+  - platform: template
+    name: "Période 2 - End Hour"
+    id: pump1_period2_end_hour_num
+    icon: mdi:clock-end
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_period2_end_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_period2_end_hour) = (int)x;
+          ESP_LOGD("pump", "Période 2 - End Hour = %d", id(pump1_period2_end_hour));
+
+  - platform: template
+    name: "Période 2 - End Minute"
+    id: pump1_period2_end_minute_num
+    icon: mdi:clock-end
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_period2_end_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_period2_end_minute) = (int)x;
+          ESP_LOGD("pump", "Période 2 - End Minute = %d", id(pump1_period2_end_minute));
+
+  - platform: template
+    name: "Période 2 - Doses"
+    id: pump1_period2_doses_num
+    icon: mdi:counter
+    min_value: 0
+    max_value: 20
+    step: 1
+    lambda: |-
+      return id(pump1_period2_doses);
+    set_action:
+      - lambda: |-
+          id(pump1_period2_doses) = (int)x;
+          ESP_LOGD("pump", "Période 2 - Doses = %d", id(pump1_period2_doses));
+
+# PÉRIODE 3
+  - platform: template
+    name: "Période 3 - Start Hour"
+    id: pump1_period3_start_hour_num
+    icon: mdi:clock-start
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_period3_start_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_period3_start_hour) = (int)x;
+          ESP_LOGD("pump", "Période 3 - Start Hour = %d", id(pump1_period3_start_hour));
+
+  - platform: template
+    name: "Période 3 - Start Minute"
+    id: pump1_period3_start_minute_num
+    icon: mdi:clock-start
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_period3_start_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_period3_start_minute) = (int)x;
+          ESP_LOGD("pump", "Période 3 - Start Minute = %d", id(pump1_period3_start_minute));
+
+  - platform: template
+    name: "Période 3 - End Hour"
+    id: pump1_period3_end_hour_num
+    icon: mdi:clock-end
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_period3_end_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_period3_end_hour) = (int)x;
+          ESP_LOGD("pump", "Période 3 - End Hour = %d", id(pump1_period3_end_hour));
+
+  - platform: template
+    name: "Période 3 - End Minute"
+    id: pump1_period3_end_minute_num
+    icon: mdi:clock-end
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_period3_end_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_period3_end_minute) = (int)x;
+          ESP_LOGD("pump", "Période 3 - End Minute = %d", id(pump1_period3_end_minute));
+
+  - platform: template
+    name: "Période 3 - Doses"
+    id: pump1_period3_doses_num
+    icon: mdi:counter
+    min_value: 0
+    max_value: 20
+    step: 1
+    lambda: |-
+      return id(pump1_period3_doses);
+    set_action:
+      - lambda: |-
+          id(pump1_period3_doses) = (int)x;
+          ESP_LOGD("pump", "Période 3 - Doses = %d", id(pump1_period3_doses));
+
+# PÉRIODE 4
+  - platform: template
+    name: "Période 4 - Start Hour"
+    id: pump1_period4_start_hour_num
+    icon: mdi:clock-start
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_period4_start_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_period4_start_hour) = (int)x;
+          ESP_LOGD("pump", "Période 4 - Start Hour = %d", id(pump1_period4_start_hour));
+
+  ... # etc. Période 4, 5, 6 : idem start/end hour/minute + doses
+# -------------------------------------
+#  MINUTEUR (DOSES 1 À 12)
+# -------------------------------------
+  - platform: template
+    name: "Minuteur Dose 1 - Hour"
+    id: pump1_minute_dose_1_hour_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_1_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_1_hour) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 1 Hour = %d", id(pump1_minute_dose_1_hour));
+
+  - platform: template
+    name: "Minuteur Dose 1 - Minute"
+    id: pump1_minute_dose_1_minute_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_1_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_1_minute) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 1 Minute = %d", id(pump1_minute_dose_1_minute));
+
+  - platform: template
+    name: "Minuteur Dose 1 - Quantity (ml)"
+    id: pump1_minute_dose_1_quantity_num
+    icon: mdi:beaker
+    min_value: 0
+    max_value: 1000
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_1_quantity);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_1_quantity) = x;
+          ESP_LOGD("pump", "Minuteur Dose 1 Quantity = %.1f ml", id(pump1_minute_dose_1_quantity));
+
+# Répétez identiquement pour dose_2_hour, dose_2_minute, dose_2_quantity...
+# ... jusqu’à dose_12
+
+select:
+  - platform: template
+    name: "Pompe 1 - Mode de Distribution"
+    id: pump1_distribution_select
+    icon: mdi:format-list-bulleted
+    optimistic: true
+    options:
+      - "Mode 0: Dose unique"
+      - "Mode 1: 24 doses"
+      - "Mode 2: 12 doses"
+      - "Mode 3: Périodes"
+      - "Mode 4: Minuteur"
+    lambda: |-
+      int mode = id(pump1_distribution_mode);
+      if (mode == 0) return "Mode 0: Dose unique";
+      else if (mode == 1) return "Mode 1: 24 doses";
+      else if (mode == 2) return "Mode 2: 12 doses";
+      else if (mode == 3) return "Mode 3: Périodes";
+      else if (mode == 4) return "Mode 4: Minuteur";
+      return {};
+    set_action:
+      - lambda: |-
+          if (x == "Mode 0: Dose unique") id(pump1_distribution_mode) = 0;
+          else if (x == "Mode 1: 24 doses") id(pump1_distribution_mode) = 1;
+          else if (x == "Mode 2: 12 doses") id(pump1_distribution_mode) = 2;
+          else if (x == "Mode 3: Périodes") id(pump1_distribution_mode) = 3;
+          else if (x == "Mode 4: Minuteur") id(pump1_distribution_mode) = 4;
+          ESP_LOGD("pump", "Nouveau mode = %d", id(pump1_distribution_mode));
 
 #####################################
 #          SCRIPTS DE DOSAGE        #
@@ -896,316 +886,6 @@ switch:
       ESP_LOGD("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
       return true;
     turn_on_action:
-      - logger.log: "Calibration validée pour Pompe 1."
-
-#####################################
-#        AUTOMATISMES (SCHEDULE)     #
-#####################################
-interval:
-  - interval: 60s
-    then:
-      - lambda: |-
-          // Vérification uniquement si la pompe est activée
-          if (!id(pump1_enabled)) return;
-
-          // Récupération de l’heure actuelle
-          auto now = id(my_time).now();
-          int current_hour = now.hour;
-          int current_minute = now.minute;
-          // Mode de distribution
-          int mode = id(pump1_distribution_mode);
-
-          // 🔹 Log de debug : mode + heure
-          ESP_LOGD("pump", "Mode actif : %d - Heure actuelle : %02d:%02d", mode, current_hour, current_minute);
-
-          // --- Mode 0 : Dose unique ---
-          if (mode == 0) {
-            if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute)) {
-              static int last_dose_day = -1;
-              // Remplacez .day par .day_of_month
-              if (now.day_of_month != last_dose_day) {
-                last_dose_day = now.day_of_month;
-                id(pump1_dose_ml) = id(pump1_daily_quantity);
-                ESP_LOGD("pump", "Dose unique déclenchée: %.2f ml", id(pump1_dose_ml));
-                id(run_pump1_steps).execute();
-              }
-            }
-
-          // --- Mode 1 : 24 doses par jour (chaque heure) ---
-          } else if (mode == 1) {
-            if (current_minute == id(pump1_dose_offset_minute)) {
-              static int last_dose_hour = -1;
-              if (current_hour != last_dose_hour) {
-                last_dose_hour = current_hour;
-                id(pump1_dose_ml) = id(pump1_daily_quantity) / 24.0;
-                ESP_LOGD("pump", "Dose horaire (24 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
-                id(run_pump1_steps).execute();
-              }
-            }
-
-          // --- Mode 2 : 12 doses par jour (toutes les 2 heures) ---
-          } else if (mode == 2) {
-            if (current_minute == id(pump1_dose_offset_minute) && (current_hour % 2 == 0)) {
-              static int last_dose_hour = -1;
-              if (current_hour != last_dose_hour) {
-                last_dose_hour = current_hour;
-                id(pump1_dose_ml) = id(pump1_daily_quantity) / 12.0;
-                ESP_LOGD("pump", "Dose bimensuelle (12 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
-                id(run_pump1_steps).execute();
-              }
-            }
-
-          // --- Mode 3 : Périodes personnalisées ---
-          } else if (mode == 3) {
-            for (int period = 1; period <= 6; period++) {
-              int start_hour   = 0;
-              int start_minute = 0;
-              int doses        = 0;
-
-              // Associer chaque période à ses variables statiques
-              if (period == 1) {
-                start_hour   = id(pump1_period1_start_hour);
-                start_minute = id(pump1_period1_start_minute);
-                doses        = id(pump1_period1_doses);
-              } else if (period == 2) {
-                start_hour   = id(pump1_period2_start_hour);
-                start_minute = id(pump1_period2_start_minute);
-                doses        = id(pump1_period2_doses);
-              } else if (period == 3) {
-                start_hour   = id(pump1_period3_start_hour);
-                start_minute = id(pump1_period3_start_minute);
-                doses        = id(pump1_period3_doses);
-              } else if (period == 4) {
-                start_hour   = id(pump1_period4_start_hour);
-                start_minute = id(pump1_period4_start_minute);
-                doses        = id(pump1_period4_doses);
-              } else if (period == 5) {
-                start_hour   = id(pump1_period5_start_hour);
-                start_minute = id(pump1_period5_start_minute);
-                doses        = id(pump1_period5_doses);
-              } else if (period == 6) {
-                start_hour   = id(pump1_period6_start_hour);
-                start_minute = id(pump1_period6_start_minute);
-                doses        = id(pump1_period6_doses);
-              }
-
-              // Déclenchement si l'heure actuelle == début de période
-              if (current_hour == start_hour && current_minute == start_minute) {
-                for (int i = 0; i < doses; i++) {
-                  id(pump1_dose_ml) = id(pump1_daily_quantity) / doses;
-                  ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
-                  id(run_pump1_steps).execute();
-                }
-              }
-            }
-
-          // --- Mode 4 : Minuteur (12 minuteurs distincts) ---
-          } else if (mode == 4) {
-            // Recalcule la dose quotidienne selon la somme de toutes les minute_dose_X
-            float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity)
-              + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity)
-              + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity)
-              + id(pump1_minute_dose_7_quantity) + id(pump1_minute_dose_8_quantity)
-              + id(pump1_minute_dose_9_quantity) + id(pump1_minute_dose_10_quantity)
-              + id(pump1_minute_dose_11_quantity) + id(pump1_minute_dose_12_quantity);
-
-            id(pump1_daily_quantity) = total;
-
-            // Puis déclenche chaque dose programmée si l'heure et la minute correspondent
-            if (current_hour == id(pump1_minute_dose_1_hour) && current_minute == id(pump1_minute_dose_1_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_1_quantity);
-              ESP_LOGD("pump", "Minuteur dose 1 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_2_hour) && current_minute == id(pump1_minute_dose_2_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_2_quantity);
-              ESP_LOGD("pump", "Minuteur dose 2 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            // ... etc. pour minute_dose_3 à minute_dose_12 ...
-            // conservez la même logique pour déclencher chaque dose
-          }
-
-          // Rappel de calibration
-          if (id(pump1_last_calibration) == 0 ||
-              ((id(my_time).now().timestamp - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) {
-            ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.",
-                     id(pump1_calibration_frequency));
-          }
-#####################################
-#          SCRIPTS DE DOSAGE        #
-#####################################
-# Ce script exécute le moteur pour délivrer un volume dose_ml calculé
-script:
-  - id: run_pump1_steps
-    then:
-      - lambda: |-
-          // Calcul du nombre de pas à effectuer selon la calibration
-          float dose_ml = id(pump1_dose_ml);
-          float factor = id(pump1_calibration_factor);
-          int steps_to_run = (int)(dose_ml / factor);
-          ESP_LOGD("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
-          // Séquence de 8 demi-pas pour le 28BYJ-48
-          const int steps[8][4] = {
-            {1,0,0,0},
-            {1,1,0,0},
-            {0,1,0,0},
-            {0,1,1,0},
-            {0,0,1,0},
-            {0,0,1,1},
-            {0,0,0,1},
-            {1,0,0,1}
-          };
-          for (int i = 0; i < steps_to_run; i++) {
-            int seq = i % 8;
-            if (steps[seq][0])
-              id(pump1_coil1).turn_on();
-            else
-              id(pump1_coil1).turn_off();
-
-            if (steps[seq][1])
-              id(pump1_coil2).turn_on();
-            else
-              id(pump1_coil2).turn_off();
-
-            if (steps[seq][2])
-              id(pump1_coil3).turn_on();
-            else
-              id(pump1_coil3).turn_off();
-
-            if (steps[seq][3])
-              id(pump1_coil4).turn_on();
-            else
-              id(pump1_coil4).turn_off();
-
-            delay(2);
-          }
-
-#####################################
-#            SWITCHES               #
-#####################################
-switch:
-  # Distribution manuelle (dose immédiate)
-  - platform: template
-    name: "Doser manuellement Pompe 1"
-    lambda: |-
-      if (id(pump1_enabled)) {
-        // Exemple: dose = la quantité quotidienne
-        id(pump1_dose_ml) = id(pump1_daily_quantity);
-        return true;
-      }
-      return false;
-    turn_on_action:
-      - script.execute: run_pump1_steps
-
-  # Bouton pour amorcer la pompe (Priming) : Remplit les tuyaux
-  - platform: template
-    name: "Amorcer Pompe 1 (Priming)"
-    lambda: |-
-      return true;
-    turn_on_action:
-      - lambda: |-
-          ESP_LOGD("pump", "Amorçage (Priming) de la pompe 1 : remplissage des tuyaux");
-          unsigned long start = millis();
-          // Lancer le moteur en continu pendant 5 secondes pour remplir les tuyaux
-          while (millis() - start < 5000) {
-            const int steps[8][4] = {
-              {1,0,0,0},
-              {1,1,0,0},
-              {0,1,0,0},
-              {0,1,1,0},
-              {0,0,1,0},
-              {0,0,1,1},
-              {0,0,0,1},
-              {1,0,0,1}
-            };
-            for (int j = 0; j < 8; j++) {
-              if (steps[j][0])
-                id(pump1_coil1).turn_on();
-              else
-                id(pump1_coil1).turn_off();
-
-              if (steps[j][1])
-                id(pump1_coil2).turn_on();
-              else
-                id(pump1_coil2).turn_off();
-
-              if (steps[j][2])
-                id(pump1_coil3).turn_on();
-              else
-                id(pump1_coil3).turn_off();
-
-              if (steps[j][3])
-                id(pump1_coil4).turn_on();
-              else
-                id(pump1_coil4).turn_off();
-
-              delay(2);
-            }
-          }
-          ESP_LOGD("pump", "Amorçage (Priming) terminé : tuyaux remplis");
-
-  # Bouton dédié au lancement de la calibration
-  - platform: template
-    name: "Lancer Calibration Pompe 1"
-    lambda: |-
-      return true;
-    turn_on_action:
-      - lambda: |-
-          ESP_LOGD("pump", "Lancement de la calibration de la pompe 1");
-          unsigned long start = millis();
-          // Lancer le moteur en continu pendant 20 secondes pour calibration
-          while (millis() - start < 20000) {
-            const int steps[8][4] = {
-              {1,0,0,0},
-              {1,1,0,0},
-              {0,1,0,0},
-              {0,1,1,0},
-              {0,0,1,0},
-              {0,0,1,1},
-              {0,0,0,1},
-              {1,0,0,1}
-            };
-            for (int j = 0; j < 8; j++) {
-              if (steps[j][0])
-                id(pump1_coil1).turn_on();
-              else
-                id(pump1_coil1).turn_off();
-
-              if (steps[j][1])
-                id(pump1_coil2).turn_on();
-              else
-                id(pump1_coil2).turn_off();
-
-              if (steps[j][2])
-                id(pump1_coil3).turn_on();
-              else
-                id(pump1_coil3).turn_off();
-
-              if (steps[j][3])
-                id(pump1_coil4).turn_on();
-              else
-                id(pump1_coil4).turn_off();
-
-              delay(2);
-            }
-          }
-          ESP_LOGD("pump", "Fin de la calibration. Mesurez le volume délivré (en ml) et mettez à jour pump1_calibration_value via l’API ou le web server.");
-
-  # Bouton virtuel pour valider la calibration
-  - platform: template
-    name: "Valider Calibration Pompe 1"
-    lambda: |-
-      // On renvoie false pour que le switch soit OFF par défaut.
-      // Quand on clique, 'turn_on_action' se déclenche une seule fois.
-      return false;
-    turn_on_action:
-      - lambda: |-
-          // Mise à jour du facteur de calibration
-          id(pump1_calibration_factor) = id(pump1_calibration_value) / id(pump1_calibration_steps);
-          // Enregistrement de la date de calibration
-          id(pump1_last_calibration) = id(my_time).now().timestamp;
-          ESP_LOGD("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
       - logger.log: "Calibration validée pour Pompe 1."
 
 #####################################

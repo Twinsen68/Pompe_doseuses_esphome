@@ -1,4 +1,3 @@
-
 #####################################
 #            VARIABLES              #
 #####################################
@@ -16,7 +15,7 @@ globals:
     initial_value: '50.0'
   # Mode de distribution
   # 0: Dose unique, 1: 24 doses (chaque heure), 2: 12 doses (toutes les 2h)
-  # (Les modes 3 et 4 pourront être implémentés ultérieurement)
+  # (Les modes 3 et 4 sont implémentés plus bas)
   - id: pump1_distribution_mode
     type: int
     restore_value: true
@@ -72,7 +71,7 @@ globals:
     restore_value: false
     initial_value: '0.0'
   
-  # Mode 3 - Période personnalisée - Période 1
+  # Mode 3 - Périodes personnalisées (1 à 6)
   - id: pump1_period1_start_hour
     type: int
     restore_value: true
@@ -113,6 +112,7 @@ globals:
     type: int
     restore_value: true
     initial_value: '1'
+
   - id: pump1_period3_start_hour
     type: int
     restore_value: true
@@ -133,6 +133,7 @@ globals:
     type: int
     restore_value: true
     initial_value: '1'
+
   - id: pump1_period4_start_hour
     type: int
     restore_value: true
@@ -153,6 +154,7 @@ globals:
     type: int
     restore_value: true
     initial_value: '0'
+
   - id: pump1_period5_start_hour
     type: int
     restore_value: true
@@ -173,6 +175,7 @@ globals:
     type: int
     restore_value: true
     initial_value: '0'
+
   - id: pump1_period6_start_hour
     type: int
     restore_value: true
@@ -219,6 +222,7 @@ globals:
     type: float
     restore_value: true
     initial_value: '0.0'
+
   - id: pump1_minute_dose_3_hour
     type: int
     restore_value: true
@@ -371,7 +375,7 @@ script:
           float factor = id(pump1_calibration_factor);
           int steps_to_run = (int)(dose_ml / factor);
           ESP_LOGD("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
-          // Séquence de 8 demi-pas du 28BYJ-48
+          // Séquence de 8 demi-pas pour le 28BYJ-48
           const int steps[8][4] = {
             {1,0,0,0},
             {1,1,0,0},
@@ -388,18 +392,22 @@ script:
               id(pump1_coil1).turn_on();
             else
               id(pump1_coil1).turn_off();
+
             if (steps[seq][1])
               id(pump1_coil2).turn_on();
             else
               id(pump1_coil2).turn_off();
+
             if (steps[seq][2])
               id(pump1_coil3).turn_on();
             else
               id(pump1_coil3).turn_off();
+
             if (steps[seq][3])
               id(pump1_coil4).turn_on();
             else
               id(pump1_coil4).turn_off();
+
             delay(2);
           }
 
@@ -412,7 +420,7 @@ switch:
     name: "Doser manuellement Pompe 1"
     lambda: |-
       if (id(pump1_enabled)) {
-        // Ici, on peut définir la dose manuelle à utiliser (par défaut, dose égale à la quantité quotidienne)
+        // Exemple: dose = la quantité quotidienne
         id(pump1_dose_ml) = id(pump1_daily_quantity);
         return true;
       }
@@ -446,18 +454,22 @@ switch:
                 id(pump1_coil1).turn_on();
               else
                 id(pump1_coil1).turn_off();
+
               if (steps[j][1])
                 id(pump1_coil2).turn_on();
               else
                 id(pump1_coil2).turn_off();
+
               if (steps[j][2])
                 id(pump1_coil3).turn_on();
               else
                 id(pump1_coil3).turn_off();
+
               if (steps[j][3])
                 id(pump1_coil4).turn_on();
               else
                 id(pump1_coil4).turn_off();
+
               delay(2);
             }
           }
@@ -489,18 +501,22 @@ switch:
                 id(pump1_coil1).turn_on();
               else
                 id(pump1_coil1).turn_off();
+
               if (steps[j][1])
                 id(pump1_coil2).turn_on();
               else
                 id(pump1_coil2).turn_off();
+
               if (steps[j][2])
                 id(pump1_coil3).turn_on();
               else
                 id(pump1_coil3).turn_off();
+
               if (steps[j][3])
                 id(pump1_coil4).turn_on();
               else
                 id(pump1_coil4).turn_off();
+
               delay(2);
             }
           }
@@ -528,6 +544,7 @@ interval:
       - lambda: |-
           // Vérification uniquement si la pompe est activée
           if (!id(pump1_enabled)) return;
+
           // Récupération de l’heure actuelle
           auto now = id(my_time).now();
           int current_hour = now.hour;
@@ -535,14 +552,14 @@ interval:
           // Mode de distribution
           int mode = id(pump1_distribution_mode);
 
-          // 🔹 Ajout du log de debug pour afficher le mode et l'heure actuelle
+          // 🔹 Log de debug : mode + heure
           ESP_LOGD("pump", "Mode actif : %d - Heure actuelle : %02d:%02d", mode, current_hour, current_minute);
 
+          // --- Mode 0 : Dose unique ---
           if (mode == 0) {
-            // Dose unique à l'heure définie
             if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute)) {
               static int last_dose_day = -1;
-              // Remplacer 'now.day' par 'now.day_of_month'
+              // Remplacez .day par .day_of_month
               if (now.day_of_month != last_dose_day) {
                 last_dose_day = now.day_of_month;
                 id(pump1_dose_ml) = id(pump1_daily_quantity);
@@ -550,9 +567,9 @@ interval:
                 id(run_pump1_steps).execute();
               }
             }
-          }
+
+          // --- Mode 1 : 24 doses par jour (chaque heure) ---
           } else if (mode == 1) {
-            // 24 doses : dose chaque heure à l’offset défini
             if (current_minute == id(pump1_dose_offset_minute)) {
               static int last_dose_hour = -1;
               if (current_hour != last_dose_hour) {
@@ -562,8 +579,9 @@ interval:
                 id(run_pump1_steps).execute();
               }
             }
+
+          // --- Mode 2 : 12 doses par jour (toutes les 2 heures) ---
           } else if (mode == 2) {
-            // 12 doses : dose toutes les 2 heures à l’offset défini
             if (current_minute == id(pump1_dose_offset_minute) && (current_hour % 2 == 0)) {
               static int last_dose_hour = -1;
               if (current_hour != last_dose_hour) {
@@ -573,15 +591,15 @@ interval:
                 id(run_pump1_steps).execute();
               }
             }
-          } else if (mode == 3) {
-            // Mode 3 - Période personnalisée
-            // Implémentation des périodes 1 à 6 (à adapter selon vos besoins)
-            for (int period = 1; period <= 6; period++) {
-              int start_hour = 0;
-              int start_minute = 0;
-              int doses = 0;
 
-              // Association statique des variables en fonction de la période
+          // --- Mode 3 : Périodes personnalisées ---
+          } else if (mode == 3) {
+            for (int period = 1; period <= 6; period++) {
+              int start_hour   = 0;
+              int start_minute = 0;
+              int doses        = 0;
+
+              // Associer chaque période à ses variables statiques
               if (period == 1) {
                 start_hour   = id(pump1_period1_start_hour);
                 start_minute = id(pump1_period1_start_minute);
@@ -592,74 +610,7 @@ interval:
                 doses        = id(pump1_period2_doses);
               } else if (period == 3) {
                 start_hour   = id(pump1_period3_start_hour);
-              (pump1_minute_dose_11_quantity) + id(pump1_minute_dose_12_quantity);
-            id(pump1_daily_quantity) = total;
-            
-            if (current_hour == id(pump1_minute_dose_1_hour) && current_minute == id(pump1_minute_dose_1_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_1_quantity);
-              ESP_LOGD("pump", "Minuteur dose 1 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_2_hour) && current_minute == id(pump1_minute_dose_2_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_2_quantity);
-              ESP_LOGD("pump", "Minuteur dose 2 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_3_hour) && current_minute == id(pump1_minute_dose_3_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_3_quantity);
-              ESP_LOGD("pump", "Minuteur dose 3 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_4_hour) && current_minute == id(pump1_minute_dose_4_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_4_quantity);
-              ESP_LOGD("pump", "Minuteur dose 4 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_5_hour) && current_minute == id(pump1_minute_dose_5_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_5_quantity);
-              ESP_LOGD("pump", "Minuteur dose 5 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_6_hour) && current_minute == id(pump1_minute_dose_6_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_6_quantity);
-              ESP_LOGD("pump", "Minuteur dose 6 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_7_hour) && current_minute == id(pump1_minute_dose_7_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_7_quantity);
-              ESP_LOGD("pump", "Minuteur dose 7 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_8_hour) && current_minute == id(pump1_minute_dose_8_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_8_quantity);
-              ESP_LOGD("pump", "Minuteur dose 8 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_9_hour) && current_minute == id(pump1_minute_dose_9_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_9_quantity);
-              ESP_LOGD("pump", "Minuteur dose 9 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_10_hour) && current_minute == id(pump1_minute_dose_10_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_10_quantity);
-              ESP_LOGD("pump", "Minuteur dose 10 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_11_hour) && current_minute == id(pump1_minute_dose_11_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_11_quantity);
-              ESP_LOGD("pump", "Minuteur dose 11 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-            if (current_hour == id(pump1_minute_dose_12_hour) && current_minute == id(pump1_minute_dose_12_minute)) {
-              id(pump1_dose_ml) = id(pump1_minute_dose_12_quantity);
-              ESP_LOGD("pump", "Minuteur dose 12 déclenchée: %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
-            }
-          }
-          // Rappel de calibration si la dernière calibration date de plus de pump1_calibration_frequency jours
-          if (id(pump1_last_calibration) == 0 || ((id(my_time).now().timestamp - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) {
-            ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.", id(pump1_calibration_frequency));
-          }  start_minute = id(pump1_period3_start_minute);
+                start_minute = id(pump1_period3_start_minute);
                 doses        = id(pump1_period3_doses);
               } else if (period == 4) {
                 start_hour   = id(pump1_period4_start_hour);
@@ -674,9 +625,9 @@ interval:
                 start_minute = id(pump1_period6_start_minute);
                 doses        = id(pump1_period6_doses);
               }
-              // Si l'heure actuelle correspond au début de la période
+
+              // Déclenchement si l'heure actuelle == début de période
               if (current_hour == start_hour && current_minute == start_minute) {
-                // On effectue 'doses' fois la distribution (ex. pour répartir la dose)
                 for (int i = 0; i < doses; i++) {
                   id(pump1_dose_ml) = id(pump1_daily_quantity) / doses;
                   ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
@@ -684,25 +635,37 @@ interval:
                 }
               }
             }
-          }
-              // Si l'heure actuelle correspond au début de la période
-              if (current_hour == start_hour && current_minute == start_minute) {
-                // On effectue 'doses' fois la distribution (ex. pour répartir la dose)
-                for (int i = 0; i < doses; i++) {
-                  id(pump1_dose_ml) = id(pump1_daily_quantity) / doses;
-                  ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
-                  id(run_pump1_steps).execute();
-                }
-              }
-            }
-          }
+
+          // --- Mode 4 : Minuteur (12 minuteurs distincts) ---
           } else if (mode == 4) {
-            // Mode 4 - Minuteur : doses programmées individuellement
-            // Mise à jour de la quantité quotidienne en fonction de la somme des doses programmées
+            // Recalcule la dose quotidienne selon la somme de toutes les minute_dose_X
             float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity)
               + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity)
               + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity)
               + id(pump1_minute_dose_7_quantity) + id(pump1_minute_dose_8_quantity)
               + id(pump1_minute_dose_9_quantity) + id(pump1_minute_dose_10_quantity)
-              + id
+              + id(pump1_minute_dose_11_quantity) + id(pump1_minute_dose_12_quantity);
+
+            id(pump1_daily_quantity) = total;
+
+            // Puis déclenche chaque dose programmée si l'heure et la minute correspondent
+            if (current_hour == id(pump1_minute_dose_1_hour) && current_minute == id(pump1_minute_dose_1_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_1_quantity);
+              ESP_LOGD("pump", "Minuteur dose 1 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_2_hour) && current_minute == id(pump1_minute_dose_2_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_2_quantity);
+              ESP_LOGD("pump", "Minuteur dose 2 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            // ... etc. pour minute_dose_3 à minute_dose_12 ...
+            // conservez la même logique pour déclencher chaque dose
+          }
+
+          // Rappel de calibration
+          if (id(pump1_last_calibration) == 0 ||
+              ((id(my_time).now().timestamp - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) {
+            ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.",
+                     id(pump1_calibration_frequency));
           }

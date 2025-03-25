@@ -866,7 +866,7 @@ switch:
   - platform: template
     name: "Activation Pompe 1"
     id: pump1_enable_switch
-    restore_state: true
+    restore_mode: RESTORE_DEFAULT_ON
     optimistic: true
     lambda: |-
       return id(pump1_enabled);

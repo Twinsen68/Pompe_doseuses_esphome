@@ -921,7 +921,6 @@ interval:
               }  // end if (now.day_of_month != last_dose_day)
             }    // end if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute))
           }      // end if (mode == 0)
-          }
           // --- Mode 1 : 24 doses par jour (chaque heure) ---
           } else if (mode == 1) {
             if (current_minute == id(pump1_dose_offset_minute)) {
@@ -990,9 +989,6 @@ interval:
               }
             }
           }
-
-            }
-
           // --- Mode 4 : Minuteur (12 minuteurs distincts) ---
           } else if (mode == 4) {
             // Recalcule la dose quotidienne selon la somme de toutes les minute_dose_X

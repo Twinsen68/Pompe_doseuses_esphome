@@ -699,11 +699,11 @@ select:
       - "Mode 4: Minuteur"
     lambda: |-
       int mode = id(pump1_distribution_mode);
-      if (mode == 0) return "Mode 0: Dose unique";
-      else if (mode == 1) return "Mode 1: 24 doses";
-      else if (mode == 2) return "Mode 2: 12 doses";
-      else if (mode == 3) return "Mode 3: Périodes";
-      else if (mode == 4) return "Mode 4: Minuteur";
+      if (mode == 0) return std::string("Mode 0: Dose unique");
+      else if (mode == 1) return std::string("Mode 1: 24 doses");
+      else if (mode == 2) return std::string("Mode 2: 12 doses");
+      else if (mode == 3) return std::string("Mode 3: Périodes");
+      else if (mode == 4) return std::string("Mode 4: Minuteur");
       return {};
     set_action:
       - lambda: |-

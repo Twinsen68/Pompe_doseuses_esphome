@@ -767,6 +767,21 @@ script:
 #            SWITCHES               #
 #####################################
 switch:
+  - platform: template
+    name: "Activation Pompe 1"
+    id: pump1_enable_switch
+    restore_state: true
+    optimistic: true
+    lambda: |-
+      return id(pump1_enabled);
+    turn_on_action:
+      - lambda: |-
+          id(pump1_enabled) = true;
+          ESP_LOGD("pump", "Pompe activée !");
+    turn_off_action:
+      - lambda: |-
+          id(pump1_enabled) = false;
+          ESP_LOGD("pump", "Pompe désactivée !");
   # Distribution manuelle (dose immédiate)
   - platform: template
     name: "Doser manuellement Pompe 1"

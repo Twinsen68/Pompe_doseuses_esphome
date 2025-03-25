@@ -983,7 +983,6 @@ interval:
                 }
               }
             }
-          }
           // --- Mode 4 : Minuteur (12 minuteurs distincts) ---
           } else if (mode == 4) {
             // Recalcule la dose quotidienne selon la somme de toutes les minute_dose_X

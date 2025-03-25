@@ -989,14 +989,6 @@ interval:
             }
           }
 
-              // Déclenchement si l'heure actuelle == début de période
-              if (current_hour == start_hour && current_minute == start_minute) {
-                for (int i = 0; i < doses; i++) {
-                  id(pump1_dose_ml) = id(pump1_daily_quantity) / doses;
-                  ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
-                  id(run_pump1_steps).execute();
-                }
-              }
             }
 
           // --- Mode 4 : Minuteur (12 minuteurs distincts) ---

@@ -48,7 +48,12 @@ globals:
   - id: pump1_last_calibration
     type: long
     restore_value: true
-    initial_value: '0'    # Timestamp (0 = jamais calibrée)
+    initial_value: '0'
+  - id: pump1_last_calibration_reminder
+    type: long
+    restore_value: false
+    initial_value: '0'
+
   - id: pump1_calibration_frequency
     type: int
     restore_value: true
@@ -1122,11 +1127,10 @@ interval:
             // conservez la même logique pour déclencher chaque dose
           }
           // Rappel de calibration (loggé une fois par jour)
-          static uint32_t last_calibration_reminder = 0;
           uint32_t now_ts = id(my_time).now().timestamp;
           if ((id(pump1_last_calibration) == 0 ||
               ((now_ts - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) &&
-              ((now_ts - last_calibration_reminder) >= 86400)) {
-            last_calibration_reminder = now_ts;
+              ((now_ts - id(pump1_last_calibration_reminder)) >= 86400)) {
+            id(pump1_last_calibration_reminder) = now_ts;
             ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.", id(pump1_calibration_frequency));
           }

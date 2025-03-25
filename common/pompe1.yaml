@@ -691,7 +691,6 @@ select:
     name: "Pompe 1 - Mode de Distribution"
     id: pump1_distribution_select
     icon: mdi:format-list-bulleted
-    optimistic: true
     options:
       - "Mode 0: Dose unique"
       - "Mode 1: 24 doses"

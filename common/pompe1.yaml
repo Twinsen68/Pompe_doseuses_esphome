@@ -920,10 +920,6 @@ interval:
                 id(run_pump1_steps).execute();
               }
             }
-          } else if (mode == 1) {
-             // 24 doses : dose chaque heure à l’offset défini
-            if (current_minute == id(pump1_dose_offset_minute)) {
-              static int last_dose_hour = -1;
           // --- Mode 1 : 24 doses par jour (chaque heure) ---
           } else if (mode == 1) {
             if (current_minute == id(pump1_dose_offset_minute)) {

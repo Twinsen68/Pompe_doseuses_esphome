@@ -921,7 +921,7 @@ interval:
             }    // end if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute))
           }      // end if (mode == 0)
           // --- Mode 1 : 24 doses par jour (chaque heure) ---
-          } else if (mode == 1) {
+          else if (mode == 1) {
             if (current_minute == id(pump1_dose_offset_minute)) {
               static int last_dose_hour = -1;
               if (current_hour != last_dose_hour) {

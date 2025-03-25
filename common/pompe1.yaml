@@ -1006,6 +1006,5 @@ interval:
           // Rappel de calibration
           if (id(pump1_last_calibration) == 0 ||
               ((id(my_time).now().timestamp - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) {
-            ESP_LOGW(\"pump\", \"Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.\",
-              id(pump1_calibration_frequency));
+            ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.", id(pump1_calibration_frequency)); 
           }

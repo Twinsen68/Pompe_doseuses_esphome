@@ -197,6 +197,34 @@ globals:
     restore_value: true
     initial_value: '0'
 
+  - id: pump1_period1_enabled
+    type: bool
+    restore_value: true
+    initial_value: 'true'
+  - id: pump1_period2_enabled
+    type: bool
+    restore_value: true
+    initial_value: 'true'
+  - id: pump1_period3_enabled
+    type: bool
+    restore_value: true
+    initial_value: 'true'
+  - id: pump1_period4_enabled
+    type: bool
+    restore_value: true
+    initial_value: 'false'
+  - id: pump1_period5_enabled
+    type: bool
+    restore_value: true
+    initial_value: 'false'
+  - id: pump1_period6_enabled
+    type: bool
+    restore_value: true
+    initial_value: 'false'
+  - id: pump1_active_periods
+    type: int
+    restore_value: true
+    initial_value: '3'
   # Mode 4 - Minuteur : doses programmées individuellement pour 12 doses
   - id: pump1_minute_dose_1_hour
     type: int
@@ -637,7 +665,75 @@ number:
           id(pump1_period4_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 4 - Start Hour = %d", id(pump1_period4_start_hour));
 
-# etc. Période 4, 5, 6 : idem start/end hour/minute + doses
+  - platform: template
+    name: "Période 5 - Start Hour"
+    id: pump1_period5_start_hour_num
+    icon: mdi:clock-start
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_period5_start_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_period5_start_hour) = (int)x;
+          ESP_LOGD("pump", "Période 5 - Start Hour = %d", id(pump1_period5_start_hour));
+  
+  - platform: template
+    name: "Période 5 - Doses"
+    id: pump1_period5_doses_num
+    icon: mdi:counter
+    min_value: 0
+    max_value: 20
+    step: 1
+    lambda: |-
+      return id(pump1_period5_doses);
+    set_action:
+      - lambda: |-
+          id(pump1_period5_doses) = (int)x;
+          ESP_LOGD("pump", "Période 5 - Doses = %d", id(pump1_period5_doses));
+  
+  - platform: template
+    name: "Période 6 - Start Hour"
+    id: pump1_period6_start_hour_num
+    icon: mdi:clock-start
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_period6_start_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_period6_start_hour) = (int)x;
+          ESP_LOGD("pump", "Période 6 - Start Hour = %d", id(pump1_period6_start_hour));
+  
+  - platform: template
+    name: "Période 6 - Doses"
+    id: pump1_period6_doses_num
+    icon: mdi:counter
+    min_value: 0
+    max_value: 20
+    step: 1
+    lambda: |-
+      return id(pump1_period6_doses);
+    set_action:
+      - lambda: |-
+          id(pump1_period6_doses) = (int)x;
+          ESP_LOGD("pump", "Période 6 - Doses = %d", id(pump1_period6_doses));
+
+  - platform: template
+    name: "Nombre de périodes actives"
+    id: pump1_active_periods_num
+    icon: mdi:clock-check
+    min_value: 1
+    max_value: 6
+    step: 1
+    lambda: |-
+      return id(pump1_active_periods);
+    set_action:
+      - lambda: |-
+          id(pump1_active_periods) = x;
+          ESP_LOGD("pump", "Nombre de périodes actives: %d", id(pump1_active_periods));
 # -------------------------------------
 #  MINUTEUR (DOSES 1 À 12)
 # -------------------------------------
@@ -960,38 +1056,44 @@ interval:
             }
           // --- Mode 3 : Périodes personnalisées ---
           } else if (mode == 3) {
-            // Mode 3 - Période personnalisée
-            // Implémentation statique des périodes 1 à 6
-            for (int period = 1; period <= 6; period++) {
+            // Mode 3 - Périodes personnalisées avec activation dynamique
+            for (int period = 1; period <= id(pump1_active_periods); period++) {
+              bool is_enabled = false;
               int start_hour = 0;
               int start_minute = 0;
               int doses = 0;
               if (period == 1) {
+                is_enabled = id(pump1_period1_enabled);
                 start_hour   = id(pump1_period1_start_hour);
                 start_minute = id(pump1_period1_start_minute);
                 doses        = id(pump1_period1_doses);
               } else if (period == 2) {
+                is_enabled = id(pump1_period2_enabled);
                 start_hour   = id(pump1_period2_start_hour);
                 start_minute = id(pump1_period2_start_minute);
                 doses        = id(pump1_period2_doses);
               } else if (period == 3) {
+                is_enabled = id(pump1_period3_enabled);
                 start_hour   = id(pump1_period3_start_hour);
                 start_minute = id(pump1_period3_start_minute);
                 doses        = id(pump1_period3_doses);
               } else if (period == 4) {
+                is_enabled = id(pump1_period4_enabled);
                 start_hour   = id(pump1_period4_start_hour);
                 start_minute = id(pump1_period4_start_minute);
                 doses        = id(pump1_period4_doses);
               } else if (period == 5) {
+                is_enabled = id(pump1_period5_enabled);
                 start_hour   = id(pump1_period5_start_hour);
                 start_minute = id(pump1_period5_start_minute);
                 doses        = id(pump1_period5_doses);
               } else if (period == 6) {
+                is_enabled = id(pump1_period6_enabled);
                 start_hour   = id(pump1_period6_start_hour);
                 start_minute = id(pump1_period6_start_minute);
                 doses        = id(pump1_period6_doses);
               }
-              if (current_hour == start_hour && current_minute == start_minute) {
+              if (is_enabled && current_hour == start_hour && current_minute == start_minute) {
                 for (int i = 0; i < doses; i++) {
                   id(pump1_dose_ml) = id(pump1_daily_quantity) / doses;
                   ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
@@ -999,6 +1101,7 @@ interval:
                 }
               }
             }
+          }
           // --- Mode 4 : Minuteur (12 minuteurs distincts) ---
           } else if (mode == 4) {
             // Recalcule la dose quotidienne selon la somme de toutes les minute_dose_X

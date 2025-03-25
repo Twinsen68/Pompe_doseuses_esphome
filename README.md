@@ -221,15 +221,50 @@ Ainsi, chaque produit est ajouté à un moment différent, réduisant les risque
    - **Exemple d'utilisation** : Un apport de 60 ml par jour distribué en doses de 5 ml toutes les deux heures.
 
 #### 4. **Mode 3 : Périodes personnalisées**
-   - **Principe** : Distribution en fonction de plages horaires définies.
-   - **Utilisation recommandée** : Pour des cycles précis adaptés aux besoins biologiques (ex : apports nutritifs en phase d'éclairage).
-   - **Paramètres à configurer** :
+   - **Principe** : Répartition de la dose quotidienne sur plusieurs périodes définies par l’utilisateur (jusqu’à 6 par jour).
+   - **Utilisation recommandée** : Pour planifier les ajouts de liquide à des moments précis de la journée, en fonction des besoins du bac ou aux besoins biologiques (ex : apports nutritifs en phase d'éclairage).
+   - **Paramètres à configurer pour chaque période** :
      - `Période X - Start Hour` : heure de début de la période.
+     - `Période X - Start Minute` : minute de début de la période.
      - `Période X - End Hour` : heure de fin de la période.
+     - `Période X - End Minute` : minute de fin de la période.
      - `Période X - Doses` : nombre total de doses sur la période.
-   - **Exemple d'utilisation** : 
-     - Apports de 20 ml de solution entre 8h et 12h avec 4 doses (5 ml chaque heure).
-     - Apports de 30 ml entre 18h et 22h avec 6 doses de 5 ml.
+
+#### Activation/Désactivation et Nombre de Périodes Actives
+
+Pour plus de flexibilité, il est possible d'activer ou de désactiver individuellement chaque période et de choisir le nombre de périodes utilisées dans la journée.
+
+- **Activation/Désactivation des périodes :**
+  Chaque période dispose d'un booléen qui permet de l'activer ou de la désactiver. Par défaut, les périodes 1 à 3 sont activées, tandis que les périodes 4 à 6 sont désactivées.
+  
+- **Sélecteur du nombre de périodes actives :**
+  Un sélecteur permet de choisir dynamiquement le nombre de périodes utilisées (de 1 à 6). Par exemple, si vous choisissez 3, seules les périodes 1 à 3 seront prises en compte par le système.
+
+La logique de distribution dans le Mode 3 utilise ces paramètres pour ne déclencher que les périodes activées et pour parcourir uniquement le nombre de périodes définies.
+
+#### **Fonctionnement détaillé :**
+1. L’utilisateur définit jusqu’à **6 périodes** réparties dans la journée.
+2. Chaque période est caractérisée par une **heure de début et une heure de fin**.
+3. L’utilisateur définit **le nombre de doses** à injecter pendant chaque période.
+4. La dose quotidienne totale est **répartie entre ces doses**.
+
+#### **Exemple de configuration :**
+| Période  | Horaire           | Nombre de doses |
+|----------|------------------|----------------|
+| **Matin**  | 08h00 - 10h00   | 3 doses        |
+| **Midi**   | 12h00 - 14h00   | 2 doses        |
+| **Soir**   | 18h00 - 20h00   | 4 doses        |
+| **Total**  | -               | 9 doses        |
+
+Si la dose quotidienne est de **100 ml**, chaque dose sera calculée comme suit :
+\[
+\frac{100 \text{ ml}}{9} = 11.1 \text{ ml par dose}
+\]
+
+#### **Avantages du Mode 3 :**
+✅ **Répartition optimisée** : Adaptable selon les besoins du bac.  
+✅ **Évite les interactions chimiques** : Permet de mieux espacer les ajouts entre différentes pompes.  
+✅ **Grande flexibilité** : L’utilisateur peut adapter les périodes aux habitudes biologiques du bac.  
 
 #### 5. **Mode 4 : Minuteur**
    - **Principe** : Distribution à des heures spécifiques.

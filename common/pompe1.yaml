@@ -918,6 +918,9 @@ interval:
                 id(pump1_dose_ml) = id(pump1_daily_quantity);
                 ESP_LOGD("pump", "Dose unique déclenchée: %.2f ml", id(pump1_dose_ml));
                 id(run_pump1_steps).execute();
+              }  // end if (now.day_of_month != last_dose_day)
+            }    // end if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute))
+          }      // end if (mode == 0)
           }
           // --- Mode 1 : 24 doses par jour (chaque heure) ---
           } else if (mode == 1) {

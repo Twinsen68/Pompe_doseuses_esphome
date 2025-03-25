@@ -1006,18 +1006,7 @@ interval:
           // --- Mode 4 : Minuteur (12 minuteurs distincts) ---
           } else if (mode == 4) {
             // Recalcule la dose quotidienne selon la somme de toutes les minute_dose_X
-            float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity)
-              id(pump1_minute_dose_2_quantity)
-              id(pump1_minute_dose_3_quantity)
-              id(pump1_minute_dose_4_quantity)
-              id(pump1_minute_dose_5_quantity)
-              id(pump1_minute_dose_6_quantity)
-              id(pump1_minute_dose_7_quantity)
-              id(pump1_minute_dose_8_quantity)
-              id(pump1_minute_dose_9_quantity)
-              id(pump1_minute_dose_10_quantity)
-              id(pump1_minute_dose_11_quantity)
-              id(pump1_minute_dose_12_quantity);
+            float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity) + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity) + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity) + id(pump1_minute_dose_7_quantity) + id(pump1_minute_dose_8_quantity) + id(pump1_minute_dose_9_quantity) + id(pump1_minute_dose_10_quantity) + id(pump1_minute_dose_11_quantity) + id(pump1_minute_dose_12_quantity);
 
             id(pump1_daily_quantity) = total;
 

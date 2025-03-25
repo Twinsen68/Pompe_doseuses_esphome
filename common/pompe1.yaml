@@ -1002,8 +1002,12 @@ interval:
             // ... etc. pour minute_dose_3 à minute_dose_12 ...
             // conservez la même logique pour déclencher chaque dose
           }
-          // Rappel de calibration
-          if (id(pump1_last_calibration) == 0 ||
-              ((id(my_time).now().timestamp - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) {
-            ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.", id(pump1_calibration_frequency)); 
+          // Rappel de calibration (loggé une fois par jour)
+          static uint32_t last_calibration_reminder = 0;
+          uint32_t now_ts = id(my_time).now().timestamp;
+          if ((id(pump1_last_calibration) == 0 ||
+              ((now_ts - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) &&
+              ((now_ts - last_calibration_reminder) >= 86400)) {
+            last_calibration_reminder = now_ts;
+            ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.", id(pump1_calibration_frequency));
           }

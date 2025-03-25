@@ -883,7 +883,7 @@ switch:
       // Enregistrement de la date de calibration (timestamp)
       id(pump1_last_calibration) = id(my_time).now().timestamp;
       ESP_LOGD("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
-      return true;
+      return false;
     turn_on_action:
       - logger.log: "Calibration validée pour Pompe 1."
 

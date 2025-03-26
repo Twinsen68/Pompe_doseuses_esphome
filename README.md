@@ -279,8 +279,6 @@ Si la dose quotidienne est de **100 ml**, chaque dose sera calculée comme suit 
 
 ---
 
-Cette mise à jour garantit que les utilisateurs savent comment définir précisément la quantité de liquide à distribuer chaque jour en fonction du mode de fonctionnement choisi.
-
 ### Paramétrage et Configuration
 
 1. **Sélection du Mode**

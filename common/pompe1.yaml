@@ -870,6 +870,7 @@ number:
 # -------------------------------------
 #  MINUTEUR (DOSES 1 À 12)
 # -------------------------------------
+# Minuteur 1
   - platform: template
     name: "Minuteur Dose 1 - Hour"
     id: pump1_minute_dose_1_hour_num
@@ -911,9 +912,216 @@ number:
       - lambda: |-
           id(pump1_minute_dose_1_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 1 Quantity = %.1f ml", id(pump1_minute_dose_1_quantity));
+# Minuteur 2
+  - platform: template
+    name: "Minuteur Dose 2 - Hour"
+    id: pump1_minute_dose_2_hour_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_2_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_2_hour) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 2 Hour = %d", id(pump1_minute_dose_2_hour));
 
-# Répétez identiquement pour dose_2_hour, dose_2_minute, dose_2_quantity...
-# ... jusqu’à dose_12
+  - platform: template
+    name: "Minuteur Dose 2 - Minute"
+    id: pump1_minute_dose_2_minute_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_2_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_2_minute) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 2 Minute = %d", id(pump1_minute_dose_2_minute));
+
+  - platform: template
+    name: "Minuteur Dose 2 - Quantity (ml)"
+    id: pump1_minute_dose_2_quantity_num
+    icon: mdi:beaker
+    min_value: 0
+    max_value: 1000
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_2_quantity);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_2_quantity) = x;
+          ESP_LOGD("pump", "Minuteur Dose 2 Quantity = %.1f ml", id(pump1_minute_dose_2_quantity));
+# Minuteur 3
+  - platform: template
+    name: "Minuteur Dose 3 - Hour"
+    id: pump1_minute_dose_3_hour_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_3_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_3_hour) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 3 Hour = %d", id(pump1_minute_dose_3_hour));
+
+  - platform: template
+    name: "Minuteur Dose 3 - Minute"
+    id: pump1_minute_dose_3_minute_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_3_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_3_minute) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 3 Minute = %d", id(pump1_minute_dose_3_minute));
+
+  - platform: template
+    name: "Minuteur Dose 3 - Quantity (ml)"
+    id: pump1_minute_dose_3_quantity_num
+    icon: mdi:beaker
+    min_value: 0
+    max_value: 1000
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_3_quantity);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_3_quantity) = x;
+          ESP_LOGD("pump", "Minuteur Dose 3 Quantity = %.1f ml", id(pump1_minute_dose_3_quantity));
+# Minuteur 4
+  - platform: template
+    name: "Minuteur Dose 5 - Hour"
+    id: pump1_minute_dose_4_hour_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_4_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_4_hour) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 4 Hour = %d", id(pump1_minute_dose_4_hour));
+
+  - platform: template
+    name: "Minuteur Dose 4 - Minute"
+    id: pump1_minute_dose_4_minute_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_4_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_4_minute) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 4 Minute = %d", id(pump1_minute_dose_4_minute));
+
+  - platform: template
+    name: "Minuteur Dose 4 - Quantity (ml)"
+    id: pump1_minute_dose_4_quantity_num
+    icon: mdi:beaker
+    min_value: 0
+    max_value: 1000
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_4_quantity);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_4_quantity) = x;
+          ESP_LOGD("pump", "Minuteur Dose 4 Quantity = %.1f ml", id(pump1_minute_dose_4_quantity));
+# Minuteur 5
+  - platform: template
+    name: "Minuteur Dose 5 - Hour"
+    id: pump1_minute_dose_5_hour_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_5_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_5_hour) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 5 Hour = %d", id(pump1_minute_dose_5_hour));
+
+  - platform: template
+    name: "Minuteur Dose 5 - Minute"
+    id: pump1_minute_dose_5_minute_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_5_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_5_minute) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 5 Minute = %d", id(pump1_minute_dose_5_minute));
+
+  - platform: template
+    name: "Minuteur Dose 5 - Quantity (ml)"
+    id: pump1_minute_dose_5_quantity_num
+    icon: mdi:beaker
+    min_value: 0
+    max_value: 1000
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_5_quantity);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_5_quantity) = x;
+          ESP_LOGD("pump", "Minuteur Dose 5 Quantity = %.1f ml", id(pump1_minute_dose_5_quantity));
+# Minuteur 6
+  - platform: template
+    name: "Minuteur Dose 6 - Hour"
+    id: pump1_minute_dose_6_hour_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 23
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_6_hour);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_6_hour) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 6 Hour = %d", id(pump1_minute_dose_6_hour));
+
+  - platform: template
+    name: "Minuteur Dose 6 - Minute"
+    id: pump1_minute_dose_6_minute_num
+    icon: mdi:clock-outline
+    min_value: 0
+    max_value: 59
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_6_minute);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_6_minute) = (int)x;
+          ESP_LOGD("pump", "Minuteur Dose 6 Minute = %d", id(pump1_minute_dose_6_minute));
+
+  - platform: template
+    name: "Minuteur Dose 6 - Quantity (ml)"
+    id: pump1_minute_dose_6_quantity_num
+    icon: mdi:beaker
+    min_value: 0
+    max_value: 1000
+    step: 1
+    lambda: |-
+      return id(pump1_minute_dose_6_quantity);
+    set_action:
+      - lambda: |-
+          id(pump1_minute_dose_6_quantity) = x;
+          ESP_LOGD("pump", "Minuteur Dose 6 Quantity = %.1f ml", id(pump1_minute_dose_6_quantity));
 
 select:
   - platform: template
@@ -1234,12 +1442,12 @@ interval:
                 }
               }
             }
-          // --- Mode 4 : Minuteur (12 minuteurs distincts) ---
+          // --- Mode 4 : Minuteur (6 minuteurs distincts) ---
           } else if (mode == 4) {
-            // Recalcule la dose quotidienne selon la somme de toutes les minute_dose_X
-            float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity) + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity) + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity) + id(pump1_minute_dose_7_quantity) + id(pump1_minute_dose_8_quantity) + id(pump1_minute_dose_9_quantity) + id(pump1_minute_dose_10_quantity) + id(pump1_minute_dose_11_quantity) + id(pump1_minute_dose_12_quantity);
+            // Recalcule la dose quotidienne selon la somme des 6 minute_dose_X
+            float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity) + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity) + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity);
             id(pump1_daily_quantity) = total;
-            // Puis déclenche chaque dose programmée si l'heure et la minute correspondent
+            // Déclenchement des doses programmées pour les 6 minuteurs
             if (current_hour == id(pump1_minute_dose_1_hour) && current_minute == id(pump1_minute_dose_1_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_1_quantity);
               ESP_LOGD("pump", "Minuteur dose 1 déclenchée: %.2f ml", id(pump1_dose_ml));
@@ -1250,14 +1458,24 @@ interval:
               ESP_LOGD("pump", "Minuteur dose 2 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(run_pump1_steps).execute();
             }
-            // ... etc. pour minute_dose_3 à minute_dose_12 ...
-            // conservez la même logique pour déclencher chaque dose
-          }
-          // Rappel de calibration (loggé une fois par jour)
-          uint32_t now_ts = id(my_time).now().timestamp;
-          if ((id(pump1_last_calibration) == 0 ||
-              ((now_ts - id(pump1_last_calibration)) / 86400) >= id(pump1_calibration_frequency)) &&
-              ((now_ts - id(pump1_last_calibration_reminder)) >= 86400)) {
-            id(pump1_last_calibration_reminder) = now_ts;
-            ESP_LOGW("pump", "Rappel : Calibration de la Pompe 1 à refaire depuis plus de %d jours.", id(pump1_calibration_frequency));
+            if (current_hour == id(pump1_minute_dose_3_hour) && current_minute == id(pump1_minute_dose_3_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_3_quantity);
+              ESP_LOGD("pump", "Minuteur dose 3 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_4_hour) && current_minute == id(pump1_minute_dose_4_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_4_quantity);
+              ESP_LOGD("pump", "Minuteur dose 4 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_5_hour) && current_minute == id(pump1_minute_dose_5_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_5_quantity);
+              ESP_LOGD("pump", "Minuteur dose 5 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+            if (current_hour == id(pump1_minute_dose_6_hour) && current_minute == id(pump1_minute_dose_6_minute)) {
+              id(pump1_dose_ml) = id(pump1_minute_dose_6_quantity);
+              ESP_LOGD("pump", "Minuteur dose 6 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
           }

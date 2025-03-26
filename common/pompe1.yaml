@@ -376,7 +376,16 @@ globals:
     type: float
     restore_value: true
     initial_value: '0.0'
-
+#####################################
+#         sensor         #
+#####################################
+sensor:
+  - platform: template
+    name: "Volume quotidien Pompe 1 (ml)"
+    id: pump1_daily_quantity_sensor
+    unit_of_measurement: "ml"
+    lambda: |-
+      return id(pump1_daily_quantity);
 #####################################
 #         SORTIES PHYSIQUES         #
 #####################################

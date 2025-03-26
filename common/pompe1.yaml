@@ -383,6 +383,7 @@ sensor:
   - platform: template
     name: "Volume quotidien Pompe 1 (ml)"
     id: pump1_daily_quantity_sensor
+    update_interval: 60s
     unit_of_measurement: "ml"
     lambda: |-
       return id(pump1_daily_quantity);
@@ -1245,7 +1246,7 @@ switch:
   - platform: template
     name: "Amorcer Pompe 1 (Priming)"
     lambda: |-
-      return true;
+      return false;
     turn_on_action:
       - lambda: |-
           ESP_LOGD("pump", "Amorçage (Priming) de la pompe 1 : remplissage des tuyaux");
@@ -1292,7 +1293,7 @@ switch:
   - platform: template
     name: "Lancer Calibration Pompe 1"
     lambda: |-
-      return true;
+      return false;
     turn_on_action:
       - lambda: |-
           ESP_LOGD("pump", "Lancement de la calibration de la pompe 1");

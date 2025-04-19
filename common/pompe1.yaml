@@ -412,36 +412,50 @@ text_sensor:
     name: "📦 Paramètres généraux"
     lambda: return {" "};
     entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_general
 
   - platform: template
     name: "🕒 Mode 0 – Dose unique"
     lambda: return {" "};
     entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_mode0
 
   - platform: template
     name: "🕒 Mode 1 – 24 doses / jour"
     lambda: return {" "};
     entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_mode1
 
   - platform: template
     name: "🕒 Mode 2 – 12 doses / jour"
     lambda: return {" "};
     entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_mode2
 
   - platform: template
     name: "🗓️ Mode 3 – Périodes personnalisées"
     lambda: return {" "};
     entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_mode3
 
   - platform: template
     name: "⏱️ Mode 4 – Minuteurs"
     lambda: return {" "};
     entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_mode4
 
   - platform: template
     name: "🔧 Calibration & Maintenance"
     lambda: return {" "};
     entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_calibration
 
   # Affichage du nom du produit distribué
   - platform: template
@@ -492,6 +506,8 @@ number:
           // Met à jour la variable globale
           id(pump1_daily_quantity) = x;
           ESP_LOGD("pump", "Nouveau volume quotidien: %.1f ml", id(pump1_daily_quantity));
+    web_server:
+      sorting_group_id: sorting_group_mode0
 
   # ╔════════════════════════════════════════╗
   # ║   MODE 1 - Répartition sur 24 doses    ║
@@ -512,7 +528,8 @@ number:
       - lambda: |-
           id(pump1_dose_offset_minute) = (int)x;
           ESP_LOGD("pump", "Nouvel offset minute: %d", id(pump1_dose_offset_minute));
-
+    web_server:
+      sorting_group_id: sorting_group_mode1
 
   # ╔═══════════════════════════════════════════╗
   # ║   MODE 3 - Répartition sur périodes (1-6) ║
@@ -537,7 +554,7 @@ number:
           id(pump1_period1_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 1 - Start Hour = %d", id(pump1_period1_start_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode3
 
   - platform: template
     name: "Période 1 - Start Minute"
@@ -553,7 +570,7 @@ number:
           id(pump1_period1_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 1 - Start Minute = %d", id(pump1_period1_start_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode3
 
   - platform: template
     name: "Période 1 - End Hour"
@@ -569,8 +586,7 @@ number:
           id(pump1_period1_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 1 - End Hour = %d", id(pump1_period1_end_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 1 - End Minute"
     id: pump1_period1_end_minute_num
@@ -585,8 +601,7 @@ number:
           id(pump1_period1_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 1 - End Minute = %d", id(pump1_period1_end_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 1 - Doses"
     id: pump1_period1_doses_num
@@ -601,8 +616,7 @@ number:
           id(pump1_period1_doses) = (int)x;
           ESP_LOGD("pump", "Période 1 - Doses = %d", id(pump1_period1_doses));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
 # PÉRIODE 2
   - platform: template
     name: "Période 2 - Start Hour"
@@ -618,8 +632,7 @@ number:
           id(pump1_period2_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 2 - Start Hour = %d", id(pump1_period2_start_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 2 - Start Minute"
     id: pump1_period2_start_minute_num
@@ -634,8 +647,7 @@ number:
           id(pump1_period2_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 2 - Start Minute = %d", id(pump1_period2_start_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 2 - End Hour"
     id: pump1_period2_end_hour_num
@@ -650,8 +662,7 @@ number:
           id(pump1_period2_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 2 - End Hour = %d", id(pump1_period2_end_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 2 - End Minute"
     id: pump1_period2_end_minute_num
@@ -666,8 +677,7 @@ number:
           id(pump1_period2_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 2 - End Minute = %d", id(pump1_period2_end_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 2 - Doses"
     id: pump1_period2_doses_num
@@ -682,8 +692,7 @@ number:
           id(pump1_period2_doses) = (int)x;
           ESP_LOGD("pump", "Période 2 - Doses = %d", id(pump1_period2_doses));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
 # PÉRIODE 3
   - platform: template
     name: "Période 3 - Start Hour"
@@ -699,8 +708,7 @@ number:
           id(pump1_period3_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 3 - Start Hour = %d", id(pump1_period3_start_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 3 - Start Minute"
     id: pump1_period3_start_minute_num
@@ -715,8 +723,7 @@ number:
           id(pump1_period3_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 3 - Start Minute = %d", id(pump1_period3_start_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 3 - End Hour"
     id: pump1_period3_end_hour_num
@@ -731,8 +738,7 @@ number:
           id(pump1_period3_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 3 - End Hour = %d", id(pump1_period3_end_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 3 - End Minute"
     id: pump1_period3_end_minute_num
@@ -747,8 +753,7 @@ number:
           id(pump1_period3_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 3 - End Minute = %d", id(pump1_period3_end_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 3 - Doses"
     id: pump1_period3_doses_num
@@ -763,8 +768,7 @@ number:
           id(pump1_period3_doses) = (int)x;
           ESP_LOGD("pump", "Période 3 - Doses = %d", id(pump1_period3_doses));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-      
+      sorting_group_id: sorting_group_mode3      
 # PÉRIODE 4
   - platform: template
     name: "Période 4 - Start Hour"
@@ -780,8 +784,7 @@ number:
           id(pump1_period4_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 4 - Start Hour = %d", id(pump1_period4_start_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 4 - Start Minute"
     id: pump1_period4_start_minute_num
@@ -796,8 +799,7 @@ number:
           id(pump1_period4_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 4 - Start Minute = %d", id(pump1_period4_start_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 4 - End Hour"
     id: pump1_period4_end_hour_num
@@ -812,8 +814,7 @@ number:
           id(pump1_period4_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 4 - End Hour = %d", id(pump1_period4_end_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 4 - End Minute"
     id: pump1_period4_end_minute_num
@@ -828,8 +829,7 @@ number:
           id(pump1_period4_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 4 - End Minute = %d", id(pump1_period4_end_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 4 - Doses"
     id: pump1_period4_doses_num
@@ -844,8 +844,7 @@ number:
           id(pump1_period4_doses) = (int)x;
           ESP_LOGD("pump", "Période 4 - Doses = %d", id(pump1_period4_doses));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
 # PÉRIODE 5
   - platform: template
     name: "Période 5 - Start Hour"
@@ -861,8 +860,7 @@ number:
           id(pump1_period5_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 5 - Start Hour = %d", id(pump1_period5_start_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 5 - Start Minute"
     id: pump1_period5_start_minute_num
@@ -877,8 +875,7 @@ number:
           id(pump1_period5_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 5 - Start Minute = %d", id(pump1_period5_start_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 5 - End Hour"
     id: pump1_period5_end_hour_num
@@ -893,8 +890,7 @@ number:
           id(pump1_period5_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 5 - End Hour = %d", id(pump1_period5_end_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 5 - End Minute"
     id: pump1_period5_end_minute_num
@@ -909,8 +905,7 @@ number:
           id(pump1_period5_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 5 - End Minute = %d", id(pump1_period5_end_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 5 - Doses"
     id: pump1_period5_doses_num
@@ -925,8 +920,7 @@ number:
           id(pump1_period5_doses) = (int)x;
           ESP_LOGD("pump", "Période 5 - Doses = %d", id(pump1_period5_doses));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
 # PÉRIODE 6
   - platform: template
     name: "Période 6 - Start Hour"
@@ -942,8 +936,7 @@ number:
           id(pump1_period6_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 6 - Start Hour = %d", id(pump1_period6_start_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 6 - Start Minute"
     id: pump1_period6_start_minute_num
@@ -958,8 +951,7 @@ number:
           id(pump1_period6_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 6 - Start Minute = %d", id(pump1_period6_start_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 6 - End Hour"
     id: pump1_period6_end_hour_num
@@ -974,8 +966,7 @@ number:
           id(pump1_period6_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 6 - End Hour = %d", id(pump1_period6_end_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 6 - End Minute"
     id: pump1_period6_end_minute_num
@@ -990,8 +981,7 @@ number:
           id(pump1_period6_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 6 - End Minute = %d", id(pump1_period6_end_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-
+      sorting_group_id: sorting_group_mode3
   - platform: template
     name: "Période 6 - Doses"
     id: pump1_period6_doses_num
@@ -1006,7 +996,7 @@ number:
           id(pump1_period6_doses) = (int)x;
           ESP_LOGD("pump", "Période 6 - Doses = %d", id(pump1_period6_doses));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode3
   # ╔═══════════════════════════════════════╗
   # ║   MODE 4 - Minuteur (doses à l’heure) ║
   # ╚═══════════════════════════════════════╝
@@ -1028,7 +1018,7 @@ number:
           id(pump1_minute_dose_1_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 1 Hour = %d", id(pump1_minute_dose_1_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
 
   - platform: template
     name: "Minuteur Dose 1 - Minute"
@@ -1044,7 +1034,7 @@ number:
           id(pump1_minute_dose_1_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 1 Minute = %d", id(pump1_minute_dose_1_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 1 - Quantity (ml)"
@@ -1060,7 +1050,7 @@ number:
           id(pump1_minute_dose_1_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 1 Quantity = %.1f ml", id(pump1_minute_dose_1_quantity));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
 # Minuteur 2
   - platform: template
@@ -1077,7 +1067,7 @@ number:
           id(pump1_minute_dose_2_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 2 Hour = %d", id(pump1_minute_dose_2_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 2 - Minute"
@@ -1093,7 +1083,7 @@ number:
           id(pump1_minute_dose_2_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 2 Minute = %d", id(pump1_minute_dose_2_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 2 - Quantity (ml)"
@@ -1109,7 +1099,7 @@ number:
           id(pump1_minute_dose_2_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 2 Quantity = %.1f ml", id(pump1_minute_dose_2_quantity));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       # Minuteur 3
   - platform: template
     name: "Minuteur Dose 3 - Hour"
@@ -1125,7 +1115,7 @@ number:
           id(pump1_minute_dose_3_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 3 Hour = %d", id(pump1_minute_dose_3_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 3 - Minute"
@@ -1141,7 +1131,7 @@ number:
           id(pump1_minute_dose_3_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 3 Minute = %d", id(pump1_minute_dose_3_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 3 - Quantity (ml)"
@@ -1157,7 +1147,7 @@ number:
           id(pump1_minute_dose_3_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 3 Quantity = %.1f ml", id(pump1_minute_dose_3_quantity));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       # Minuteur 4
   - platform: template
     name: "Minuteur Dose 5 - Hour"
@@ -1173,7 +1163,7 @@ number:
           id(pump1_minute_dose_4_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 4 Hour = %d", id(pump1_minute_dose_4_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 4 - Minute"
@@ -1189,7 +1179,7 @@ number:
           id(pump1_minute_dose_4_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 4 Minute = %d", id(pump1_minute_dose_4_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 4 - Quantity (ml)"
@@ -1205,7 +1195,7 @@ number:
           id(pump1_minute_dose_4_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 4 Quantity = %.1f ml", id(pump1_minute_dose_4_quantity));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       # Minuteur 5
   - platform: template
     name: "Minuteur Dose 5 - Hour"
@@ -1221,7 +1211,7 @@ number:
           id(pump1_minute_dose_5_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 5 Hour = %d", id(pump1_minute_dose_5_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 5 - Minute"
@@ -1237,7 +1227,7 @@ number:
           id(pump1_minute_dose_5_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 5 Minute = %d", id(pump1_minute_dose_5_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 5 - Quantity (ml)"
@@ -1253,7 +1243,7 @@ number:
           id(pump1_minute_dose_5_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 5 Quantity = %.1f ml", id(pump1_minute_dose_5_quantity));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       # Minuteur 6
   - platform: template
     name: "Minuteur Dose 6 - Hour"
@@ -1269,7 +1259,7 @@ number:
           id(pump1_minute_dose_6_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 6 Hour = %d", id(pump1_minute_dose_6_hour));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 6 - Minute"
@@ -1285,7 +1275,7 @@ number:
           id(pump1_minute_dose_6_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 6 Minute = %d", id(pump1_minute_dose_6_minute));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
       
   - platform: template
     name: "Minuteur Dose 6 - Quantity (ml)"
@@ -1301,7 +1291,8 @@ number:
           id(pump1_minute_dose_6_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 6 Quantity = %.1f ml", id(pump1_minute_dose_6_quantity));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode4
+      
 select:
   - platform: template
     name: "Pompe 1 - Mode de Distribution"
@@ -1402,7 +1393,7 @@ switch:
           id(pump1_enabled) = false;
           ESP_LOGD("pump", "Pompe désactivée !");
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_general  # ou diagnostic, misc, etc.
       
   # Distribution manuelle (dose immédiate)
   - platform: template
@@ -1417,7 +1408,7 @@ switch:
     turn_on_action:
       - script.execute: run_pump1_steps
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_general  # ou diagnostic, misc, etc.
       
   # Amorçage (remplissage tuyaux)
   - platform: template
@@ -1443,7 +1434,7 @@ switch:
           }
           ESP_LOGD("pump", "Amorçage terminé");
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
       
   # Bouton pour lancer la calibration
   - platform: template
@@ -1468,7 +1459,7 @@ switch:
             }
           }
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
       
   # Bouton pour valider la calibration
   - platform: template
@@ -1481,7 +1472,7 @@ switch:
           id(pump1_last_calibration) = id(my_time).now().timestamp;
           ESP_LOGW("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
     web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
 #####################################
 #        AUTOMATISMES (SCHEDULE)     #
 #####################################

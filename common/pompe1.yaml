@@ -1215,8 +1215,8 @@ number:
       - lambda: |-
           id(pump1_minute_dose_4_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 4 Quantity = %.1f ml", id(pump1_minute_dose_4_quantity));
-    - script.execute: update_computed_daily_quantity
-    - script.execute: refresh_daily_quantity_sensor
+      - script.execute: update_computed_daily_quantity
+      - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
       # Minuteur 5
@@ -1265,8 +1265,8 @@ number:
       - lambda: |-
           id(pump1_minute_dose_5_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 5 Quantity = %.1f ml", id(pump1_minute_dose_5_quantity));
-    - script.execute: update_computed_daily_quantity
-    - script.execute: refresh_daily_quantity_sensor
+      - script.execute: update_computed_daily_quantity
+      - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
       # Minuteur 6
@@ -1315,8 +1315,8 @@ number:
       - lambda: |-
           id(pump1_minute_dose_6_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 6 Quantity = %.1f ml", id(pump1_minute_dose_6_quantity));
-    - script.execute: update_computed_daily_quantity
-    - script.execute: refresh_daily_quantity_sensor
+      - script.execute: update_computed_daily_quantity
+      - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
       
@@ -1348,7 +1348,7 @@ select:
           else if (x == "Mode 3: Périodes") id(pump1_distribution_mode) = 3;
           else if (x == "Mode 4: Minuteur") id(pump1_distribution_mode) = 4;
           ESP_LOGD("pump", "Nouveau mode = %d", id(pump1_distribution_mode));
-    - script.execute: update_computed_daily_quantity
+      - script.execute: update_computed_daily_quantity
 
 #####################################
 #          SCRIPTS DE DOSAGE        #

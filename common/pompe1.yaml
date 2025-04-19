@@ -432,19 +432,11 @@ text_sensor:
     name: "🗓️ Mode 3 – Périodes personnalisées"
     lambda: return {" "};
     entity_category: diagnostic
-  - platform: template
-    name: "🗓️ Configuration des Périodes"
-    lambda: return {" "};
-    entity_category: config
 
   - platform: template
     name: "⏱️ Mode 4 – Minuteurs"
     lambda: return {" "};
     entity_category: diagnostic
-  - platform: template
-    name: "⏱️ Configuration des Minuteurs"
-    lambda: return {" "};
-    entity_category: config
 
   - platform: template
     name: "🔧 Calibration & Maintenance"
@@ -770,7 +762,9 @@ number:
       - lambda: |-
           id(pump1_period3_doses) = (int)x;
           ESP_LOGD("pump", "Période 3 - Doses = %d", id(pump1_period3_doses));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
 # PÉRIODE 4
   - platform: template
     name: "Période 4 - Start Hour"
@@ -1306,7 +1300,8 @@ number:
       - lambda: |-
           id(pump1_minute_dose_6_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 6 Quantity = %.1f ml", id(pump1_minute_dose_6_quantity));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 select:
   - platform: template
     name: "Pompe 1 - Mode de Distribution"
@@ -1439,10 +1434,10 @@ switch:
               {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
             };
             for (int j = 0; j < 8; j++) {
-              if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
-              if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
-              if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
-              if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
+              id(pump1_coil1).state = steps[j][0];
+              id(pump1_coil2).state = steps[j][1];
+              id(pump1_coil3).state = steps[j][2];
+              id(pump1_coil4).state = steps[j][3];
               delay(2);
             }
           }
@@ -1465,10 +1460,10 @@ switch:
               {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
             };
             for (int j = 0; j < 8; j++) {
-              if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
-              if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
-              if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
-              if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
+              id(pump1_coil1).state = steps[j][0];
+              id(pump1_coil2).state = steps[j][1];
+              id(pump1_coil3).state = steps[j][2];
+              id(pump1_coil4).state = steps[j][3];
               delay(2);
             }
           }
@@ -1487,7 +1482,6 @@ switch:
           ESP_LOGW("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
     web_server:
       sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
-      
 #####################################
 #        AUTOMATISMES (SCHEDULE)     #
 #####################################

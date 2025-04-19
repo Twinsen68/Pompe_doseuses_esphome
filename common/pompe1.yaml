@@ -1524,6 +1524,7 @@ switch:
           id(pump1_last_dose_log) = buffer;
           id(pump1_last_dose_text).update();
           ESP_LOGD("pump", "Amorçage terminé");
+      - delay: 10ms  # Clôture explicite de la liste YAML
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
       

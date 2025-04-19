@@ -277,6 +277,9 @@ Si la dose quotidienne est de **100 ml**, chaque dose sera calculée comme suit 
      - Ajout de 10 ml à 9h30.
      - Ajout de 5 ml à 14h15 et 18h45.
 
+> En Mode 4, le volume quotidien est recalculé dynamiquement à partir des doses configurées.
+> Ce volume s’affiche dans le champ "Volume quotidien Pompe X (ml)" pour information, mais ne peut pas être modifié manuellement dans ce mode.
+
 #### **Nom du produit distribué**
 Chaque pompe peut avoir un nom de produit associé (ex : Calcium, KH, Aminés, etc.). Ce nom est affiché dans l’interface Web ESPHome ainsi que dans Home Assistant.
 
@@ -303,6 +306,17 @@ Cette option permet de mieux identifier les pompes et leurs fonctions spécifiqu
    - Consultez les logs ESPHome (`Logs en direct`) pour vérifier l'exécution des doses.
    - Activez `Valider Calibration Pompe X` après une calibration pour mettre à jour les paramètres internes.
    - Vérifiez régulièrement la précision des doses et ajustez la calibration si nécessaire.
+
+### Calibration et enregistrement du facteur
+
+Lors de la calibration, vous pouvez mesurer le volume réellement délivré (ex. dans une seringue graduée), puis saisir cette valeur dans le champ **"Pompe X - Volume mesuré (ml)"**.
+
+Ensuite, cliquez sur **"Valider Calibration Pompe X"** pour enregistrer le nouveau facteur (ml/pas), automatiquement calculé.
+
+Ce facteur sera utilisé dans tous les modes pour déterminer la quantité à distribuer.
+
+> ⚠️ Le lancement de la calibration est bloqué si les switches "Amorcer" ou "Valider Calibration" sont actifs.
+> Ces actions sont exclusives afin d’éviter les conflits moteurs. Chaque switch revient automatiquement à l'état OFF une fois son action terminée.
 
 ### Conseils d'Utilisation
 - Pour garantir la fiabilité du système, testez chaque mode avant de l'appliquer en condition réelle.

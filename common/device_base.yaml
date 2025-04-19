@@ -60,7 +60,34 @@ web_server:
     - id: sorting_group_misc  # Groupe pour les capteurs divers
       name: "Misc. Sensors"  # Nom complet du groupe
       sorting_weight: ${sorting_group_misc_weight}  # Poids de tri
+    # Groupes personnalisés supplémentaires :
+    - id: sorting_group_general
+      name: "Paramètres généraux"
+      sorting_weight: 40
 
+    - id: sorting_group_mode0
+      name: "Mode 0 – Dose unique"
+      sorting_weight: 41
+
+    - id: sorting_group_mode1
+      name: "Mode 1 – 24 doses / jour"
+      sorting_weight: 42
+
+    - id: sorting_group_mode2
+      name: "Mode 2 – 12 doses / jour"
+      sorting_weight: 43
+
+    - id: sorting_group_mode3
+      name: "Mode 3 – Périodes personnalisées"
+      sorting_weight: 44
+
+    - id: sorting_group_mode4
+      name: "Mode 4 – Minuteurs"
+      sorting_weight: 45
+
+    - id: sorting_group_calibration
+      name: "Calibration & Maintenance"
+      sorting_weight: 46
 improv_serial:  # Active le protocole "Improv Serial" pour configuration simplifiée
 
 # LED bleue interne utilisée comme indicateur de statut

@@ -389,48 +389,66 @@ sensor:
     id: pump1_daily_quantity_sensor
     update_interval: 60s
     unit_of_measurement: "ml"
+    entity_category: diagnostic
     lambda: |-
       return id(pump1_daily_quantity);
-text_sensor:
-  - platform: template
-    name: "━━ PARAMÈTRES GÉNÉRAUX ━━"
-    lambda: |-
-      return {" "};
-  - platform: template
-    name: "━━ MODE 0 ━━ Dose unique"
-    lambda: |-
-      return {" "};
-  - platform: template
-    name: "━━ MODE 1 ━━ 24 doses / jour"
-    lambda: |-
-      return {" "};
-  - platform: template
-    name: "━━ MODE 2 ━━ 12 doses / jour"
-    lambda: |-
-      return {" "};
-  - platform: template
-    name: "━━ MODE 3 ━━ Répartition par périodes"
-    lambda: |-
-      return {" "};
-  - platform: template
-    name: "━━ MODE 4 ━━ Minuteurs précis"
-    lambda: |-
-      return {" "};
-  - platform: template
-    name: "Pompe 1 - Produit distribué"
-    lambda: |-
-      return optional<std::string>(id(pump1_product_name));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 text:
   - platform: template
     name: "Pompe 1 - Nom du produit"
     id: pump1_product_name_text
     mode: text
+    entity_category: config
     lambda: |-
       return optional<std::string>(id(pump1_product_name));
     set_action:
       - lambda: |-
           id(pump1_product_name) = x;
           ESP_LOGD("pump", "Nom du produit mis à jour: %s", x.c_str());
+text_sensor:
+  # Titres de regroupement visuels (faux sensors repliables)
+  - platform: template
+    name: "📦 Paramètres généraux"
+    lambda: return {" "};
+    entity_category: diagnostic
+
+  - platform: template
+    name: "🕒 Mode 0 – Dose unique"
+    lambda: return {" "};
+    entity_category: diagnostic
+
+  - platform: template
+    name: "🕒 Mode 1 – 24 doses / jour"
+    lambda: return {" "};
+    entity_category: diagnostic
+
+  - platform: template
+    name: "🕒 Mode 2 – 12 doses / jour"
+    lambda: return {" "};
+    entity_category: diagnostic
+
+  - platform: template
+    name: "🗓️ Mode 3 – Périodes personnalisées"
+    lambda: return {" "};
+    entity_category: diagnostic
+
+  - platform: template
+    name: "⏱️ Mode 4 – Minuteurs"
+    lambda: return {" "};
+    entity_category: diagnostic
+
+  - platform: template
+    name: "🔧 Calibration & Maintenance"
+    lambda: return {" "};
+    entity_category: diagnostic
+
+  # Affichage du nom du produit distribué
+  - platform: template
+    name: "Pompe 1 - Produit distribué"
+    lambda: |-
+      return optional<std::string>(id(pump1_product_name));
+    entity_category: config
 #####################################
 #         SORTIES PHYSIQUES         #
 #####################################
@@ -518,6 +536,8 @@ number:
       - lambda: |-
           id(pump1_period1_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 1 - Start Hour = %d", id(pump1_period1_start_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 1 - Start Minute"
@@ -532,6 +552,8 @@ number:
       - lambda: |-
           id(pump1_period1_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 1 - Start Minute = %d", id(pump1_period1_start_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 1 - End Hour"
@@ -546,6 +568,8 @@ number:
       - lambda: |-
           id(pump1_period1_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 1 - End Hour = %d", id(pump1_period1_end_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 1 - End Minute"
@@ -560,6 +584,8 @@ number:
       - lambda: |-
           id(pump1_period1_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 1 - End Minute = %d", id(pump1_period1_end_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 1 - Doses"
@@ -574,6 +600,8 @@ number:
       - lambda: |-
           id(pump1_period1_doses) = (int)x;
           ESP_LOGD("pump", "Période 1 - Doses = %d", id(pump1_period1_doses));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
 # PÉRIODE 2
   - platform: template
@@ -589,6 +617,8 @@ number:
       - lambda: |-
           id(pump1_period2_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 2 - Start Hour = %d", id(pump1_period2_start_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 2 - Start Minute"
@@ -603,6 +633,8 @@ number:
       - lambda: |-
           id(pump1_period2_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 2 - Start Minute = %d", id(pump1_period2_start_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 2 - End Hour"
@@ -617,6 +649,8 @@ number:
       - lambda: |-
           id(pump1_period2_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 2 - End Hour = %d", id(pump1_period2_end_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 2 - End Minute"
@@ -631,6 +665,8 @@ number:
       - lambda: |-
           id(pump1_period2_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 2 - End Minute = %d", id(pump1_period2_end_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 2 - Doses"
@@ -645,6 +681,8 @@ number:
       - lambda: |-
           id(pump1_period2_doses) = (int)x;
           ESP_LOGD("pump", "Période 2 - Doses = %d", id(pump1_period2_doses));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
 # PÉRIODE 3
   - platform: template
@@ -660,6 +698,8 @@ number:
       - lambda: |-
           id(pump1_period3_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 3 - Start Hour = %d", id(pump1_period3_start_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 3 - Start Minute"
@@ -674,6 +714,8 @@ number:
       - lambda: |-
           id(pump1_period3_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 3 - Start Minute = %d", id(pump1_period3_start_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 3 - End Hour"
@@ -688,6 +730,8 @@ number:
       - lambda: |-
           id(pump1_period3_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 3 - End Hour = %d", id(pump1_period3_end_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 3 - End Minute"
@@ -702,6 +746,8 @@ number:
       - lambda: |-
           id(pump1_period3_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 3 - End Minute = %d", id(pump1_period3_end_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 3 - Doses"
@@ -731,6 +777,8 @@ number:
       - lambda: |-
           id(pump1_period4_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 4 - Start Hour = %d", id(pump1_period4_start_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 4 - Start Minute"
@@ -745,6 +793,8 @@ number:
       - lambda: |-
           id(pump1_period4_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 4 - Start Minute = %d", id(pump1_period4_start_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 4 - End Hour"
@@ -759,6 +809,8 @@ number:
       - lambda: |-
           id(pump1_period4_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 4 - End Hour = %d", id(pump1_period4_end_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 4 - End Minute"
@@ -773,6 +825,8 @@ number:
       - lambda: |-
           id(pump1_period4_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 4 - End Minute = %d", id(pump1_period4_end_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 4 - Doses"
@@ -787,6 +841,8 @@ number:
       - lambda: |-
           id(pump1_period4_doses) = (int)x;
           ESP_LOGD("pump", "Période 4 - Doses = %d", id(pump1_period4_doses));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
 # PÉRIODE 5
   - platform: template
@@ -802,6 +858,8 @@ number:
       - lambda: |-
           id(pump1_period5_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 5 - Start Hour = %d", id(pump1_period5_start_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 5 - Start Minute"
@@ -816,6 +874,8 @@ number:
       - lambda: |-
           id(pump1_period5_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 5 - Start Minute = %d", id(pump1_period5_start_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 5 - End Hour"
@@ -830,6 +890,8 @@ number:
       - lambda: |-
           id(pump1_period5_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 5 - End Hour = %d", id(pump1_period5_end_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 5 - End Minute"
@@ -844,6 +906,8 @@ number:
       - lambda: |-
           id(pump1_period5_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 5 - End Minute = %d", id(pump1_period5_end_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 5 - Doses"
@@ -858,6 +922,8 @@ number:
       - lambda: |-
           id(pump1_period5_doses) = (int)x;
           ESP_LOGD("pump", "Période 5 - Doses = %d", id(pump1_period5_doses));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
 # PÉRIODE 6
   - platform: template
@@ -873,6 +939,8 @@ number:
       - lambda: |-
           id(pump1_period6_start_hour) = (int)x;
           ESP_LOGD("pump", "Période 6 - Start Hour = %d", id(pump1_period6_start_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 6 - Start Minute"
@@ -887,6 +955,8 @@ number:
       - lambda: |-
           id(pump1_period6_start_minute) = (int)x;
           ESP_LOGD("pump", "Période 6 - Start Minute = %d", id(pump1_period6_start_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 6 - End Hour"
@@ -901,6 +971,8 @@ number:
       - lambda: |-
           id(pump1_period6_end_hour) = (int)x;
           ESP_LOGD("pump", "Période 6 - End Hour = %d", id(pump1_period6_end_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 6 - End Minute"
@@ -915,6 +987,8 @@ number:
       - lambda: |-
           id(pump1_period6_end_minute) = (int)x;
           ESP_LOGD("pump", "Période 6 - End Minute = %d", id(pump1_period6_end_minute));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Période 6 - Doses"
@@ -929,6 +1003,8 @@ number:
       - lambda: |-
           id(pump1_period6_doses) = (int)x;
           ESP_LOGD("pump", "Période 6 - Doses = %d", id(pump1_period6_doses));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
   # ╔═══════════════════════════════════════╗
   # ║   MODE 4 - Minuteur (doses à l’heure) ║
   # ╚═══════════════════════════════════════╝
@@ -949,6 +1025,8 @@ number:
       - lambda: |-
           id(pump1_minute_dose_1_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 1 Hour = %d", id(pump1_minute_dose_1_hour));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
 
   - platform: template
     name: "Minuteur Dose 1 - Minute"
@@ -963,7 +1041,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_1_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 1 Minute = %d", id(pump1_minute_dose_1_minute));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 1 - Quantity (ml)"
     id: pump1_minute_dose_1_quantity_num
@@ -977,6 +1057,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_1_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 1 Quantity = %.1f ml", id(pump1_minute_dose_1_quantity));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
 # Minuteur 2
   - platform: template
     name: "Minuteur Dose 2 - Hour"
@@ -991,7 +1074,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_2_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 2 Hour = %d", id(pump1_minute_dose_2_hour));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 2 - Minute"
     id: pump1_minute_dose_2_minute_num
@@ -1005,7 +1090,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_2_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 2 Minute = %d", id(pump1_minute_dose_2_minute));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 2 - Quantity (ml)"
     id: pump1_minute_dose_2_quantity_num
@@ -1019,7 +1106,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_2_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 2 Quantity = %.1f ml", id(pump1_minute_dose_2_quantity));
-# Minuteur 3
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      # Minuteur 3
   - platform: template
     name: "Minuteur Dose 3 - Hour"
     id: pump1_minute_dose_3_hour_num
@@ -1033,7 +1122,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_3_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 3 Hour = %d", id(pump1_minute_dose_3_hour));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 3 - Minute"
     id: pump1_minute_dose_3_minute_num
@@ -1047,7 +1138,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_3_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 3 Minute = %d", id(pump1_minute_dose_3_minute));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 3 - Quantity (ml)"
     id: pump1_minute_dose_3_quantity_num
@@ -1061,7 +1154,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_3_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 3 Quantity = %.1f ml", id(pump1_minute_dose_3_quantity));
-# Minuteur 4
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      # Minuteur 4
   - platform: template
     name: "Minuteur Dose 5 - Hour"
     id: pump1_minute_dose_4_hour_num
@@ -1075,7 +1170,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_4_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 4 Hour = %d", id(pump1_minute_dose_4_hour));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 4 - Minute"
     id: pump1_minute_dose_4_minute_num
@@ -1089,7 +1186,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_4_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 4 Minute = %d", id(pump1_minute_dose_4_minute));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 4 - Quantity (ml)"
     id: pump1_minute_dose_4_quantity_num
@@ -1103,7 +1202,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_4_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 4 Quantity = %.1f ml", id(pump1_minute_dose_4_quantity));
-# Minuteur 5
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      # Minuteur 5
   - platform: template
     name: "Minuteur Dose 5 - Hour"
     id: pump1_minute_dose_5_hour_num
@@ -1117,7 +1218,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_5_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 5 Hour = %d", id(pump1_minute_dose_5_hour));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 5 - Minute"
     id: pump1_minute_dose_5_minute_num
@@ -1131,7 +1234,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_5_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 5 Minute = %d", id(pump1_minute_dose_5_minute));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 5 - Quantity (ml)"
     id: pump1_minute_dose_5_quantity_num
@@ -1145,7 +1250,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_5_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 5 Quantity = %.1f ml", id(pump1_minute_dose_5_quantity));
-# Minuteur 6
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      # Minuteur 6
   - platform: template
     name: "Minuteur Dose 6 - Hour"
     id: pump1_minute_dose_6_hour_num
@@ -1159,7 +1266,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_6_hour) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 6 Hour = %d", id(pump1_minute_dose_6_hour));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 6 - Minute"
     id: pump1_minute_dose_6_minute_num
@@ -1173,7 +1282,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_6_minute) = (int)x;
           ESP_LOGD("pump", "Minuteur Dose 6 Minute = %d", id(pump1_minute_dose_6_minute));
-
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   - platform: template
     name: "Minuteur Dose 6 - Quantity (ml)"
     id: pump1_minute_dose_6_quantity_num
@@ -1193,6 +1304,7 @@ select:
     name: "Pompe 1 - Mode de Distribution"
     id: pump1_distribution_select
     icon: mdi:format-list-bulleted
+    entity_category: config
     options:
       - "Mode 0: Dose unique"
       - "Mode 1: 24 doses"
@@ -1269,11 +1381,13 @@ script:
 #            SWITCHES               #
 #####################################
 switch:
+  # Activation globale
   - platform: template
     name: "Activation Pompe 1"
     id: pump1_enable_switch
     restore_mode: RESTORE_DEFAULT_ON
     optimistic: true
+    entity_category: config
     lambda: |-
       return id(pump1_enabled);
     turn_on_action:
@@ -1284,127 +1398,88 @@ switch:
       - lambda: |-
           id(pump1_enabled) = false;
           ESP_LOGD("pump", "Pompe désactivée !");
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
   # Distribution manuelle (dose immédiate)
   - platform: template
     name: "Doser manuellement Pompe 1"
+    entity_category: diagnostic
     lambda: |-
       if (id(pump1_enabled)) {
-        // Exemple: dose = la quantité quotidienne
         id(pump1_dose_ml) = id(pump1_daily_quantity);
         return true;
       }
       return false;
     turn_on_action:
       - script.execute: run_pump1_steps
-
-  # Bouton pour amorcer la pompe (Priming) : Remplit les tuyaux
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
+  # Amorçage (remplissage tuyaux)
   - platform: template
     name: "Amorcer Pompe 1 (Priming)"
-    lambda: |-
-      return false;
+    entity_category: diagnostic
+    lambda: return false;
     turn_on_action:
       - lambda: |-
           ESP_LOGD("pump", "Amorçage (Priming) de la pompe 1 : remplissage des tuyaux");
           unsigned long start = millis();
-          // Lancer le moteur en continu pendant 5 secondes pour remplir les tuyaux
           while (millis() - start < 5000) {
             const int steps[8][4] = {
-              {1,0,0,0},
-              {1,1,0,0},
-              {0,1,0,0},
-              {0,1,1,0},
-              {0,0,1,0},
-              {0,0,1,1},
-              {0,0,0,1},
-              {1,0,0,1}
+              {1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,1,1,0},
+              {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
             };
             for (int j = 0; j < 8; j++) {
-              if (steps[j][0])
-                id(pump1_coil1).turn_on();
-              else
-                id(pump1_coil1).turn_off();
-
-              if (steps[j][1])
-                id(pump1_coil2).turn_on();
-              else
-                id(pump1_coil2).turn_off();
-
-              if (steps[j][2])
-                id(pump1_coil3).turn_on();
-              else
-                id(pump1_coil3).turn_off();
-
-              if (steps[j][3])
-                id(pump1_coil4).turn_on();
-              else
-                id(pump1_coil4).turn_off();
-
+              id(pump1_coil1).state = steps[j][0];
+              id(pump1_coil2).state = steps[j][1];
+              id(pump1_coil3).state = steps[j][2];
+              id(pump1_coil4).state = steps[j][3];
               delay(2);
             }
           }
-          ESP_LOGD("pump", "Amorçage (Priming) terminé : tuyaux remplis");
-
-  # Bouton dédié au lancement de la calibration
+          ESP_LOGD("pump", "Amorçage terminé");
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
+  # Bouton pour lancer la calibration
   - platform: template
     name: "Lancer Calibration Pompe 1"
-    lambda: |-
-      return false;
+    entity_category: diagnostic
+    lambda: return false;
     turn_on_action:
       - lambda: |-
-          ESP_LOGD("pump", "Lancement de la calibration de la pompe 1");
+          ESP_LOGD("pump", "Lancement de la calibration...");
           unsigned long start = millis();
-          // Lancer le moteur en continu pendant 20 secondes pour calibration
           while (millis() - start < 20000) {
             const int steps[8][4] = {
-              {1,0,0,0},
-              {1,1,0,0},
-              {0,1,0,0},
-              {0,1,1,0},
-              {0,0,1,0},
-              {0,0,1,1},
-              {0,0,0,1},
-              {1,0,0,1}
+              {1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,1,1,0},
+              {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
             };
             for (int j = 0; j < 8; j++) {
-              if (steps[j][0])
-                id(pump1_coil1).turn_on();
-              else
-                id(pump1_coil1).turn_off();
-
-              if (steps[j][1])
-                id(pump1_coil2).turn_on();
-              else
-                id(pump1_coil2).turn_off();
-
-              if (steps[j][2])
-                id(pump1_coil3).turn_on();
-              else
-                id(pump1_coil3).turn_off();
-
-              if (steps[j][3])
-                id(pump1_coil4).turn_on();
-              else
-                id(pump1_coil4).turn_off();
-
+              id(pump1_coil1).state = steps[j][0];
+              id(pump1_coil2).state = steps[j][1];
+              id(pump1_coil3).state = steps[j][2];
+              id(pump1_coil4).state = steps[j][3];
               delay(2);
             }
           }
-          ESP_LOGD("pump", "Fin de la calibration. Mesurez le volume délivré (en ml) et mettez à jour pump1_calibration_value via l’API ou le web server.");
-
-  # Bouton virtuel pour valider la calibration
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
+  # Bouton pour valider la calibration
   - platform: template
     name: "Valider Calibration Pompe 1"
-    lambda: |-
-      return false;
+    entity_category: diagnostic
+    lambda: return false;
     turn_on_action:
       - lambda: |-
-          // Mise à jour du facteur de calibration à partir de la valeur mesurée
           id(pump1_calibration_factor) = id(pump1_calibration_value) / id(pump1_calibration_steps);
-          // Enregistrement de la date de calibration (timestamp)
           id(pump1_last_calibration) = id(my_time).now().timestamp;
-          ESP_LOGD("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
-      - logger.log: "Calibration validée pour Pompe 1."
-
+          ESP_LOGW("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
+    web_server:
+      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+      
 #####################################
 #        AUTOMATISMES (SCHEDULE)     #
 #####################################

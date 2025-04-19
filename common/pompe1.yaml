@@ -402,7 +402,7 @@ text:
     id: pump1_product_name_text
     mode: text
     lambda: |-
-      return id(pump1_product_name).c_str();
+      return optional<std::string>(id(pump1_product_name));
     set_action:
       - lambda: |-
           id(pump1_product_name) = x;

@@ -393,6 +393,30 @@ sensor:
       return id(pump1_daily_quantity);
 text_sensor:
   - platform: template
+    name: "━━ PARAMÈTRES GÉNÉRAUX ━━"
+    lambda: |-
+      return {" "};
+  - platform: template
+    name: "━━ MODE 0 ━━ Dose unique"
+    lambda: |-
+      return {" "};
+  - platform: template
+    name: "━━ MODE 1 ━━ 24 doses / jour"
+    lambda: |-
+      return {" "};
+  - platform: template
+    name: "━━ MODE 2 ━━ 12 doses / jour"
+    lambda: |-
+      return {" "};
+  - platform: template
+    name: "━━ MODE 3 ━━ Répartition par périodes"
+    lambda: |-
+      return {" "};
+  - platform: template
+    name: "━━ MODE 4 ━━ Minuteurs précis"
+    lambda: |-
+      return {" "};
+  - platform: template
     name: "Pompe 1 - Produit distribué"
     lambda: |-
       return optional<std::string>(id(pump1_product_name));

@@ -1520,10 +1520,11 @@ switch:
           // Enregistre l'heure et le volume de la dernière dose
           char buffer[40];
           auto now = id(my_time).now();
-          sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day, now.hour, now.minute, id(pump1_dose_ml));
+          sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, id(pump1_dose_ml));
           id(pump1_last_dose_log) = buffer;
           id(pump1_last_dose_text).update();
           ESP_LOGD("pump", "Amorçage terminé");
+      - # fin de turn_on_action
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
       

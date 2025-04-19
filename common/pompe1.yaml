@@ -392,6 +392,9 @@ sensor:
     entity_category: diagnostic
     lambda: |-
       return id(pump1_daily_quantity);
+    web_server:
+      sorting_group_id: sorting_group_general
+
 # ou diagnostic, misc, etc.
 text:
   - platform: template
@@ -1407,7 +1410,7 @@ switch:
     turn_on_action:
       - script.execute: run_pump1_steps
     web_server:
-      sorting_group_id: sorting_group_general  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_mode0
       
   # Amorçage (remplissage tuyaux)
   - platform: template

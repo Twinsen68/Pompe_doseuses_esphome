@@ -1353,6 +1353,7 @@ select:
           else if (x == "Mode 4: Minuteur") id(pump1_distribution_mode) = 4;
           ESP_LOGD("pump", "Nouveau mode = %d", id(pump1_distribution_mode));
       - script.execute: update_computed_daily_quantity
+      - script.execute: refresh_daily_quantity_sensor
 
 #####################################
 #          SCRIPTS DE DOSAGE        #

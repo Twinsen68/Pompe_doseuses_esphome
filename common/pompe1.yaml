@@ -388,6 +388,10 @@ globals:
     type: bool
     restore_value: false
     initial_value: 'false'
+  - id: pump1_last_dose_log
+    type: std::string
+    restore_value: false
+    initial_value: '"Jamais"'
 #####################################
 #         sensor         #
 #####################################
@@ -487,6 +491,16 @@ text_sensor:
     lambda: |-
       return optional<std::string>(id(pump1_product_name));
     entity_category: config
+  - platform: template
+    name: "Pompe 1 - Dernière dose"
+    lambda: |-
+      return optional<std::string>(id(pump1_last_dose_log));
+    update_interval: never
+    entity_category: diagnostic
+    icon: mdi:clock
+    id: pump1_last_dose_text
+    web_server:
+      sorting_group_id: sorting_group_general
 #####################################
 #         SORTIES PHYSIQUES         #
 #####################################
@@ -1501,9 +1515,14 @@ switch:
               if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
               if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
               if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
-              delay(2);
-            }
+          delay(2);
           }
+          // Enregistre l'heure et le volume de la dernière dose
+          char buffer[40];
+          auto now = id(my_time).now();
+          sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day, now.hour, now.minute, id(pump1_dose_ml));
+          id(pump1_last_dose_log) = buffer;
+          id(pump1_last_dose_text).update();
           ESP_LOGD("pump", "Amorçage terminé");
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.

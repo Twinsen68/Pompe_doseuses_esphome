@@ -1515,7 +1515,8 @@ switch:
               if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
               if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
               if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
-          delay(2);
+              delay(2);
+            }
           }
           // Enregistre l'heure et le volume de la dernière dose
           char buffer[40];
@@ -1526,7 +1527,7 @@ switch:
           ESP_LOGD("pump", "Amorçage terminé");
       - delay: 10ms
     web_server:
-      sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
+      sorting_group_id: sorting_group_calibration
       
   # Bouton pour lancer la calibration
   - platform: template

@@ -401,6 +401,10 @@ sensor:
         return id(pump1_daily_quantity);
     web_server:
       sorting_group_id: sorting_group_general
+  - platform: uptime
+    name: Uptime
+    id: uptime_sensor
+    update_interval: 10s
 
 # ou diagnostic, misc, etc.
 text:
@@ -1595,6 +1599,11 @@ interval:
             }
           // --- Mode 4 : Minuteur (6 minuteurs distincts) ---
           } else if (mode == 4) {
+            // Ne rien faire si uptime < 60s pour éviter le crash au boot
+            if (id(uptime_sensor).state < 60) {
+              ESP_LOGW("pump", "Attente du démarrage complet avant de lancer les minuteurs.");
+              return;
+            }
             // Recalcule la dose quotidienne selon la somme des 6 minute_dose_X
             float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity) + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity) + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity);
             id(pump1_daily_quantity_computed) = total;

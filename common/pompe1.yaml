@@ -512,9 +512,9 @@ number:
       return id(pump1_daily_quantity);
     set_action:
       - lambda: |-
-          // Met à jour la variable globale
           id(pump1_daily_quantity) = x;
           ESP_LOGD("pump", "Nouveau volume quotidien: %.1f ml", id(pump1_daily_quantity));
+      - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode0
 
@@ -1330,7 +1330,7 @@ select:
           else if (x == "Mode 3: Périodes") id(pump1_distribution_mode) = 3;
           else if (x == "Mode 4: Minuteur") id(pump1_distribution_mode) = 4;
           ESP_LOGD("pump", "Nouveau mode = %d", id(pump1_distribution_mode));
-
+      - script.execute: refresh_daily_quantity_sensor
 #####################################
 #          SCRIPTS DE DOSAGE        #
 #####################################
@@ -1379,7 +1379,10 @@ script:
 
             delay(2);
           }
-
+  - id: refresh_daily_quantity_sensor
+    mode: queued
+    then:
+      - component.update: pump1_daily_quantity_sensor
 #####################################
 #            SWITCHES               #
 #####################################

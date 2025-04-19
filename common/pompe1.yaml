@@ -376,6 +376,10 @@ globals:
     type: float
     restore_value: true
     initial_value: '0.0'
+  - id: pump1_product_name
+    type: std::string
+    restore_value: true
+    initial_value: '"Sans nom"'
 #####################################
 #         sensor         #
 #####################################
@@ -387,6 +391,21 @@ sensor:
     unit_of_measurement: "ml"
     lambda: |-
       return id(pump1_daily_quantity);
+text_sensor:
+  - platform: template
+    name: "Pompe 1 - Produit distribué"
+    lambda: |-
+      return id(pump1_product_name).c_str();
+text:
+  - platform: template
+    name: "Pompe 1 - Nom du produit"
+    id: pump1_product_name_text
+    lambda: |-
+      return id(pump1_product_name).c_str();
+    set_action:
+      - lambda: |-
+          id(pump1_product_name) = x;
+          ESP_LOGD("pump", "Nom du produit mis à jour: %s", x.c_str());
 #####################################
 #         SORTIES PHYSIQUES         #
 #####################################

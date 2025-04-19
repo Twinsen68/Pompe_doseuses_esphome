@@ -13,6 +13,10 @@ globals:
     type: float
     restore_value: true
     initial_value: '50.0'
+  - id: pump1_daily_quantity_computed
+    type: float
+    restore_value: false
+    initial_value: '0.0'
   # Mode de distribution
   # 0: Dose unique, 1: 24 doses (chaque heure), 2: 12 doses (toutes les 2h)
   # (Les modes 3 et 4 sont implémentés plus bas)
@@ -391,7 +395,10 @@ sensor:
     unit_of_measurement: "ml"
     entity_category: diagnostic
     lambda: |-
-      return id(pump1_daily_quantity);
+      if (id(pump1_distribution_mode) == 4)
+        return id(pump1_daily_quantity_computed);
+      else
+        return id(pump1_daily_quantity);
     web_server:
       sorting_group_id: sorting_group_general
 
@@ -1581,7 +1588,7 @@ interval:
           } else if (mode == 4) {
             // Recalcule la dose quotidienne selon la somme des 6 minute_dose_X
             float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity) + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity) + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity);
-            id(pump1_daily_quantity) = total;
+            id(pump1_daily_quantity_computed) = total;
             // Déclenchement des doses programmées pour les 6 minuteurs
             if (current_hour == id(pump1_minute_dose_1_hour) && current_minute == id(pump1_minute_dose_1_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_1_quantity);

@@ -518,8 +518,7 @@ number:
       - lambda: |-
           id(pump1_daily_quantity) = x;
           ESP_LOGD("pump", "Nouveau volume quotidien: %.1f ml", id(pump1_daily_quantity));
-    - script.execute: update_computed_daily_quantity
-
+      - script.execute: update_computed_daily_quantity
     web_server:
       sorting_group_id: sorting_group_mode0
 

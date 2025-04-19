@@ -400,6 +400,7 @@ text:
   - platform: template
     name: "Pompe 1 - Nom du produit"
     id: pump1_product_name_text
+    mode: text
     lambda: |-
       return id(pump1_product_name).c_str();
     set_action:

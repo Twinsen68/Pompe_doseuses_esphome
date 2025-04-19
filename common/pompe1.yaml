@@ -508,21 +508,21 @@ number:
   # -------------------------------
   #  PUMP1_calibration
   # -------------------------------
-- platform: template
-  name: "Pompe 1 - Volume mesuré (ml)"
-  id: pump1_calibration_value_num
-  icon: mdi:beaker-check
-  min_value: 0.0
-  max_value: 100.0
-  step: 0.1
-  lambda: |-
-    return id(pump1_calibration_value);
-  set_action:
-    - lambda: |-
-        id(pump1_calibration_value) = x;
-        ESP_LOGD("pump", "Nouveau volume mesuré pour calibration : %.2f ml", id(pump1_calibration_value));
-  web_server:
-    sorting_group_id: sorting_group_calibration
+  - platform: template
+    name: "Pompe 1 - Volume mesuré (ml)"
+    id: pump1_calibration_value_num
+    icon: mdi:beaker-check
+    min_value: 0.0
+    max_value: 100.0
+    step: 0.1
+    lambda: |-
+      return id(pump1_calibration_value);
+    set_action:
+      - lambda: |-
+          id(pump1_calibration_value) = x;
+          ESP_LOGD("pump", "Nouveau volume mesuré pour calibration : %.2f ml", id(pump1_calibration_value));
+    web_server:
+      sorting_group_id: sorting_group_calibration
   # -------------------------------
   #  PUMP1_DAILY_QUANTITY
   # -------------------------------

@@ -384,6 +384,17 @@ globals:
     type: std::string
     restore_value: true
     initial_value: '"Sans nom"'
+  # Volume total utilisé par la pompe (y compris tests, amorçage, etc.)
+  - id: pump1_used_today
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+  
+  # Volume effectivement injecté dans l’aquarium (hors calibration/amorçage)
+  - id: pump1_distributed_today
+    type: float
+    restore_value: false
+    initial_value: '0.0'
   - id: pump1_minuteur_ready
     type: bool
     restore_value: false
@@ -413,7 +424,29 @@ sensor:
     name: Uptime
     id: uptime_sensor
     update_interval: 10s
+  - platform: template
+    name: "Pompe 1 - Volume utilisé (aujourd'hui)"
+    id: pump1_used_today_sensor
+    unit_of_measurement: "ml"
+    accuracy_decimals: 1
+    lambda: |-
+      return id(pump1_used_today);
+    update_interval: 60s
+    entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_general
 
+  - platform: template
+    name: "Pompe 1 - Volume distribué (aujourd'hui)"
+    id: pump1_distributed_today_sensor
+    unit_of_measurement: "ml"
+    accuracy_decimals: 1
+    lambda: |-
+      return id(pump1_distributed_today);
+    update_interval: 60s
+    entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_general
 # ou diagnostic, misc, etc.
 text:
   - platform: template
@@ -501,6 +534,17 @@ text_sensor:
     id: pump1_last_dose_text
     web_server:
       sorting_group_id: sorting_group_general
+  # Volume total utilisé par la pompe (y compris tests, amorçage, etc.)
+  - id: pump1_used_today
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+
+  # Volume effectivement injecté dans l’aquarium (hors calibration/amorçage)
+  - id: pump1_distributed_today
+    type: float
+    restore_value: false
+    initial_value: '0.0'
 #####################################
 #         SORTIES PHYSIQUES         #
 #####################################
@@ -1608,6 +1652,7 @@ interval:
                 last_dose_day = now.day_of_month;
                 id(pump1_dose_ml) = id(pump1_daily_quantity);
                 ESP_LOGD("pump", "Dose unique déclenchée: %.2f ml", id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
                 id(run_pump1_steps).execute();
               }  // end if (now.day_of_month != last_dose_day)
             }    // end if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute))
@@ -1620,6 +1665,7 @@ interval:
                 last_dose_hour = current_hour;
                 id(pump1_dose_ml) = id(pump1_daily_quantity) / 24.0;
                 ESP_LOGD("pump", "Dose horaire (24 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
                 id(run_pump1_steps).execute();
               }
             }
@@ -1631,6 +1677,7 @@ interval:
                 last_dose_hour = current_hour;
                 id(pump1_dose_ml) = id(pump1_daily_quantity) / 12.0;
                 ESP_LOGD("pump", "Dose bimensuelle (12 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
                 id(run_pump1_steps).execute();
               }
             }
@@ -1677,6 +1724,7 @@ interval:
                 for (int i = 0; i < doses; i++) {
                   id(pump1_dose_ml) = id(pump1_daily_quantity) / doses;
                   ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
+                  id(pump1_distributed_today) += id(pump1_dose_ml);
                   id(run_pump1_steps).execute();
                 }
               }
@@ -1700,31 +1748,43 @@ interval:
             if (current_hour == id(pump1_minute_dose_1_hour) && current_minute == id(pump1_minute_dose_1_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_1_quantity);
               ESP_LOGD("pump", "Minuteur dose 1 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(pump1_distributed_today) += id(pump1_dose_ml);
               id(run_pump1_steps).execute();
             }
             if (current_hour == id(pump1_minute_dose_2_hour) && current_minute == id(pump1_minute_dose_2_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_2_quantity);
               ESP_LOGD("pump", "Minuteur dose 2 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(pump1_distributed_today) += id(pump1_dose_ml);
               id(run_pump1_steps).execute();
             }
             if (current_hour == id(pump1_minute_dose_3_hour) && current_minute == id(pump1_minute_dose_3_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_3_quantity);
               ESP_LOGD("pump", "Minuteur dose 3 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(pump1_distributed_today) += id(pump1_dose_ml);
               id(run_pump1_steps).execute();
             }
             if (current_hour == id(pump1_minute_dose_4_hour) && current_minute == id(pump1_minute_dose_4_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_4_quantity);
               ESP_LOGD("pump", "Minuteur dose 4 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(pump1_distributed_today) += id(pump1_dose_ml);
               id(run_pump1_steps).execute();
             }
             if (current_hour == id(pump1_minute_dose_5_hour) && current_minute == id(pump1_minute_dose_5_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_5_quantity);
               ESP_LOGD("pump", "Minuteur dose 5 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(pump1_distributed_today) += id(pump1_dose_ml);
               id(run_pump1_steps).execute();
             }
             if (current_hour == id(pump1_minute_dose_6_hour) && current_minute == id(pump1_minute_dose_6_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_6_quantity);
               ESP_LOGD("pump", "Minuteur dose 6 déclenchée: %.2f ml", id(pump1_dose_ml));
+              id(pump1_distributed_today) += id(pump1_dose_ml);
               id(run_pump1_steps).execute();
             }
           }
+  - interval: 24h
+    then:
+      - lambda: |-
+          id(pump1_used_today) = 0.0;
+          id(pump1_distributed_today) = 0.0;
+          ESP_LOGI("pump", "Remise à zéro des volumes journaliers.");

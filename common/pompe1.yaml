@@ -518,7 +518,8 @@ number:
       - lambda: |-
           id(pump1_daily_quantity) = x;
           ESP_LOGD("pump", "Nouveau volume quotidien: %.1f ml", id(pump1_daily_quantity));
-      - script.execute: refresh_daily_quantity_sensor
+    - script.execute: update_computed_daily_quantity
+
     web_server:
       sorting_group_id: sorting_group_mode0
 
@@ -1062,7 +1063,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_1_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 1 Quantity = %.1f ml", id(pump1_minute_dose_1_quantity));
+      - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
+
     web_server:
       sorting_group_id: sorting_group_mode4
       
@@ -1112,7 +1115,9 @@ number:
       - lambda: |-
           id(pump1_minute_dose_2_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 2 Quantity = %.1f ml", id(pump1_minute_dose_2_quantity));
+      - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
+
     web_server:
       sorting_group_id: sorting_group_mode4
       # Minuteur 3
@@ -1161,6 +1166,7 @@ number:
       - lambda: |-
           id(pump1_minute_dose_3_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 3 Quantity = %.1f ml", id(pump1_minute_dose_3_quantity));
+      - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1210,7 +1216,8 @@ number:
       - lambda: |-
           id(pump1_minute_dose_4_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 4 Quantity = %.1f ml", id(pump1_minute_dose_4_quantity));
-      - script.execute: refresh_daily_quantity_sensor
+    - script.execute: update_computed_daily_quantity
+    - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
       # Minuteur 5
@@ -1259,7 +1266,8 @@ number:
       - lambda: |-
           id(pump1_minute_dose_5_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 5 Quantity = %.1f ml", id(pump1_minute_dose_5_quantity));
-      - script.execute: refresh_daily_quantity_sensor
+    - script.execute: update_computed_daily_quantity
+    - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
       # Minuteur 6
@@ -1308,7 +1316,8 @@ number:
       - lambda: |-
           id(pump1_minute_dose_6_quantity) = x;
           ESP_LOGD("pump", "Minuteur Dose 6 Quantity = %.1f ml", id(pump1_minute_dose_6_quantity));
-      - script.execute: refresh_daily_quantity_sensor
+    - script.execute: update_computed_daily_quantity
+    - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
       
@@ -1340,7 +1349,8 @@ select:
           else if (x == "Mode 3: Périodes") id(pump1_distribution_mode) = 3;
           else if (x == "Mode 4: Minuteur") id(pump1_distribution_mode) = 4;
           ESP_LOGD("pump", "Nouveau mode = %d", id(pump1_distribution_mode));
-      - script.execute: refresh_daily_quantity_sensor
+    - script.execute: update_computed_daily_quantity
+
 #####################################
 #          SCRIPTS DE DOSAGE        #
 #####################################
@@ -1393,6 +1403,18 @@ script:
     mode: queued
     then:
       - component.update: pump1_daily_quantity_sensor
+  - id: update_computed_daily_quantity
+    mode: queued
+    then:
+      - lambda: |-
+          float total = id(pump1_minute_dose_1_quantity) +
+                        id(pump1_minute_dose_2_quantity) +
+                        id(pump1_minute_dose_3_quantity) +
+                        id(pump1_minute_dose_4_quantity) +
+                        id(pump1_minute_dose_5_quantity) +
+                        id(pump1_minute_dose_6_quantity);
+          id(pump1_daily_quantity_computed) = total;
+          ESP_LOGD("pump", "Recalcul immédiat du volume total : %.1f ml", total);a 
 #####################################
 #            SWITCHES               #
 #####################################

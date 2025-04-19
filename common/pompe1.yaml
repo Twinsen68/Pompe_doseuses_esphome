@@ -1434,10 +1434,10 @@ switch:
               {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
             };
             for (int j = 0; j < 8; j++) {
-              id(pump1_coil1).state = steps[j][0];
-              id(pump1_coil2).state = steps[j][1];
-              id(pump1_coil3).state = steps[j][2];
-              id(pump1_coil4).state = steps[j][3];
+              if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
+              if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
+              if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
+              if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
               delay(2);
             }
           }
@@ -1460,10 +1460,10 @@ switch:
               {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
             };
             for (int j = 0; j < 8; j++) {
-              id(pump1_coil1).state = steps[j][0];
-              id(pump1_coil2).state = steps[j][1];
-              id(pump1_coil3).state = steps[j][2];
-              id(pump1_coil4).state = steps[j][3];
+              if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
+              if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
+              if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
+              if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
               delay(2);
             }
           }

@@ -427,49 +427,56 @@ text_sensor:
   # Titres de regroupement visuels (faux sensors repliables)
   - platform: template
     name: "📦 Paramètres généraux"
-    lambda: return {" "};
+    lambda: |-
+      return optional<std::string>(" ");
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_general
 
   - platform: template
     name: "🕒 Mode 0 – Dose unique"
-    lambda: return {" "};
+    lambda: |-
+      return optional<std::string>(" ");
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_mode0
 
   - platform: template
     name: "🕒 Mode 1 – 24 doses / jour"
-    lambda: return {" "};
+    lambda: |-
+      return optional<std::string>(" ");
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_mode1
 
   - platform: template
     name: "🕒 Mode 2 – 12 doses / jour"
-    lambda: return {" "};
+    lambda: |-
+      return optional<std::string>(" ");
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_mode2
 
   - platform: template
     name: "🗓️ Mode 3 – Périodes personnalisées"
-    lambda: return {" "};
+    lambda: |-
+      return optional<std::string>(" ");
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_mode3
 
   - platform: template
     name: "⏱️ Mode 4 – Minuteurs"
-    lambda: return {" "};
+    lambda: |-
+      return optional<std::string>(" ");
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_mode4
 
   - platform: template
     name: "🔧 Calibration & Maintenance"
-    lambda: return {" "};
+    lambda: |-
+      return optional<std::string>(" ");
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_calibration
@@ -544,7 +551,6 @@ number:
       - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode0
-
   # ╔════════════════════════════════════════╗
   # ║   MODE 1 - Répartition sur 24 doses    ║
   # ╚════════════════════════════════════════╝

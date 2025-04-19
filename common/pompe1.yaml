@@ -427,8 +427,10 @@ output:
 
 ################################################
 #     COMPOSANTS NUMBER & SELECT (UI)          #
-################################################
-
+#     Titres de regroupement ajoutés
+# ╔══════════════════════════════════════╗
+# ║   PARAMÈTRES GÉNÉRAUX (TOUS MODES)  ║
+# ╚══════════════════════════════════════╝
 number:
   # -------------------------------
   #  PUMP1_DAILY_QUANTITY
@@ -449,6 +451,9 @@ number:
           id(pump1_daily_quantity) = x;
           ESP_LOGD("pump", "Nouveau volume quotidien: %.1f ml", id(pump1_daily_quantity));
 
+  # ╔════════════════════════════════════════╗
+  # ║   MODE 1 - Répartition sur 24 doses    ║
+  # ╚════════════════════════════════════════╝
   # -------------------------------
   #  PUMP1_DOSE_OFFSET_MINUTE
   # -------------------------------
@@ -467,9 +472,12 @@ number:
           ESP_LOGD("pump", "Nouvel offset minute: %d", id(pump1_dose_offset_minute));
 
 
-# -------------------------------------
-#  PERIODES PERSONNALISÉES (1 À 6)
-# -------------------------------------
+  # ╔═══════════════════════════════════════════╗
+  # ║   MODE 3 - Répartition sur périodes (1-6) ║
+  # ╚═══════════════════════════════════════════╝
+  # -------------------------------------
+  #  PERIODES PERSONNALISÉES (1 À 6)
+  # -------------------------------------
 # Pour chaque période, on déclare Start Hour, Start Minute,
 # End Hour, End Minute et Doses
 # PÉRIODE 1
@@ -897,9 +905,12 @@ number:
       - lambda: |-
           id(pump1_period6_doses) = (int)x;
           ESP_LOGD("pump", "Période 6 - Doses = %d", id(pump1_period6_doses));
-# -------------------------------------
-#  MINUTEUR (DOSES 1 À 12)
-# -------------------------------------
+  # ╔═══════════════════════════════════════╗
+  # ║   MODE 4 - Minuteur (doses à l’heure) ║
+  # ╚═══════════════════════════════════════╝
+  # -------------------------------------
+  #  MINUTEUR (DOSES 1 À 12)
+  # -------------------------------------
 # Minuteur 1
   - platform: template
     name: "Minuteur Dose 1 - Hour"

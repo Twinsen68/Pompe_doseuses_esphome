@@ -277,6 +277,15 @@ Si la dose quotidienne est de **100 ml**, chaque dose sera calculée comme suit 
      - Ajout de 10 ml à 9h30.
      - Ajout de 5 ml à 14h15 et 18h45.
 
+#### **Nom du produit distribué**
+Chaque pompe peut avoir un nom de produit associé (ex : Calcium, KH, Aminés, etc.). Ce nom est affiché dans l’interface Web ESPHome ainsi que dans Home Assistant.
+
+- **Affichage :** visible dans le champ "Pompe X - Produit distribué".
+- **Modification :** via le champ texte "Pompe X - Nom du produit" disponible dans l’interface.
+- **Stockage :** le nom est conservé après redémarrage.
+
+Cette option permet de mieux identifier les pompes et leurs fonctions spécifiques.
+
 ---
 
 ### Paramétrage et Configuration

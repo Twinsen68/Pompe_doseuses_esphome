@@ -432,11 +432,19 @@ text_sensor:
     name: "🗓️ Mode 3 – Périodes personnalisées"
     lambda: return {" "};
     entity_category: diagnostic
+  - platform: template
+    name: "🗓️ Configuration des Périodes"
+    lambda: return {" "};
+    entity_category: config
 
   - platform: template
     name: "⏱️ Mode 4 – Minuteurs"
     lambda: return {" "};
     entity_category: diagnostic
+  - platform: template
+    name: "⏱️ Configuration des Minuteurs"
+    lambda: return {" "};
+    entity_category: config
 
   - platform: template
     name: "🔧 Calibration & Maintenance"

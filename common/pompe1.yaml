@@ -395,7 +395,7 @@ text_sensor:
   - platform: template
     name: "Pompe 1 - Produit distribué"
     lambda: |-
-      return id(pump1_product_name).c_str();
+      return optional<std::string>(id(pump1_product_name));
 text:
   - platform: template
     name: "Pompe 1 - Nom du produit"

@@ -506,6 +506,24 @@ output:
 # ╚══════════════════════════════════════╝
 number:
   # -------------------------------
+  #  PUMP1_calibration
+  # -------------------------------
+- platform: template
+  name: "Pompe 1 - Volume mesuré (ml)"
+  id: pump1_calibration_value_num
+  icon: mdi:beaker-check
+  min_value: 0.0
+  max_value: 100.0
+  step: 0.1
+  lambda: |-
+    return id(pump1_calibration_value);
+  set_action:
+    - lambda: |-
+        id(pump1_calibration_value) = x;
+        ESP_LOGD("pump", "Nouveau volume mesuré pour calibration : %.2f ml", id(pump1_calibration_value));
+  web_server:
+    sorting_group_id: sorting_group_calibration
+  # -------------------------------
   #  PUMP1_DAILY_QUANTITY
   # -------------------------------
   - platform: template
@@ -1447,13 +1465,11 @@ switch:
   - platform: template
     name: "Doser manuellement Pompe 1"
     entity_category: diagnostic
-    lambda: |-
-      if (id(pump1_enabled)) {
-        id(pump1_dose_ml) = id(pump1_daily_quantity);
-        return true;
-      }
-      return false;
+    lambda: return false;
     turn_on_action:
+      - lambda: |-
+          id(pump1_dose_ml) = id(pump1_daily_quantity);
+          ESP_LOGD("pump", "Dose manuelle demandée : %.2f ml", id(pump1_dose_ml));
       - script.execute: run_pump1_steps
     web_server:
       sorting_group_id: sorting_group_mode0
@@ -1461,6 +1477,7 @@ switch:
   # Amorçage (remplissage tuyaux)
   - platform: template
     name: "Amorcer Pompe 1 (Priming)"
+    id: pump1_priming_switch
     entity_category: diagnostic
     lambda: return false;
     turn_on_action:
@@ -1487,31 +1504,43 @@ switch:
   # Bouton pour lancer la calibration
   - platform: template
     name: "Lancer Calibration Pompe 1"
+    id: pump1_start_calibration_switch
     entity_category: diagnostic
     lambda: return false;
     turn_on_action:
-      - lambda: |-
-          ESP_LOGD("pump", "Lancement de la calibration...");
-          unsigned long start = millis();
-          while (millis() - start < 20000) {
-            const int steps[8][4] = {
-              {1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,1,1,0},
-              {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
-            };
-            for (int j = 0; j < 8; j++) {
-              if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
-              if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
-              if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
-              if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
-              delay(2);
-            }
-          }
+      - if:
+          condition:
+            and:
+              - lambda: 'return !id(pump1_priming_switch);'
+              - lambda: 'return !id(pump1_validate_calibration_switch);'
+          then:
+            - lambda: |-
+                ESP_LOGD("pump", "Lancement de la calibration...");
+                unsigned long start = millis();
+                while (millis() - start < 20000) {
+                  const int steps[8][4] = {
+                    {1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,1,1,0},
+                    {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
+                  };
+                  for (int j = 0; j < 8; j++) {
+                    if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
+                    if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
+                    if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
+                    if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
+                    delay(2);
+                  }
+                }
+            - switch.turn_off: pump1_start_calibration_switch
+          else:
+            - lambda: 'ESP_LOGW("pump", "Calibration annulée : conditions non remplies.");'
+            - switch.turn_off: pump1_start_calibration_switch
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
       
   # Bouton pour valider la calibration
   - platform: template
     name: "Valider Calibration Pompe 1"
+    id: pump1_validate_calibration_switch
     entity_category: diagnostic
     lambda: return false;
     turn_on_action:
@@ -1519,6 +1548,7 @@ switch:
           id(pump1_calibration_factor) = id(pump1_calibration_value) / id(pump1_calibration_steps);
           id(pump1_last_calibration) = id(my_time).now().timestamp;
           ESP_LOGW("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
+      - switch.turn_off: pump1_validate_calibration_switch
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
 #####################################

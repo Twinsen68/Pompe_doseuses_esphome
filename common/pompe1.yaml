@@ -1413,7 +1413,7 @@ script:
                         id(pump1_minute_dose_5_quantity) +
                         id(pump1_minute_dose_6_quantity);
           id(pump1_daily_quantity_computed) = total;
-          ESP_LOGD("pump", "Recalcul immédiat du volume total : %.1f ml", total);a 
+          ESP_LOGD("pump", "Recalcul immédiat du volume total : %.1f ml", total);
 #####################################
 #            SWITCHES               #
 #####################################

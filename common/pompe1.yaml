@@ -392,8 +392,7 @@ sensor:
     entity_category: diagnostic
     lambda: |-
       return id(pump1_daily_quantity);
-    web_server:
-      sorting_group_id: sorting_group_config  # ou diagnostic, misc, etc.
+# ou diagnostic, misc, etc.
 text:
   - platform: template
     name: "Pompe 1 - Nom du produit"

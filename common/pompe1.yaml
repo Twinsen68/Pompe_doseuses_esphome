@@ -1646,6 +1646,10 @@ interval:
 
           // Récupération de l’heure actuelle
           auto now = id(my_time).now();
+          if (id(pump1_test_mode)) {
+            now.minute = (int)((id(uptime_sensor).state / 2)) % 60;
+            now.hour = (int)((id(uptime_sensor).state / 120)) % 24;
+          }
           int current_hour = now.hour;
           int current_minute = now.minute;
           // Mode de distribution

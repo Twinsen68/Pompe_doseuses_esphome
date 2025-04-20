@@ -1664,7 +1664,12 @@ interval:
                 id(pump1_dose_ml) = id(pump1_daily_quantity);
                 ESP_LOGD("pump", "Dose unique déclenchée: %.2f ml", id(pump1_dose_ml));
                 id(pump1_distributed_today) += id(pump1_dose_ml);
-                id(run_pump1_steps).execute();
+                if (id(pump1_test_mode)) {
+                  ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 0 : %.2f ml", id(pump1_dose_ml));
+                  id(pump1_distributed_today) += id(pump1_dose_ml);
+                } else {
+                  id(run_pump1_steps).execute();
+                }
               }  // end if (now.day_of_month != last_dose_day)
             }    // end if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute))
           }      // end if (mode == 0)
@@ -1677,7 +1682,12 @@ interval:
                 id(pump1_dose_ml) = id(pump1_daily_quantity) / 24.0;
                 ESP_LOGD("pump", "Dose horaire (24 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
                 id(pump1_distributed_today) += id(pump1_dose_ml);
-                id(run_pump1_steps).execute();
+                if (id(pump1_test_mode)) {
+                  ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 1 à %dh : %.2f ml", current_hour, id(pump1_dose_ml));
+                  id(pump1_distributed_today) += id(pump1_dose_ml);
+                } else {
+                  id(run_pump1_steps).execute();
+                }
               }
             }
           // --- Mode 2 : 12 doses par jour (toutes les 2 heures) ---
@@ -1689,7 +1699,12 @@ interval:
                 id(pump1_dose_ml) = id(pump1_daily_quantity) / 12.0;
                 ESP_LOGD("pump", "Dose bimensuelle (12 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
                 id(pump1_distributed_today) += id(pump1_dose_ml);
-                id(run_pump1_steps).execute();
+                if (id(pump1_test_mode)) {
+                  ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 2 à %dh : %.2f ml", current_hour, id(pump1_dose_ml));
+                  id(pump1_distributed_today) += id(pump1_dose_ml);
+                } else {
+                  id(run_pump1_steps).execute();
+                }
               }
             }
           // --- Mode 3 : Périodes personnalisées ---
@@ -1736,7 +1751,12 @@ interval:
                   id(pump1_dose_ml) = id(pump1_daily_quantity) / doses;
                   ESP_LOGD("pump", "Dose pour période %d déclenchée: %.2f ml", period, id(pump1_dose_ml));
                   id(pump1_distributed_today) += id(pump1_dose_ml);
-                  id(run_pump1_steps).execute();
+                  if (id(pump1_test_mode)) {
+                    ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 3 période %d : %.2f ml", period, id(pump1_dose_ml));
+                    id(pump1_distributed_today) += id(pump1_dose_ml);
+                  } else {
+                    id(run_pump1_steps).execute();
+                  }
                 }
               }
             }
@@ -1760,37 +1780,67 @@ interval:
               id(pump1_dose_ml) = id(pump1_minute_dose_1_quantity);
               ESP_LOGD("pump", "Minuteur dose 1 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
-              id(run_pump1_steps).execute();
+              if (id(pump1_test_mode)) {
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
+              } else {
+                id(run_pump1_steps).execute();
+              }
             }
             if (current_hour == id(pump1_minute_dose_2_hour) && current_minute == id(pump1_minute_dose_2_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_2_quantity);
               ESP_LOGD("pump", "Minuteur dose 2 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
-              id(run_pump1_steps).execute();
+              if (id(pump1_test_mode)) {
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
+              } else {
+                id(run_pump1_steps).execute();
+              }
             }
             if (current_hour == id(pump1_minute_dose_3_hour) && current_minute == id(pump1_minute_dose_3_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_3_quantity);
               ESP_LOGD("pump", "Minuteur dose 3 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
-              id(run_pump1_steps).execute();
+              if (id(pump1_test_mode)) {
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
+              } else {
+                id(run_pump1_steps).execute();
+              }
             }
             if (current_hour == id(pump1_minute_dose_4_hour) && current_minute == id(pump1_minute_dose_4_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_4_quantity);
               ESP_LOGD("pump", "Minuteur dose 4 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
-              id(run_pump1_steps).execute();
+              if (id(pump1_test_mode)) {
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
+              } else {
+                id(run_pump1_steps).execute();
+              }
             }
             if (current_hour == id(pump1_minute_dose_5_hour) && current_minute == id(pump1_minute_dose_5_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_5_quantity);
               ESP_LOGD("pump", "Minuteur dose 5 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
-              id(run_pump1_steps).execute();
+              if (id(pump1_test_mode)) {
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
+              } else {
+                id(run_pump1_steps).execute();
+              }
             }
             if (current_hour == id(pump1_minute_dose_6_hour) && current_minute == id(pump1_minute_dose_6_minute)) {
               id(pump1_dose_ml) = id(pump1_minute_dose_6_quantity);
               ESP_LOGD("pump", "Minuteur dose 6 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
-              id(run_pump1_steps).execute();
+              if (id(pump1_test_mode)) {
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
+              } else {
+                id(run_pump1_steps).execute();
+              }
             }
           }
   - interval: 24h

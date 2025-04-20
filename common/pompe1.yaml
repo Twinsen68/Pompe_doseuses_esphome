@@ -403,6 +403,11 @@ globals:
     type: std::string
     restore_value: false
     initial_value: '"Jamais"'
+  # Mode de test 
+    - id: pump1_test_mode
+    type: bool
+    restore_value: true
+    initial_value: 'false'
 #####################################
 #         sensor         #
 #####################################
@@ -1473,7 +1478,7 @@ script:
             else
               id(pump1_coil4).turn_off();
 
-            delay(2);
+            delay(id(pump1_test_mode) ? 0 : 2);
           }
   - id: refresh_daily_quantity_sensor
     mode: queued
@@ -1612,6 +1617,23 @@ switch:
       - switch.turn_off: pump1_validate_calibration_switch
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
+  # Mode de test
+    - platform: template
+    name: "🧪 Mode Test / Simulation"
+    id: pump1_test_mode_switch
+    entity_category: config
+    lambda: |-
+      return id(pump1_test_mode);
+    turn_on_action:
+      - lambda: |-
+          id(pump1_test_mode) = true;
+          ESP_LOGW("pump", "Mode test activé : vitesse accélérée");
+    turn_off_action:
+      - lambda: |-
+          id(pump1_test_mode) = false;
+          ESP_LOGI("pump", "Mode test désactivé");
+    web_server:
+      sorting_group_id: sorting_group_general
 #####################################
 #        AUTOMATISMES (SCHEDULE)     #
 #####################################

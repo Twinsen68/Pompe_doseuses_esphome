@@ -1618,7 +1618,7 @@ switch:
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
   # Mode de test
-    - platform: template
+  - platform: template
     name: "🧪 Mode Test / Simulation"
     id: pump1_test_mode_switch
     entity_category: config

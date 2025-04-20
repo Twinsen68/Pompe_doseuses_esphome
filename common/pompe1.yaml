@@ -404,10 +404,10 @@ globals:
     restore_value: false
     initial_value: '"Jamais"'
   # Mode de test 
-    - id: pump1_test_mode
-    type: bool
-    restore_value: true
-    initial_value: 'false'
+  - id: pump1_test_mode
+  type: bool
+  restore_value: true
+  initial_value: 'false'
 #####################################
 #         sensor         #
 #####################################

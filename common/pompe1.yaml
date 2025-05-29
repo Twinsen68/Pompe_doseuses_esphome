@@ -1472,11 +1472,11 @@ script:
     mode: single
     then:
       - lambda: |-
-          if (id(pump1_manual_dose_active)) {
+          bool already_running = id(pump1_manual_dose_active);
+          if (already_running) {
             ESP_LOGW("pump", "⚠️ Une distribution est déjà en cours, exécution ignorée.");
             return;
           }
-          id(pump1_manual_dose_active) = true;
           float dose_ml = id(pump1_dose_ml);
           ESP_LOGW("pump", "⚙️ Début du script run_pump1_steps (dose_ml: %.2f)", dose_ml);
           // Calcul du nombre de pas à effectuer selon la calibration
@@ -1533,10 +1533,11 @@ script:
           // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
           ESP_LOGD("pump", "✅ Forçage final du switch manuel à OFF (publish_state)");
           delay(100);
-          id(pump1_manual_dose_active) = false;
+          id(pump1_manual_dose_active) = true;
           delay(100);
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
+          id(pump1_manual_dose_active) = false;
       - lambda: |-
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Statut mis à jour : Prêt");

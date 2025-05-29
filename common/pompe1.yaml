@@ -551,6 +551,15 @@ text_sensor:
     id: pump1_last_dose_text
     web_server:
       sorting_group_id: sorting_group_general
+  - platform: template
+    name: "Pompe 1 - Statut"
+    id: pump1_status
+    lambda: |-
+      return optional<std::string>("Prêt");
+    update_interval: never
+    entity_category: diagnostic
+    web_server:
+      sorting_group_id: sorting_group_mode0
   # --- Section wifi_info déplacée à la fin du bloc text_sensor ---
   - platform: wifi_info
     ip_address:
@@ -1467,6 +1476,7 @@ script:
           float factor = id(pump1_calibration_factor);
           int steps_to_run = (int)(dose_ml / factor);
           ESP_LOGD("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
+          id(pump1_status).publish_state("Distribution en cours…");
           // Séquence de 8 demi-pas pour le 28BYJ-48
           const int steps[8][4] = {
             {1,0,0,0},
@@ -1526,6 +1536,8 @@ script:
       - lambda: |-
           id(pump1_manual_dose_active) = false;
           // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
+          id(pump1_status).publish_state("Prêt");
+          ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:

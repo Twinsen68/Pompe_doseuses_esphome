@@ -423,6 +423,10 @@ globals:
     type: bool
     restore_value: true
     initial_value: 'false'
+  - id: pump1_manual_dose_active
+    type: bool
+    restore_value: false
+    initial_value: 'false'
 #####################################
 #         sensor         #
 #####################################
@@ -1519,6 +1523,9 @@ script:
           id(pump1_manual_dose_switch).turn_off();
           ESP_LOGD("pump", "✅ Forçage final du switch manuel à OFF (turn_off)");
       - switch.turn_off: pump1_manual_dose_switch
+      - lambda: |-
+          id(pump1_manual_dose_active) = false;
+          id(pump1_manual_dose_switch).publish_state(false);
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:
@@ -1564,20 +1571,20 @@ switch:
     name: "Doser manuellement Pompe 1"
     id: pump1_manual_dose_switch
     entity_category: diagnostic
-    lambda: return false;
+    lambda: |-
+      return id(pump1_manual_dose_active);
     turn_on_action:
       - lambda: |-
-          if (id(pump1_enabled)) {
-            id(pump1_dose_ml) = id(pump1_daily_quantity);
-            ESP_LOGD("pump", "Dose manuelle demandée : %.2f ml", id(pump1_dose_ml));
+          if (!id(pump1_enabled)) {
+            ESP_LOGW("pump", "Pompe désactivée : dose manuelle ignorée.");
+            id(pump1_manual_dose_active) = false;
+            id(pump1_manual_dose_switch).publish_state(false);
           } else {
-            ESP_LOGW("pump", "Dose manuelle ignorée : pompe désactivée.");
+            id(pump1_manual_dose_active) = true;
+            id(pump1_dose_ml) = id(pump1_daily_quantity);
+            ESP_LOGD("pump", "Dose manuelle enclenchée : %.2f ml", id(pump1_dose_ml));
+            id(run_pump1_steps).execute();
           }
-      - if:
-          condition:
-            lambda: 'return id(pump1_enabled);'
-          then:
-            - script.execute: run_pump1_steps
     web_server:
       sorting_group_id: sorting_group_mode0
       

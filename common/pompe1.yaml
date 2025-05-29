@@ -1485,6 +1485,11 @@ script:
 
             delay(id(pump1_test_mode) ? 0 : 2);
           }
+          // Désactivation des bobines à la fin de la séquence
+          id(pump1_coil1).turn_off();
+          id(pump1_coil2).turn_off();
+          id(pump1_coil3).turn_off();
+          id(pump1_coil4).turn_off();
           // Mise à jour du log de la dernière dose
           char buffer[40];
           auto now = id(my_time).now();
@@ -1577,6 +1582,11 @@ switch:
               delay(2);
             }
           }
+          // Désactivation des bobines à la fin de la séquence d'amorçage
+          id(pump1_coil1).turn_off();
+          id(pump1_coil2).turn_off();
+          id(pump1_coil3).turn_off();
+          id(pump1_coil4).turn_off();
           // Enregistre l'heure et le volume de la dernière dose
           char buffer[40];
           auto now = id(my_time).now();
@@ -1617,6 +1627,11 @@ switch:
                     delay(2);
                   }
                 }
+                // Désactivation des bobines à la fin de la séquence de calibration
+                id(pump1_coil1).turn_off();
+                id(pump1_coil2).turn_off();
+                id(pump1_coil3).turn_off();
+                id(pump1_coil4).turn_off();
             - switch.turn_off: pump1_start_calibration_switch
           else:
             - lambda: 'ESP_LOGW("pump", "Calibration annulée : conditions non remplies.");'

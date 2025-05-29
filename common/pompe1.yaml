@@ -1474,6 +1474,11 @@ script:
       - lambda: |-
           if (id(pump1_manual_dose_active)) {
             ESP_LOGW("pump", "⚠️ Une distribution est déjà en cours, exécution ignorée.");
+            id(pump1_status).publish_state("⚠️ Déjà en cours");
+            id(pump1_manual_dose_active) = false;
+            delay(100);
+            id(pump1_status).publish_state("Prêt");
+            ESP_LOGI("pump", "✅ Statut mis à jour : Prêt");
             return;
           }
           id(pump1_manual_dose_active) = true;

@@ -1,3 +1,13 @@
+logger:
+  level: INFO  # Réduction du niveau global à INFO
+  logs:
+    sensor: WARN
+    number: WARN
+    text_sensor: WARN
+    component: ERROR
+    main: ERROR
+    api: WARN
+    wifi: WARN
 #####################################
 #            VARIABLES              #
 #####################################

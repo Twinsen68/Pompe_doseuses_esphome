@@ -1566,6 +1566,8 @@ switch:
           } else {
             ESP_LOGW("pump", "Dose manuelle ignorée : pompe désactivée.");
           }
+      - delay: 500ms
+      - switch.turn_off: pump1_manual_dose_switch
     web_server:
       sorting_group_id: sorting_group_mode0
       
@@ -1608,6 +1610,7 @@ switch:
           }
           ESP_LOGD("pump", "Amorçage terminé");
       - delay: 10ms
+      - switch.turn_off: pump1_priming_switch
     web_server:
       sorting_group_id: sorting_group_calibration
       
@@ -1618,37 +1621,29 @@ switch:
     entity_category: diagnostic
     lambda: return false;
     turn_on_action:
-      - if:
-          condition:
-            and:
-              - lambda: 'return !id(pump1_priming_switch);'
-              - lambda: 'return !id(pump1_validate_calibration_switch);'
-          then:
-            - lambda: |-
-                ESP_LOGD("pump", "Lancement de la calibration...");
-                unsigned long start = millis();
-                while (millis() - start < 20000) {
-                  const int steps[8][4] = {
-                    {1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,1,1,0},
-                    {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
-                  };
-                  for (int j = 0; j < 8; j++) {
-                    if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
-                    if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
-                    if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
-                    if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
-                    delay(2);
-                  }
+      - then:
+          - lambda: |-
+              ESP_LOGD("pump", "Lancement de la calibration...");
+              unsigned long start = millis();
+              while (millis() - start < 20000) {
+                const int steps[8][4] = {
+                  {1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,1,1,0},
+                  {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
+                };
+                for (int j = 0; j < 8; j++) {
+                  if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
+                  if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
+                  if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
+                  if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
+                  delay(2);
                 }
-                // Désactivation des bobines à la fin de la séquence de calibration
-                id(pump1_coil1).turn_off();
-                id(pump1_coil2).turn_off();
-                id(pump1_coil3).turn_off();
-                id(pump1_coil4).turn_off();
-            - switch.turn_off: pump1_start_calibration_switch
-          else:
-            - lambda: 'ESP_LOGW("pump", "Calibration annulée : conditions non remplies.");'
-            - switch.turn_off: pump1_start_calibration_switch
+              }
+              // Désactivation des bobines à la fin de la séquence de calibration
+              id(pump1_coil1).turn_off();
+              id(pump1_coil2).turn_off();
+              id(pump1_coil3).turn_off();
+              id(pump1_coil4).turn_off();
+          - switch.turn_off: pump1_start_calibration_switch
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
       

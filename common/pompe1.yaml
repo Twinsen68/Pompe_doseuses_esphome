@@ -1517,15 +1517,15 @@ script:
           id(pump1_last_dose_text).update();
           ESP_LOGD("pump", "→ Tentative de remise à OFF du switch manuel");
           delay(500);  // Laisse le temps au serveur Web d’enregistrer l’état
-          id(pump1_manual_dose_button).publish_state(false);
+          // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
           ESP_LOGD("pump", "✅ Switch manuel remis à OFF (publish_state)");
           // Tentative finale explicite de coupure du switch (pour la GUI)
-          id(pump1_manual_dose_button).publish_state(false);
+          // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
           ESP_LOGD("pump", "✅ Forçage final du switch manuel à OFF (publish_state)");
       # - switch.turn_off: pump1_manual_dose_switch
       - lambda: |-
           id(pump1_manual_dose_active) = false;
-          id(pump1_manual_dose_button).publish_state(false);
+          // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:
@@ -1600,7 +1600,7 @@ switch:
           id(pump1_last_dose_log) = buffer;
           id(pump1_last_dose_text).update();
           id(pump1_manual_dose_active) = false;
-          id(pump1_manual_dose_button).publish_state(false);
+          // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
           ESP_LOGD("pump", "Amorçage terminé");
       - delay: 10ms
       - switch.turn_off: pump1_priming_switch

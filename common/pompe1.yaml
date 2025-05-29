@@ -542,8 +542,6 @@ text_sensor:
       name: "WiFi BSSID"
     ssid:
       name: "WiFi SSID"
-    web_server:
-      sorting_group_id: sorting_group_diagnostic
 #####################################
 #         SORTIES PHYSIQUES         #
 #####################################

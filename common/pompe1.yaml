@@ -1515,6 +1515,9 @@ script:
           delay(500);  // Laisse le temps au serveur Web d’enregistrer l’état
           id(pump1_manual_dose_switch).publish_state(false);
           ESP_LOGD("pump", "✅ Switch manuel remis à OFF (publish_state)");
+          // Tentative finale explicite de coupure du switch (pour la GUI)
+          id(pump1_manual_dose_switch).turn_off();
+          ESP_LOGD("pump", "✅ Forçage final du switch manuel à OFF (turn_off)");
       - switch.turn_off: pump1_manual_dose_switch
   - id: refresh_daily_quantity_sensor
     mode: queued

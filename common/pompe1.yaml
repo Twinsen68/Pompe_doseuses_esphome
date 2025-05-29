@@ -1565,29 +1565,6 @@ switch:
           ESP_LOGD("pump", "Pompe désactivée !");
     web_server:
       sorting_group_id: sorting_group_general  # ou diagnostic, misc, etc.
-      
-  # Distribution manuelle (dose immédiate)
-  - platform: template
-    name: "Doser manuellement Pompe 1"
-    id: pump1_manual_dose_switch
-    entity_category: diagnostic
-    lambda: |-
-      return id(pump1_manual_dose_active);
-    turn_on_action:
-      - lambda: |-
-          if (!id(pump1_enabled)) {
-            ESP_LOGW("pump", "Pompe désactivée : dose manuelle ignorée.");
-            id(pump1_manual_dose_active) = false;
-            id(pump1_manual_dose_switch).publish_state(false);
-          } else {
-            id(pump1_manual_dose_active) = true;
-            id(pump1_dose_ml) = id(pump1_daily_quantity);
-            ESP_LOGD("pump", "Dose manuelle enclenchée : %.2f ml", id(pump1_dose_ml));
-            id(run_pump1_steps).execute();
-          }
-    web_server:
-      sorting_group_id: sorting_group_mode0
-      
   # Amorçage (remplissage tuyaux)
   - platform: template
     name: "Amorcer Pompe 1 (Priming)"
@@ -1630,7 +1607,6 @@ switch:
       - switch.turn_off: pump1_priming_switch
     web_server:
       sorting_group_id: sorting_group_calibration
-      
   # Bouton pour lancer la calibration
   - platform: template
     name: "Lancer Calibration Pompe 1"
@@ -1663,7 +1639,6 @@ switch:
           - switch.turn_off: pump1_start_calibration_switch
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
-      
   # Bouton pour valider la calibration
   - platform: template
     name: "Valider Calibration Pompe 1"
@@ -1695,6 +1670,30 @@ switch:
           ESP_LOGI("pump", "Mode test désactivé");
     web_server:
       sorting_group_id: sorting_group_general
+
+button:
+  - platform: template
+    name: "Doser manuellement Pompe 1"
+    id: pump1_manual_dose_button
+    entity_category: diagnostic
+    icon: mdi:play-circle
+    on_press:
+      then:
+        - lambda: |-
+            if (id(pump1_manual_dose_active)) {
+              ESP_LOGW("pump", "⚠️ Une dose manuelle est déjà en cours, action ignorée.");
+              return;
+            }
+            if (!id(pump1_enabled)) {
+              ESP_LOGW("pump", "Pompe désactivée : dose manuelle ignorée.");
+            } else {
+              id(pump1_manual_dose_active) = true;
+              id(pump1_dose_ml) = id(pump1_daily_quantity);
+              ESP_LOGD("pump", "Dose manuelle enclenchée : %.2f ml", id(pump1_dose_ml));
+              id(run_pump1_steps).execute();
+            }
+    web_server:
+      sorting_group_id: sorting_group_mode0
 #####################################
 #        AUTOMATISMES (SCHEDULE)     #
 #####################################

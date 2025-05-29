@@ -1,6 +1,7 @@
 logger:
-  level: INFO  # Réduction du niveau global à INFO
+  level: WARN
   logs:
+    pump: DEBUG
     sensor: WARN
     number: WARN
     text_sensor: WARN
@@ -8,6 +9,10 @@ logger:
     main: ERROR
     api: WARN
     wifi: WARN
+    switch: WARN
+    select: WARN
+    output: WARN
+    interval: INFO
 #####################################
 #            VARIABLES              #
 #####################################
@@ -1561,8 +1566,6 @@ switch:
           } else {
             ESP_LOGW("pump", "Dose manuelle ignorée : pompe désactivée.");
           }
-      - delay: 100ms
-      - switch.turn_off: pump1_manual_dose_switch
     web_server:
       sorting_group_id: sorting_group_mode0
       
@@ -1600,6 +1603,9 @@ switch:
           sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, id(pump1_dose_ml));
           id(pump1_last_dose_log) = buffer;
           id(pump1_last_dose_text).update();
+          if (id(pump1_manual_dose_switch).state) {
+            id(pump1_manual_dose_switch).turn_off();
+          }
           ESP_LOGD("pump", "Amorçage terminé");
       - delay: 10ms
     web_server:

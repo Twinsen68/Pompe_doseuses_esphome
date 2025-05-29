@@ -467,13 +467,6 @@ text:
           ESP_LOGD("pump", "Nom du produit mis à jour: %s", x.c_str());
 text_sensor:
   # Titres de regroupement visuels (faux sensors repliables)
-  - platform: template
-    name: "📦 Paramètres généraux"
-    lambda: |-
-      return optional<std::string>(" ");
-    entity_category: diagnostic
-    web_server:
-      sorting_group_id: sorting_group_general
 
   - platform: template
     name: "🕒 Mode 0 – Dose unique"

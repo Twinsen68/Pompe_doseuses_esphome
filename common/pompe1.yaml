@@ -1469,10 +1469,17 @@ select:
 # Ce script exécute le moteur pour délivrer un volume dose_ml calculé
 script:
   - id: run_pump1_steps
+    mode: single
     then:
       - lambda: |-
-          // Calcul du nombre de pas à effectuer selon la calibration
+          if (id(pump1_manual_dose_active)) {
+            ESP_LOGW("pump", "⚠️ Une distribution est déjà en cours, exécution ignorée.");
+            return;
+          }
+          id(pump1_manual_dose_active) = true;
           float dose_ml = id(pump1_dose_ml);
+          ESP_LOGW("pump", "⚙️ Début du script run_pump1_steps (dose_ml: %.2f)", dose_ml);
+          // Calcul du nombre de pas à effectuer selon la calibration
           float factor = id(pump1_calibration_factor);
           int steps_to_run = (int)(dose_ml / factor);
           ESP_LOGD("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
@@ -1532,8 +1539,6 @@ script:
           // Tentative finale explicite de coupure du switch (pour la GUI)
           // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
           ESP_LOGD("pump", "✅ Forçage final du switch manuel à OFF (publish_state)");
-      # - switch.turn_off: pump1_manual_dose_switch
-      - lambda: |-
           id(pump1_manual_dose_active) = false;
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Distribution manuelle terminée.");

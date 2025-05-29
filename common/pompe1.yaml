@@ -1511,6 +1511,9 @@ script:
           id(pump1_used_today) += dose_ml;
           id(pump1_last_dose_log) = buffer;
           id(pump1_last_dose_text).update();
+          if (id(pump1_manual_dose_switch).state) {
+            id(pump1_manual_dose_switch).turn_off();
+          }
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:
@@ -1570,11 +1573,6 @@ switch:
             lambda: 'return id(pump1_enabled);'
           then:
             - script.execute: run_pump1_steps
-      - delay: 500ms
-      - lambda: |-
-          if (id(pump1_manual_dose_switch).state) {
-            id(pump1_manual_dose_switch).turn_off();
-          }
     web_server:
       sorting_group_id: sorting_group_mode0
       

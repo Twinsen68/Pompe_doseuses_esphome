@@ -532,6 +532,18 @@ text_sensor:
     id: pump1_last_dose_text
     web_server:
       sorting_group_id: sorting_group_general
+  # --- Section wifi_info déplacée à la fin du bloc text_sensor ---
+  - platform: wifi_info
+    ip_address:
+      name: "Adresse IP ESP32"
+    mac_address:
+      name: "Adresse MAC"
+    bssid:
+      name: "WiFi BSSID"
+    ssid:
+      name: "WiFi SSID"
+    web_server:
+      sorting_group_id: sorting_group_diagnostic
 #####################################
 #         SORTIES PHYSIQUES         #
 #####################################
@@ -1473,6 +1485,15 @@ script:
 
             delay(id(pump1_test_mode) ? 0 : 2);
           }
+          // Mise à jour du log de la dernière dose
+          char buffer[40];
+          auto now = id(my_time).now();
+          sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, dose_ml);
+          id(pump1_distributed_today) += dose_ml;
+          id(pump1_used_today) += dose_ml;
+          id(pump1_last_dose_log) = buffer;
+          id(pump1_last_dose_text).update();
+      - switch.turn_off: pump1_manual_dose_switch
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:
@@ -1528,7 +1549,6 @@ switch:
                 id(pump1_dose_ml) = id(pump1_daily_quantity);
                 ESP_LOGD("pump", "Dose manuelle demandée : %.2f ml", id(pump1_dose_ml));
             - script.execute: run_pump1_steps
-            - switch.turn_off: pump1_manual_dose_switch
           else:
             - lambda: 'ESP_LOGW("pump", "Dose manuelle ignorée : pompe désactivée.");'
     web_server:

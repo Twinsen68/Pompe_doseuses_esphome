@@ -1517,15 +1517,15 @@ script:
           id(pump1_last_dose_text).update();
           ESP_LOGD("pump", "→ Tentative de remise à OFF du switch manuel");
           delay(500);  // Laisse le temps au serveur Web d’enregistrer l’état
-          id(pump1_manual_dose_switch).publish_state(false);
+          id(pump1_manual_dose_button).publish_state(false);
           ESP_LOGD("pump", "✅ Switch manuel remis à OFF (publish_state)");
           // Tentative finale explicite de coupure du switch (pour la GUI)
-          id(pump1_manual_dose_switch).turn_off();
-          ESP_LOGD("pump", "✅ Forçage final du switch manuel à OFF (turn_off)");
-      - switch.turn_off: pump1_manual_dose_switch
+          id(pump1_manual_dose_button).publish_state(false);
+          ESP_LOGD("pump", "✅ Forçage final du switch manuel à OFF (publish_state)");
+      # - switch.turn_off: pump1_manual_dose_switch
       - lambda: |-
           id(pump1_manual_dose_active) = false;
-          id(pump1_manual_dose_switch).publish_state(false);
+          id(pump1_manual_dose_button).publish_state(false);
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:
@@ -1599,9 +1599,8 @@ switch:
           sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, id(pump1_dose_ml));
           id(pump1_last_dose_log) = buffer;
           id(pump1_last_dose_text).update();
-          if (id(pump1_manual_dose_switch).state) {
-            id(pump1_manual_dose_switch).turn_off();
-          }
+          id(pump1_manual_dose_active) = false;
+          id(pump1_manual_dose_button).publish_state(false);
           ESP_LOGD("pump", "Amorçage terminé");
       - delay: 10ms
       - switch.turn_off: pump1_priming_switch

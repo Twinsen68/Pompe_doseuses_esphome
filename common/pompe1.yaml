@@ -1511,8 +1511,10 @@ script:
           id(pump1_used_today) += dose_ml;
           id(pump1_last_dose_log) = buffer;
           id(pump1_last_dose_text).update();
+          ESP_LOGD("pump", "→ Tentative de remise à OFF du switch manuel");
           if (id(pump1_manual_dose_switch).state) {
             id(pump1_manual_dose_switch).turn_off();
+            ESP_LOGD("pump", "✅ Switch manuel remis à OFF");
           }
   - id: refresh_daily_quantity_sensor
     mode: queued

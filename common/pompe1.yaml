@@ -1535,9 +1535,11 @@ script:
       # - switch.turn_off: pump1_manual_dose_switch
       - lambda: |-
           id(pump1_manual_dose_active) = false;
-          // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
+      - lambda: |-
+          id(pump1_status).publish_state("Prêt");
+          ESP_LOGI("pump", "✅ Statut mis à jour : Prêt");
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:

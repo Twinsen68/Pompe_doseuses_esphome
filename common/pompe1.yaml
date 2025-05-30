@@ -1472,6 +1472,7 @@ script:
     mode: restart
     then:
       - lambda: |-
+          float dose_ml = id(pump1_dose_ml);
           if (id(pump1_manual_dose_active)) {
             ESP_LOGW("pump", "⚠️ Une distribution est déjà en cours, exécution ignorée.");
             return;
@@ -1494,7 +1495,6 @@ script:
             {0,0,0,1},
             {1,0,0,1}
           };
-          float dose_ml = id(pump1_dose_ml);
           int dyn_delay = 2;  // Valeur par défaut
 
           if (dose_ml > 80)      dyn_delay = 0;   // Turbo

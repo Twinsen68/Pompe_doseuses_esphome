@@ -1479,12 +1479,10 @@ script:
           }
           id(pump1_manual_dose_active) = true;
           ESP_LOGI("pump", "⚙️ Début du script run_pump1_steps (dose_ml: %.2f)", dose_ml);
-          // Calcul du nombre de pas à effectuer selon la calibration
           float factor = id(pump1_calibration_factor);
           int steps_to_run = (int)(dose_ml / factor);
           ESP_LOGI("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
           id(pump1_status).publish_state("Distribution en cours…");
-          // Séquence de 8 demi-pas pour le 28BYJ-48
           const int steps[8][4] = {
             {1,0,0,0},
             {1,1,0,0},
@@ -1495,14 +1493,14 @@ script:
             {0,0,0,1},
             {1,0,0,1}
           };
-          int dyn_delay = 2;  // Valeur par défaut
+          int dyn_delay = 2;  // par défaut
 
           if (dose_ml > 80)      dyn_delay = 0;   // Turbo
           else if (dose_ml > 40) dyn_delay = 1;   // Rapide
           else if (dose_ml > 15) dyn_delay = 2;   // Normal/précis
           else                   dyn_delay = 3;   // Très lent/précis
 
-          int max_chunk = 10;  // <<<< Important : tranches de 10 pas seulement !
+          int max_chunk = 50;  // <<<< Chunk augmenté à 50 pas
           int step_index = 0;
           while (step_index < steps_to_run) {
             int chunk = std::min(max_chunk, steps_to_run - step_index);
@@ -1513,16 +1511,16 @@ script:
               if (steps[seq][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
               if (steps[seq][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
               delay(id(pump1_test_mode) ? 0 : dyn_delay);
+              delay(0); // Yield CPU à chaque pas
             }
-            // Pause très courte pour laisser ESPHome respirer (évite le watchdog)
-            delay(10); // Pause après CHAQUE chunk de 10 pas
+            delay(1); // Pause très courte après chaque chunk
           }
           // Désactivation des bobines à la fin de la séquence
           id(pump1_coil1).turn_off();
           id(pump1_coil2).turn_off();
           id(pump1_coil3).turn_off();
           id(pump1_coil4).turn_off();
-          // Mise à jour du log de la dernière dose
+          // Log...
           char buffer[40];
           auto now = id(my_time).now();
           sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, dose_ml);

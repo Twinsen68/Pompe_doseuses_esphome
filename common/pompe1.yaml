@@ -1477,7 +1477,6 @@ script:
             return;
           }
           id(pump1_manual_dose_active) = true;
-          float dose_ml = id(pump1_dose_ml);
           ESP_LOGI("pump", "⚙️ Début du script run_pump1_steps (dose_ml: %.2f)", dose_ml);
           // Calcul du nombre de pas à effectuer selon la calibration
           float factor = id(pump1_calibration_factor);

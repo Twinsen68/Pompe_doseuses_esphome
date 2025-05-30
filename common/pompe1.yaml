@@ -1482,10 +1482,6 @@ script:
           // Calcul du nombre de pas à effectuer selon la calibration
           float factor = id(pump1_calibration_factor);
           int steps_to_run = (int)(dose_ml / factor);
-          // Ajout : segmentation en blocs pour éviter le blocage du scheduler
-          const int max_steps_per_block = 500;
-          int total_steps = steps_to_run;
-          int executed_steps = 0;
           ESP_LOGD("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
           id(pump1_status).publish_state("Distribution en cours…");
           // Séquence de 8 demi-pas pour le 28BYJ-48
@@ -1499,18 +1495,29 @@ script:
             {0,0,0,1},
             {1,0,0,1}
           };
-          while (executed_steps < total_steps) {
-            int block_steps = std::min(max_steps_per_block, total_steps - executed_steps);
-            for (int i = 0; i < block_steps; i++) {
-              int seq = (executed_steps + i) % 8;
-              if (steps[seq][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
-              if (steps[seq][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
-              if (steps[seq][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
-              if (steps[seq][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
-              delay(id(pump1_test_mode) ? 0 : 2);
-            }
-            executed_steps += block_steps;
-            delay(10);  // petite pause pour laisser le scheduler respirer
+          for (int i = 0; i < steps_to_run; i++) {
+            int seq = i % 8;
+            if (steps[seq][0])
+              id(pump1_coil1).turn_on();
+            else
+              id(pump1_coil1).turn_off();
+
+            if (steps[seq][1])
+              id(pump1_coil2).turn_on();
+            else
+              id(pump1_coil2).turn_off();
+
+            if (steps[seq][2])
+              id(pump1_coil3).turn_on();
+            else
+              id(pump1_coil3).turn_off();
+
+            if (steps[seq][3])
+              id(pump1_coil4).turn_on();
+            else
+              id(pump1_coil4).turn_off();
+
+            delay(id(pump1_test_mode) ? 0 : 2);
           }
           // Désactivation des bobines à la fin de la séquence
           id(pump1_coil1).turn_off();
@@ -1536,8 +1543,9 @@ script:
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
       - lambda: |-
+          id(pump1_manual_dose_active) = false;
           id(pump1_status).publish_state("Prêt");
-          ESP_LOGI("pump", "✅ Statut mis à jour : Prêt");
+          ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:
@@ -1586,6 +1594,7 @@ switch:
     turn_on_action:
       - lambda: |-
           ESP_LOGD("pump", "Amorçage (Priming) de la pompe 1 : remplissage des tuyaux");
+          id(pump1_status).publish_state("Amorçage en cours…");
           unsigned long start = millis();
           while (millis() - start < 5000) {
             const int steps[8][4] = {
@@ -1613,6 +1622,8 @@ switch:
           id(pump1_last_dose_text).update();
           id(pump1_manual_dose_active) = false;
           // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
+          id(pump1_status).publish_state("Prêt");
+          ESP_LOGI("pump", "✅ Statut mis à jour : Prêt");
           ESP_LOGD("pump", "Amorçage terminé");
       - delay: 10ms
       - switch.turn_off: pump1_priming_switch

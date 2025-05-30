@@ -1535,15 +1535,11 @@ script:
           id(pump1_last_dose_text).update();
           ESP_LOGD("pump", "→ Tentative de remise à OFF du switch manuel");
           delay(500);  // Laisse le temps au serveur Web d’enregistrer l’état
-          // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
           ESP_LOGD("pump", "✅ Switch manuel remis à OFF (publish_state)");
-          // Tentative finale explicite de coupure du switch (pour la GUI)
-          // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
           ESP_LOGD("pump", "✅ Forçage final du switch manuel à OFF (publish_state)");
-          id(pump1_manual_dose_active) = false;
-          id(pump1_status).publish_state("Prêt");
-          ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
+      - delay: 100ms
       - lambda: |-
+          ESP_LOGW("pump", "[DEBUG] Délai 100ms terminé, remise à false.");
           id(pump1_manual_dose_active) = false;
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
@@ -1703,6 +1699,7 @@ button:
     on_press:
       then:
         - lambda: |-
+            ESP_LOGW("pump", "[DEBUG] État de pump1_manual_dose_active = %s", id(pump1_manual_dose_active) ? "true" : "false");
             if (id(pump1_manual_dose_active)) {
               ESP_LOGW("pump", "⚠️ Une dose manuelle est déjà en cours, action ignorée.");
               return;

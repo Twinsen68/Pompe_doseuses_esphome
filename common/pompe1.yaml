@@ -439,6 +439,10 @@ globals:
     type: int
     restore_value: false
     initial_value: '0'
+  - id: pump1_calibration_steps_remaining
+    type: int
+    restore_value: false
+    initial_value: '0'
 #####################################
 #         sensor         #
 #####################################
@@ -1615,6 +1619,50 @@ script:
                 ESP_LOGI("pump", "✅ Amorçage terminé.");
             - delay: 10ms
             - switch.turn_off: pump1_priming_switch
+  - id: calibration_pump1_steps
+    mode: restart
+    then:
+      - lambda: |-
+          const int steps[8][4] = {
+            {1,0,0,0},
+            {1,1,0,0},
+            {0,1,0,0},
+            {0,1,1,0},
+            {0,0,1,0},
+            {0,0,1,1},
+            {0,0,0,1},
+            {1,0,0,1}
+          };
+          int max_chunk = 32;
+          int remaining = id(pump1_calibration_steps_remaining);
+          int run_now = (remaining < max_chunk) ? remaining : max_chunk;
+          int start = 0;
+          int end = run_now;
+          for (int i = start; i < end; i++) {
+            int seq = i % 8;
+            if (steps[seq][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
+            if (steps[seq][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
+            if (steps[seq][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
+            if (steps[seq][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
+            delay(2);
+          }
+          id(pump1_calibration_steps_remaining) -= run_now;
+      - if:
+          condition:
+            lambda: 'return id(pump1_calibration_steps_remaining) > 0;'
+          then:
+            - delay: 20ms
+            - script.execute: calibration_pump1_steps
+          else:
+            - lambda: |-
+                id(pump1_coil1).turn_off();
+                id(pump1_coil2).turn_off();
+                id(pump1_coil3).turn_off();
+                id(pump1_coil4).turn_off();
+                id(pump1_status).publish_state("Prêt");
+                ESP_LOGI("pump", "✅ Calibration terminée.");
+            - delay: 10ms
+            - switch.turn_off: pump1_start_calibration_switch
 #####################################
 #            SWITCHES               #
 #####################################
@@ -1660,29 +1708,12 @@ switch:
     entity_category: diagnostic
     lambda: return false;
     turn_on_action:
-      - then:
-          - lambda: |-
-              ESP_LOGD("pump", "Lancement de la calibration...");
-              unsigned long start = millis();
-              while (millis() - start < 20000) {
-                const int steps[8][4] = {
-                  {1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,1,1,0},
-                  {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
-                };
-                for (int j = 0; j < 8; j++) {
-                  if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
-                  if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
-                  if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
-                  if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
-                  delay(2);
-                }
-              }
-              // Désactivation des bobines à la fin de la séquence de calibration
-              id(pump1_coil1).turn_off();
-              id(pump1_coil2).turn_off();
-              id(pump1_coil3).turn_off();
-              id(pump1_coil4).turn_off();
-          - switch.turn_off: pump1_start_calibration_switch
+      - lambda: |-
+          ESP_LOGD("pump", "Lancement de la calibration (mode asynchrone)...");
+          id(pump1_status).publish_state("Calibration en cours…");
+          // Lance la calibration sur le nombre de pas configuré
+          id(pump1_calibration_steps_remaining) = id(pump1_calibration_steps);
+      - script.execute: calibration_pump1_steps
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
   # Bouton pour valider la calibration

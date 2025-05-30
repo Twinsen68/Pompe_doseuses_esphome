@@ -1502,7 +1502,7 @@ script:
           else if (dose_ml > 15) dyn_delay = 2;   // Normal/précis
           else                   dyn_delay = 3;   // Très lent/précis
 
-          int max_chunk = 100;  // Nombre de pas maximum entre deux pauses
+          int max_chunk = 10;  // <<<< Important : tranches de 10 pas seulement !
           int step_index = 0;
           while (step_index < steps_to_run) {
             int chunk = std::min(max_chunk, steps_to_run - step_index);
@@ -1514,8 +1514,8 @@ script:
               if (steps[seq][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
               delay(id(pump1_test_mode) ? 0 : dyn_delay);
             }
-            // Petite pause pour laisser ESPHome respirer (évite le watchdog)
-            delay(10);
+            // Pause très courte pour laisser ESPHome respirer (évite le watchdog)
+            delay(10); // Pause après CHAQUE chunk de 10 pas
           }
           // Désactivation des bobines à la fin de la séquence
           id(pump1_coil1).turn_off();

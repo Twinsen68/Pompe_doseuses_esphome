@@ -1474,16 +1474,15 @@ script:
       - lambda: |-
           if (id(pump1_manual_dose_active)) {
             ESP_LOGW("pump", "⚠️ Une distribution est déjà en cours, exécution ignorée.");
-            id(pump1_manual_dose_active) = false;
             return;
           }
           id(pump1_manual_dose_active) = true;
           float dose_ml = id(pump1_dose_ml);
-          ESP_LOGW("pump", "⚙️ Début du script run_pump1_steps (dose_ml: %.2f)", dose_ml);
+          ESP_LOGI("pump", "⚙️ Début du script run_pump1_steps (dose_ml: %.2f)", dose_ml);
           // Calcul du nombre de pas à effectuer selon la calibration
           float factor = id(pump1_calibration_factor);
           int steps_to_run = (int)(dose_ml / factor);
-          ESP_LOGD("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
+          ESP_LOGI("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
           id(pump1_status).publish_state("Distribution en cours…");
           // Séquence de 8 demi-pas pour le 28BYJ-48
           const int steps[8][4] = {
@@ -1498,26 +1497,10 @@ script:
           };
           for (int i = 0; i < steps_to_run; i++) {
             int seq = i % 8;
-            if (steps[seq][0])
-              id(pump1_coil1).turn_on();
-            else
-              id(pump1_coil1).turn_off();
-
-            if (steps[seq][1])
-              id(pump1_coil2).turn_on();
-            else
-              id(pump1_coil2).turn_off();
-
-            if (steps[seq][2])
-              id(pump1_coil3).turn_on();
-            else
-              id(pump1_coil3).turn_off();
-
-            if (steps[seq][3])
-              id(pump1_coil4).turn_on();
-            else
-              id(pump1_coil4).turn_off();
-
+            if (steps[seq][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
+            if (steps[seq][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
+            if (steps[seq][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
+            if (steps[seq][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
             delay(id(pump1_test_mode) ? 0 : 2);
           }
           // Désactivation des bobines à la fin de la séquence
@@ -1533,16 +1516,12 @@ script:
           id(pump1_used_today) += dose_ml;
           id(pump1_last_dose_log) = buffer;
           id(pump1_last_dose_text).update();
-          ESP_LOGD("pump", "→ Tentative de remise à OFF du switch manuel");
-          delay(500);  // Laisse le temps au serveur Web d’enregistrer l’état
-          ESP_LOGD("pump", "✅ Switch manuel remis à OFF (publish_state)");
-          ESP_LOGD("pump", "✅ Forçage final du switch manuel à OFF (publish_state)");
-      - delay: 100ms
+          ESP_LOGI("pump", "→ Distribution terminée, mise à OFF du flag manuel dans 300ms...");
+      - delay: 300ms
       - lambda: |-
-          ESP_LOGW("pump", "[DEBUG] Délai 100ms terminé, remise à false.");
           id(pump1_manual_dose_active) = false;
           id(pump1_status).publish_state("Prêt");
-          ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
+          ESP_LOGI("pump", "✅ Distribution manuelle terminée, statut remis à 'Prêt'.");
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:
@@ -1699,19 +1678,19 @@ button:
     on_press:
       then:
         - lambda: |-
-            ESP_LOGW("pump", "[DEBUG] État de pump1_manual_dose_active = %s", id(pump1_manual_dose_active) ? "true" : "false");
+            ESP_LOGW("pump", "[DEBUG] Bouton pressé - État de pump1_manual_dose_active = %s", id(pump1_manual_dose_active) ? "true" : "false");
             if (id(pump1_manual_dose_active)) {
               ESP_LOGW("pump", "⚠️ Une dose manuelle est déjà en cours, action ignorée.");
               return;
             }
             if (!id(pump1_enabled)) {
               ESP_LOGW("pump", "Pompe désactivée : dose manuelle ignorée.");
-            } else {
-              id(pump1_manual_dose_active) = true;
-              id(pump1_dose_ml) = id(pump1_daily_quantity);
-              ESP_LOGD("pump", "Dose manuelle enclenchée : %.2f ml", id(pump1_dose_ml));
-              id(run_pump1_steps).execute();
+              return;
             }
+            // Ici on ne met plus pump1_manual_dose_active à true, on laisse le script principal le faire
+            id(pump1_dose_ml) = id(pump1_daily_quantity);
+            ESP_LOGD("pump", "Dose manuelle enclenchée : %.2f ml", id(pump1_dose_ml));
+            id(run_pump1_steps).execute();
     web_server:
       sorting_group_id: sorting_group_mode0
 #####################################

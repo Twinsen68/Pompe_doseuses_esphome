@@ -1936,10 +1936,3 @@ interval:
           id(pump1_used_today) = 0.0;
           id(pump1_distributed_today) = 0.0;
           ESP_LOGI("pump", "Remise à zéro des volumes journaliers.");
-
-on_boot:
-  priority: -100
-  then:
-    - lambda: |-
-        id(pump1_manual_dose_active) = false;
-        ESP_LOGW("pump", "Remise à zéro de pump1_manual_dose_active au boot !");

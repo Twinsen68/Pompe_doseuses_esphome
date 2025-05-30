@@ -17,7 +17,12 @@ esphome:
   platformio_options:
     build_flags:
       - -DBROWNOUT_DISABLE
-
+  on_boot:
+    priority: -100
+    then:
+      - lambda: |-
+          id(pump1_manual_dose_active) = false;
+          ESP_LOGW("pump", "Remise à zéro de pump1_manual_dose_active au boot !");
 api:
   encryption:
     key: tsHqLo48mLGhWo/qQQrZUFdsEwuZcC1/BlUOXWExy14=

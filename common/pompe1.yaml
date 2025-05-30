@@ -435,6 +435,10 @@ globals:
     type: int
     restore_value: false
     initial_value: '0'
+  - id: pump1_priming_steps_remaining
+    type: int
+    restore_value: false
+    initial_value: '0'
 #####################################
 #         sensor         #
 #####################################
@@ -1566,6 +1570,51 @@ script:
                         id(pump1_minute_dose_6_quantity);
           id(pump1_daily_quantity_computed) = total;
           ESP_LOGD("pump", "Recalcul immédiat du volume total : %.1f ml", total);
+  - id: priming_pump1_steps
+    mode: restart
+    then:
+      - lambda: |-
+          // On prend la séquence habituelle de 8 pas
+          const int steps[8][4] = {
+            {1,0,0,0},
+            {1,1,0,0},
+            {0,1,0,0},
+            {0,1,1,0},
+            {0,0,1,0},
+            {0,0,1,1},
+            {0,0,0,1},
+            {1,0,0,1}
+          };
+          int max_chunk = 32;
+          int remaining = id(pump1_priming_steps_remaining);
+          int run_now = (remaining < max_chunk) ? remaining : max_chunk;
+          int start = 0;
+          int end = run_now;
+          for (int i = start; i < end; i++) {
+            int seq = i % 8;
+            if (steps[seq][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
+            if (steps[seq][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
+            if (steps[seq][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
+            if (steps[seq][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
+            delay(2);
+          }
+          id(pump1_priming_steps_remaining) -= run_now;
+      - if:
+          condition:
+            lambda: 'return id(pump1_priming_steps_remaining) > 0;'
+          then:
+            - delay: 20ms
+            - script.execute: priming_pump1_steps
+          else:
+            - lambda: |-
+                id(pump1_coil1).turn_off();
+                id(pump1_coil2).turn_off();
+                id(pump1_coil3).turn_off();
+                id(pump1_coil4).turn_off();
+                id(pump1_status).publish_state("Prêt");
+                ESP_LOGI("pump", "✅ Amorçage terminé.");
+            - delay: 10ms
+            - switch.turn_off: pump1_priming_switch
 #####################################
 #            SWITCHES               #
 #####################################
@@ -1599,38 +1648,9 @@ switch:
       - lambda: |-
           ESP_LOGD("pump", "Amorçage (Priming) de la pompe 1 : remplissage des tuyaux");
           id(pump1_status).publish_state("Amorçage en cours…");
-          unsigned long start = millis();
-          while (millis() - start < 5000) {
-            const int steps[8][4] = {
-              {1,0,0,0}, {1,1,0,0}, {0,1,0,0}, {0,1,1,0},
-              {0,0,1,0}, {0,0,1,1}, {0,0,0,1}, {1,0,0,1}
-            };
-            for (int j = 0; j < 8; j++) {
-              if (steps[j][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
-              if (steps[j][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
-              if (steps[j][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
-              if (steps[j][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
-              delay(2);
-            }
-          }
-          // Désactivation des bobines à la fin de la séquence d'amorçage
-          id(pump1_coil1).turn_off();
-          id(pump1_coil2).turn_off();
-          id(pump1_coil3).turn_off();
-          id(pump1_coil4).turn_off();
-          // Enregistre l'heure et le volume de la dernière dose
-          char buffer[40];
-          auto now = id(my_time).now();
-          sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, id(pump1_dose_ml));
-          id(pump1_last_dose_log) = buffer;
-          id(pump1_last_dose_text).update();
-          id(pump1_manual_dose_active) = false;
-          // id(pump1_manual_dose_button).publish_state(false); // Removed invalid call
-          id(pump1_status).publish_state("Prêt");
-          ESP_LOGI("pump", "✅ Statut mis à jour : Prêt");
-          ESP_LOGD("pump", "Amorçage terminé");
-      - delay: 10ms
-      - switch.turn_off: pump1_priming_switch
+          // Pour 5 secondes d’amorçage, calculons le nombre de pas : 5s = 5000ms / 2ms par pas = 2500 pas
+          id(pump1_priming_steps_remaining) = 2500;
+      - script.execute: priming_pump1_steps
     web_server:
       sorting_group_id: sorting_group_calibration
   # Bouton pour lancer la calibration

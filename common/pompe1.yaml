@@ -427,6 +427,14 @@ globals:
     type: bool
     restore_value: false
     initial_value: 'false'
+  - id: pump1_step_index
+    type: int
+    restore_value: false
+    initial_value: '0'
+  - id: pump1_steps_to_run
+    type: int
+    restore_value: false
+    initial_value: '0'
 #####################################
 #         sensor         #
 #####################################
@@ -1472,17 +1480,22 @@ script:
     mode: restart
     then:
       - lambda: |-
-          float dose_ml = id(pump1_dose_ml);
           if (id(pump1_manual_dose_active)) {
             ESP_LOGW("pump", "⚠️ Une distribution est déjà en cours, exécution ignorée.");
             return;
           }
-          id(pump1_manual_dose_active) = true;
-          ESP_LOGI("pump", "⚙️ Début du script run_pump1_steps (dose_ml: %.2f)", dose_ml);
+          float dose_ml = id(pump1_dose_ml);
           float factor = id(pump1_calibration_factor);
-          int steps_to_run = (int)(dose_ml / factor);
-          ESP_LOGI("pump", "Démarrage de la pompe 1 pour %d pas (dose cible: %.2f ml)", steps_to_run, dose_ml);
+          id(pump1_steps_to_run) = (int)(dose_ml / factor);
+          id(pump1_step_index) = 0;
+          id(pump1_manual_dose_active) = true;
           id(pump1_status).publish_state("Distribution en cours…");
+          ESP_LOGI("pump", "⚙️ Début du script asynchrone : %d pas à faire", id(pump1_steps_to_run));
+      - script.execute: run_pump1_async_chunk
+  - id: run_pump1_async_chunk
+    mode: queued
+    then:
+      - lambda: |-
           const int steps[8][4] = {
             {1,0,0,0},
             {1,1,0,0},
@@ -1493,47 +1506,50 @@ script:
             {0,0,0,1},
             {1,0,0,1}
           };
-          int dyn_delay = 2;  // par défaut
-
-          if (dose_ml > 80)      dyn_delay = 0;   // Turbo
-          else if (dose_ml > 40) dyn_delay = 1;   // Rapide
-          else if (dose_ml > 15) dyn_delay = 2;   // Normal/précis
-          else                   dyn_delay = 3;   // Très lent/précis
-
-          int max_chunk = 50;  // <<<< Chunk augmenté à 50 pas
-          int step_index = 0;
-          while (step_index < steps_to_run) {
-            int chunk = std::min(max_chunk, steps_to_run - step_index);
-            for (int j = 0; j < chunk; j++, step_index++) {
-              int seq = step_index % 8;
-              if (steps[seq][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
-              if (steps[seq][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
-              if (steps[seq][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
-              if (steps[seq][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
-              delay(id(pump1_test_mode) ? 0 : dyn_delay);
-              delay(0); // Yield CPU à chaque pas
-            }
-            delay(1); // Pause très courte après chaque chunk
+          int dyn_delay = 2;
+          if (id(pump1_dose_ml) > 80)      dyn_delay = 0;
+          else if (id(pump1_dose_ml) > 40) dyn_delay = 1;
+          else if (id(pump1_dose_ml) > 15) dyn_delay = 2;
+          else                             dyn_delay = 3;
+          int max_chunk = 30;
+          int start = id(pump1_step_index);
+          int end = start + max_chunk;
+          if (end > id(pump1_steps_to_run)) end = id(pump1_steps_to_run);
+          for (int i = start; i < end; i++) {
+            int seq = i % 8;
+            if (steps[seq][0]) id(pump1_coil1).turn_on(); else id(pump1_coil1).turn_off();
+            if (steps[seq][1]) id(pump1_coil2).turn_on(); else id(pump1_coil2).turn_off();
+            if (steps[seq][2]) id(pump1_coil3).turn_on(); else id(pump1_coil3).turn_off();
+            if (steps[seq][3]) id(pump1_coil4).turn_on(); else id(pump1_coil4).turn_off();
+            delay(id(pump1_test_mode) ? 0 : dyn_delay);
           }
-          // Désactivation des bobines à la fin de la séquence
-          id(pump1_coil1).turn_off();
-          id(pump1_coil2).turn_off();
-          id(pump1_coil3).turn_off();
-          id(pump1_coil4).turn_off();
-          // Log...
-          char buffer[40];
-          auto now = id(my_time).now();
-          sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, dose_ml);
-          id(pump1_distributed_today) += dose_ml;
-          id(pump1_used_today) += dose_ml;
-          id(pump1_last_dose_log) = buffer;
-          id(pump1_last_dose_text).update();
-          ESP_LOGI("pump", "→ Distribution terminée, mise à OFF du flag manuel dans 300ms...");
-      - delay: 300ms
-      - lambda: |-
-          id(pump1_manual_dose_active) = false;
-          id(pump1_status).publish_state("Prêt");
-          ESP_LOGI("pump", "✅ Distribution manuelle terminée, statut remis à 'Prêt'.");
+          id(pump1_step_index) = end;
+      - if:
+          condition:
+            lambda: 'return id(pump1_step_index) < id(pump1_steps_to_run);'
+          then:
+            - delay: 20ms
+            - script.execute: run_pump1_async_chunk
+          else:
+            - lambda: |-
+                id(pump1_coil1).turn_off();
+                id(pump1_coil2).turn_off();
+                id(pump1_coil3).turn_off();
+                id(pump1_coil4).turn_off();
+                char buffer[40];
+                auto now = id(my_time).now();
+                float dose_ml = id(pump1_dose_ml);
+                sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, dose_ml);
+                id(pump1_distributed_today) += dose_ml;
+                id(pump1_used_today) += dose_ml;
+                id(pump1_last_dose_log) = buffer;
+                id(pump1_last_dose_text).update();
+                ESP_LOGI("pump", "→ Distribution terminée, mise à OFF du flag manuel dans 300ms...");
+            - delay: 300ms
+            - lambda: |-
+                id(pump1_manual_dose_active) = false;
+                id(pump1_status).publish_state("Prêt");
+                ESP_LOGI("pump", "✅ Distribution manuelle terminée, statut remis à 'Prêt'.");
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:

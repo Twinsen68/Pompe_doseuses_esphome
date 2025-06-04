@@ -338,7 +338,7 @@ Chaque pompe peut être activée ou désactivée individuellement via un switch,
 - **Interface** : Le switch "Activation Pompe 1" est visible dans l’interface web ESPHome ainsi que dans Home Assistant. L’état du switch est sauvegardé après redémarrage.
 
 **Exemple de configuration du switch dans ESPHome :**
-\`\`\`yaml
+```yaml
 switch:
   - platform: template
     name: "Activation Pompe 1"
@@ -355,7 +355,7 @@ switch:
       - lambda: |-
           id(pump1_enabled) = false;
           ESP_LOGD("pump", "Pompe désactivée !");
-\`\`\`
+```
 
 This switch allows you to control the pump directly from the ESPHome web interface and Home Assistant.
 

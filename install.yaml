@@ -10,7 +10,7 @@ packages:
     file: pompedoseuses_config.yaml
     ref: v1.3.4
 
-esphome:
+esphome:  
   name: pompe_doseuses_esphome
   name_add_mac_suffix: false
   friendly_name: "Pompes doseuses récifales"

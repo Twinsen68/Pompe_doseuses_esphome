@@ -1,11 +1,11 @@
 # Pompe Doseuses ESPHome
 
-Ce projet fournit une configuration ESPHome pour contrôler **4 pompes doseuses** utilisant des moteurs pas à pas **28BYJ-48** (5V) pilotés par des drivers **ULN2003**. La solution permet d’activer chaque pompe via Home Assistant grâce à des switches template.
+Ce projet propose une configuration ESPHome pour piloter **une pompe doseuse** munie d’un moteur pas à pas **28BYJ-48** (5V) et de son driver **ULN2003**. La configuration peut être dupliquée afin de gérer plusieurs pompes depuis Home Assistant via des switches template.
 
 ## Fonctionnalités
 
-- **Contrôle de 4 pompes doseuses :**
-  Chaque pompe est associée à un moteur 28BYJ-48 et un driver ULN2003.
+- **Contrôle d'une pompe doseuse (duplicable) :**
+  La configuration prévoit un moteur 28BYJ-48 et son driver ULN2003. Dupliquez ce bloc pour gérer plusieurs pompes.
 - **Séquence de pas intégrée :**
   Exécution d'une séquence de 8 demi-pas pour piloter les moteurs (512 demi-pas par défaut, ajustable).
 - **Activation via Home Assistant :**
@@ -16,8 +16,7 @@ Ce projet fournit une configuration ESPHome pour contrôler **4 pompes doseuses*
 ## Matériel Requis
 
 - Carte ESP32 (ou ESP8266 compatible avec ESPHome)
-- 4 moteurs pas à pas **28BYJ-48** (5V)
-- 4 drivers **ULN2003**
+- 1 moteur pas à pas **28BYJ-48** (5V) et son driver **ULN2003** (à répéter pour chaque pompe supplémentaire)
 - Alimentation 5V adaptée aux moteurs
 - Câblage et connecteurs
 
@@ -44,6 +43,7 @@ Le fichier de configuration inclut :
   Configuration des sorties pour piloter les bobines.
 - **Scripts de contrôle :**
   Chaque script exécute la séquence de 8 demi-pas pour actionner le moteur (avec 512 demi-pas par défaut).
+  Pour éviter un blocage quand le nombre de pas est très élevé, la distribution est découpée en petits scripts asynchrones exécutés par tranches d'une trentaine de pas.
 - **Switches Template :**
   Permettent de lancer les scripts via Home Assistant.
 
@@ -338,7 +338,7 @@ Chaque pompe peut être activée ou désactivée individuellement via un switch,
 - **Interface** : Le switch "Activation Pompe 1" est visible dans l’interface web ESPHome ainsi que dans Home Assistant. L’état du switch est sauvegardé après redémarrage.
 
 **Exemple de configuration du switch dans ESPHome :**
-\`\`\`yaml
+```yaml
 switch:
   - platform: template
     name: "Activation Pompe 1"
@@ -355,9 +355,27 @@ switch:
       - lambda: |-
           id(pump1_enabled) = false;
           ESP_LOGD("pump", "Pompe désactivée !");
-\`\`\`
+```
 
 This switch allows you to control the pump directly from the ESPHome web interface and Home Assistant.
+
+### Amorçage (Priming)
+Un switch dédié permet de lancer rapidement l'amorçage de la pompe pour remplir les tuyaux :
+
+- **Paramètre associé** : `Amorcer Pompe 1 (Priming)`
+- **Principe** : active temporairement le moteur pendant quelques secondes.
+- **Utilisation** : à déclencher après installation ou maintenance pour éviter les bulles d'air.
+
+### Dose manuelle
+Un bouton permet d'injecter manuellement la quantité configurée :
+
+- **Bouton** : `Doser manuellement Pompe 1`
+- **Fonctionnement** : envoie immédiatement une dose égale au volume quotidien paramétré.
+- **Précaution** : la pompe doit être activée et aucune autre dose manuelle ne doit être en cours.
+
+### Mode Test / Simulation
+Pour valider votre configuration sans consommer de produit, activez le switch `Mode Test / Simulation`.
+Lorsque ce mode est actif, la vitesse d'exécution est accélérée et la distribution est simulée sans actionner réellement la pompe.
 
 ---
 ## Contributions

@@ -1905,15 +1905,14 @@ interval:
           // --- Mode 4 : Minuteur (6 minuteurs distincts) ---
           } else if (mode == 4) {
           if (!id(pump1_minuteur_ready)) {
-            ESP_LOGD("pump", "Minuteurs non encore armés (délai de sécurité après boot)");
-            return;
-          }
             // Ne rien faire si uptime < 60s pour éviter le crash au boot
             if (id(uptime_sensor).state < 60) {
               ESP_LOGW("pump", "Attente du démarrage complet avant de lancer les minuteurs.");
               return;
             }
+            ESP_LOGD("pump", "Minuteurs armés après délai de sécurité");
             id(pump1_minuteur_ready) = true;
+          }
             // Recalcule la dose quotidienne selon la somme des 6 minute_dose_X
             float total = id(pump1_minute_dose_1_quantity) + id(pump1_minute_dose_2_quantity) + id(pump1_minute_dose_3_quantity) + id(pump1_minute_dose_4_quantity) + id(pump1_minute_dose_5_quantity) + id(pump1_minute_dose_6_quantity);
             id(pump1_daily_quantity_computed) = total;
@@ -1923,7 +1922,7 @@ interval:
               ESP_LOGD("pump", "Minuteur dose 1 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
               if (id(pump1_test_mode)) {
-                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose 1 : %.2f ml", id(pump1_dose_ml));
                 id(pump1_distributed_today) += id(pump1_dose_ml);
               } else {
                 id(run_pump1_steps).execute();
@@ -1934,7 +1933,7 @@ interval:
               ESP_LOGD("pump", "Minuteur dose 2 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
               if (id(pump1_test_mode)) {
-                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose 2 : %.2f ml", id(pump1_dose_ml));
                 id(pump1_distributed_today) += id(pump1_dose_ml);
               } else {
                 id(run_pump1_steps).execute();
@@ -1945,7 +1944,7 @@ interval:
               ESP_LOGD("pump", "Minuteur dose 3 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
               if (id(pump1_test_mode)) {
-                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose 3 : %.2f ml", id(pump1_dose_ml));
                 id(pump1_distributed_today) += id(pump1_dose_ml);
               } else {
                 id(run_pump1_steps).execute();
@@ -1956,7 +1955,7 @@ interval:
               ESP_LOGD("pump", "Minuteur dose 4 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
               if (id(pump1_test_mode)) {
-                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose 4 : %.2f ml", id(pump1_dose_ml));
                 id(pump1_distributed_today) += id(pump1_dose_ml);
               } else {
                 id(run_pump1_steps).execute();
@@ -1967,7 +1966,7 @@ interval:
               ESP_LOGD("pump", "Minuteur dose 5 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
               if (id(pump1_test_mode)) {
-                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose 5 : %.2f ml", id(pump1_dose_ml));
                 id(pump1_distributed_today) += id(pump1_dose_ml);
               } else {
                 id(run_pump1_steps).execute();
@@ -1978,7 +1977,7 @@ interval:
               ESP_LOGD("pump", "Minuteur dose 6 déclenchée: %.2f ml", id(pump1_dose_ml));
               id(pump1_distributed_today) += id(pump1_dose_ml);
               if (id(pump1_test_mode)) {
-                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose X : %.2f ml", id(pump1_dose_ml));
+                ESP_LOGI("pump", "🧪 [Test] Simulation minuteur dose 6 : %.2f ml", id(pump1_dose_ml));
                 id(pump1_distributed_today) += id(pump1_dose_ml);
               } else {
                 id(run_pump1_steps).execute();

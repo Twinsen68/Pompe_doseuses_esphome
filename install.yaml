@@ -13,7 +13,7 @@ packages:
 esphome:
   name: pompe_doseuses_esphome
   name_add_mac_suffix: false
-  friendly_name: "Pompes doseuses récifale"
+  friendly_name: "Pompes doseuses récifales"
   platformio_options:
     build_flags:
       - -DBROWNOUT_DISABLE

@@ -5,9 +5,9 @@ Ce projet propose une configuration ESPHome pour piloter **une pompe doseuse** m
 ## Fonctionnalités
 
 - **Contrôle d'une pompe doseuse (duplicable) :**
-  La configuration prévoit un moteur 28BYJ-48 et son driver ULN2003. Dupliquez ce bloc pour gérer plusieurs pompes.
-- **Séquence de pas intégrée :**
-  Exécution d'une séquence de 8 demi-pas pour piloter les moteurs (512 demi-pas par défaut, ajustable).
+  Configuration d'un moteur 28BYJ-48 piloté via le composant `stepper` ULN2003. Dupliquez ce bloc pour plusieurs pompes.
+- **Moteur piloté par le composant Stepper :**
+  Utilise `max_speed` et `acceleration` pour un mouvement fluide.
 - **Activation via Home Assistant :**
   Utilisation de switches template pour déclencher manuellement les scripts de contrôle.
 - **Configuration flexible :**
@@ -38,12 +38,11 @@ Ce projet propose une configuration ESPHome pour piloter **une pompe doseuse** m
 Le fichier de configuration inclut :
 
 - **Substitutions :**
-  Définition des pins pour chaque bobine des moteurs.
-- **Déclaration des sorties GPIO :**
-  Configuration des sorties pour piloter les bobines.
+  Définition des pins pour le pilote ULN2003.
+- **Composant Stepper :**
+  Gère directement le moteur pas à pas avec `max_speed` et `acceleration`.
 - **Scripts de contrôle :**
-  Chaque script exécute la séquence de 8 demi-pas pour actionner le moteur (avec 512 demi-pas par défaut).
-  Pour éviter un blocage quand le nombre de pas est très élevé, la distribution est découpée en petits scripts asynchrones exécutés par tranches d'une trentaine de pas.
+  Utilisent `stepper.set_target` et `wait_until` pour piloter le moteur sans boucles bloquantes.
 - **Switches Template :**
   Permettent de lancer les scripts via Home Assistant.
 

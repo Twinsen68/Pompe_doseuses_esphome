@@ -423,6 +423,11 @@ globals:
     type: bool
     restore_value: true
     initial_value: 'false'
+  # Vitesse de la pompe (0=lent, 1=moyen, 2=rapide)
+  - id: pump1_speed_level
+    type: int
+    restore_value: true
+    initial_value: '1'
   - id: pump1_manual_dose_active
     type: bool
     restore_value: false
@@ -1638,6 +1643,29 @@ switch:
       - lambda: |-
           id(pump1_test_mode) = false;
           ESP_LOGI("pump", "Mode test désactivé");
+    web_server:
+      sorting_group_id: sorting_group_general
+
+  - platform: template
+    name: "Pompe 1 - Vitesse"
+    id: pump1_speed_select
+    icon: mdi:speedometer
+    entity_category: config
+    options:
+      - "Lent"
+      - "Moyen"
+      - "Rapide"
+    lambda: |-
+      int lvl = id(pump1_speed_level);
+      if (lvl == 0) return std::string("Lent");
+      else if (lvl == 1) return std::string("Moyen");
+      else return std::string("Rapide");
+    set_action:
+      - lambda: |-
+          if (x == "Lent") id(pump1_speed_level) = 0;
+          else if (x == "Moyen") id(pump1_speed_level) = 1;
+          else if (x == "Rapide") id(pump1_speed_level) = 2;
+          ESP_LOGD("pump", "Niveau de vitesse mis à %d", id(pump1_speed_level));
     web_server:
       sorting_group_id: sorting_group_general
 

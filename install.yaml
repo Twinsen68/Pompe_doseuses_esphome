@@ -23,6 +23,9 @@ esphome:
       - lambda: |-
           id(pump1_manual_dose_active) = false;
           ESP_LOGW("pump", "Remise à zéro de pump1_manual_dose_active au boot !");
+      - stepper.report_position:
+          id: pump1_stepper
+          position: 0
 api:
   encryption:
     key: tsHqLo48mLGhWo/qQQrZUFdsEwuZcC1/BlUOXWExy14=

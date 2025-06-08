@@ -8,7 +8,7 @@ packages:
   twinsen68.pompe_doseuses_esphome:
     url: https://github.com/Twinsen68/pompe_doseuses_esphome
     file: pompedoseuses_config.yaml
-    ref: v1.3.4
+    ref: main
 
 esphome:  
   name: pompe_doseuses_esphome
@@ -23,16 +23,13 @@ esphome:
       - lambda: |-
           id(pump1_manual_dose_active) = false;
           ESP_LOGW("pump", "Remise à zéro de pump1_manual_dose_active au boot !");
-      - stepper.report_position:
-          id: pump1_stepper
-          position: 0
 api:
   encryption:
     key: tsHqLo48mLGhWo/qQQrZUFdsEwuZcC1/BlUOXWExy14=
 
 wifi:
   ssid: !secret wifi_ssid
-  password: !secret wifi_passwor
+  password: !secret wifi_password
 
 text_sensor:
   - platform: wifi_info

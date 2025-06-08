@@ -1546,9 +1546,7 @@ script:
       - stepper.set_target:
           id: pump1_stepper
           target: !lambda 'return id(pump1_stepper).current_position + id(pump1_steps_to_run);'
-      - wait_until:
-          condition:
-            lambda: 'return !id(pump1_stepper).is_running();'
+      - delay: !lambda 'return (id(pump1_steps_to_run) * 2) / 1000;'
       # - stepper.deenergize: pump1_stepper
       - lambda: |-
           char buffer[40];
@@ -1586,9 +1584,7 @@ script:
       - stepper.set_target:
           id: pump1_stepper
           target: !lambda 'return id(pump1_stepper).current_position + id(pump1_priming_steps_remaining);'
-      - wait_until:
-          condition:
-            lambda: 'return !id(pump1_stepper).is_running();'
+      - delay: !lambda 'return (id(pump1_priming_steps_remaining) * 2) / 1000;'
       # - stepper.deenergize: pump1_stepper
       - lambda: |-
           id(pump1_status).publish_state("Prêt");
@@ -1601,9 +1597,7 @@ script:
       - stepper.set_target:
           id: pump1_stepper
           target: !lambda 'return id(pump1_stepper).current_position + id(pump1_calibration_steps_remaining);'
-      - wait_until:
-          condition:
-            lambda: 'return !id(pump1_stepper).is_running();'
+      - delay: !lambda 'return (id(pump1_calibration_steps_remaining) * 2) / 1000;'
       # - stepper.deenergize: pump1_stepper
       - lambda: |-
           id(pump1_status).publish_state("Prêt");

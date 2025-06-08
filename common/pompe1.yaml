@@ -1323,7 +1323,7 @@ number:
       sorting_group_id: sorting_group_mode4
       # Minuteur 4
   - platform: template
-    name: "Minuteur Dose 5 - Hour"
+    name: "Minuteur Dose 4 - Hour"
     id: pump1_minute_dose_4_hour_num
     icon: mdi:clock-outline
     min_value: 0

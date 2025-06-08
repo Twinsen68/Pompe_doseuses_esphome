@@ -64,253 +64,264 @@ cards:
         name: Mode
         icon: mdi:format-list-bulleted
         icon_color: lime
-  - type: custom:mushroom-title-card
-    title: 🗓️ Périodes de Distribution
-    subtitle: 🕒 Période 1
-  - type: grid
-    columns: 4
-    square: false
-    cards:
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_1_start_hour
-        name: Début h
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_1_start_minute
-        name: Début min
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_1_end_hour
-        name: Fin h
-        icon: mdi:clock-time-eight-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_1_end_minute
-        name: Fin min
-        icon: mdi:clock-outline
-  - type: custom:mushroom-number-card
-    entity: number.pompe_doseuses_esphome_p_riode_1_doses
-    name: Doses Période 1
-    icon: mdi:counter
-    icon_color: pink
-  - type: custom:mushroom-title-card
-    subtitle: 🕒 Période 2
-  - type: grid
-    columns: 4
-    square: false
-    cards:
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_2_start_hour
-        name: Début h
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_2_start_minute
-        name: Début min
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_2_end_hour
-        name: Fin h
-        icon: mdi:clock-time-eight-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_2_end_minute
-        name: Fin min
-        icon: mdi:clock-outline
-  - type: custom:mushroom-number-card
-    entity: number.pompe_doseuses_esphome_p_riode_2_doses
-    name: Doses Période 2
-    icon: mdi:counter
-    icon_color: pink
-  - type: custom:mushroom-title-card
-    subtitle: 🕒 Période 3
-  - type: grid
-    columns: 4
-    square: false
-    cards:
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_3_start_hour
-        name: Début h
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_3_start_minute
-        name: Début min
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_3_end_hour
-        name: Fin h
-        icon: mdi:clock-time-eight-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_3_end_minute
-        name: Fin min
-        icon: mdi:clock-outline
-  - type: custom:mushroom-number-card
-    entity: number.pompe_doseuses_esphome_p_riode_3_doses
-    name: Doses Période 3
-    icon: mdi:counter
-    icon_color: pink
-  - type: custom:mushroom-title-card
-    subtitle: 🕒 Période 4
-  - type: grid
-    columns: 4
-    square: false
-    cards:
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_4_start_hour
-        name: Début h
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_4_start_minute
-        name: Début min
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_4_end_hour
-        name: Fin h
-        icon: mdi:clock-time-eight-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_4_end_minute
-        name: Fin min
-        icon: mdi:clock-outline
-  - type: custom:mushroom-number-card
-    entity: number.pompe_doseuses_esphome_p_riode_4_doses
-    name: Doses Période 4
-    icon: mdi:counter
-    icon_color: pink
-  - type: custom:mushroom-title-card
-    subtitle: 🕒 Période 5
-  - type: grid
-    columns: 4
-    square: false
-    cards:
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_5_start_hour
-        name: Début h
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_5_start_minute
-        name: Début min
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_5_end_hour
-        name: Fin h
-        icon: mdi:clock-time-eight-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_5_end_minute
-        name: Fin min
-        icon: mdi:clock-outline
-  - type: custom:mushroom-number-card
-    entity: number.pompe_doseuses_esphome_p_riode_5_doses
-    name: Doses Période 5
-    icon: mdi:counter
-    icon_color: pink
-  - type: custom:mushroom-title-card
-    subtitle: 🕒 Période 6
-  - type: grid
-    columns: 4
-    square: false
-    cards:
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_6_start_hour
-        name: Début h
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_6_start_minute
-        name: Début min
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_6_end_hour
-        name: Fin h
-        icon: mdi:clock-time-eight-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_p_riode_6_end_minute
-        name: Fin min
-        icon: mdi:clock-outline
-  - type: custom:mushroom-number-card
-    entity: number.pompe_doseuses_esphome_p_riode_6_doses
-    name: Doses Période 6
-    icon: mdi:counter
-    icon_color: pink
-  - type: custom:mushroom-title-card
-    title: ⏲️ Minuteurs Programmés
-  - type: grid
-    columns: 3
-    square: false
-    cards:
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_1_hour
-        name: Heure 1
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_1_minute
-        name: Minute 1
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_1_quantity_ml
-        name: Qté (ml) 1
-        icon: mdi:counter
-        icon_color: green
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_2_hour
-        name: Heure 2
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_2_minute
-        name: Minute 2
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_2_quantity_ml
-        name: Qté (ml) 2
-        icon: mdi:counter
-        icon_color: green
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_3_hour
-        name: Heure 3
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_3_minute
-        name: Minute 3
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_3_quantity_ml
-        name: Qté (ml) 3
-        icon: mdi:counter
-        icon_color: green
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_4_hour
-        name: Heure 4
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_4_minute
-        name: Minute 4
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_4_quantity_ml
-        name: Qté (ml) 4
-        icon: mdi:counter
-        icon_color: green
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_5_hour
-        name: Heure 5
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_5_minute
-        name: Minute 5
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_5_quantity_ml
-        name: Qté (ml) 5
-        icon: mdi:counter
-        icon_color: green
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_6_hour
-        name: Heure 6
-        icon: mdi:clock-time-four-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_6_minute
-        name: Minute 6
-        icon: mdi:clock-outline
-      - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_minuteur_dose_6_quantity_ml
-        name: Qté (ml) 6
-        icon: mdi:counter
-        icon_color: green
+  - type: custom:state-switch
+    entity: select.pompe_doseuses_esphome_pompe_1_mode_de_distribution
+    default: Autre
+    states:
+      "Mode 3: Périodes":
+        type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: 🗓️ Périodes de Distribution
+          - type: custom:mushroom-title-card
+            subtitle: 🕒 Période 1
+          - type: grid
+            columns: 4
+            square: false
+            cards:
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_1_start_hour
+                name: Début h
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_1_start_minute
+                name: Début min
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_1_end_hour
+                name: Fin h
+                icon: mdi:clock-time-eight-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_1_end_minute
+                name: Fin min
+                icon: mdi:clock-outline
+          - type: custom:mushroom-number-card
+            entity: number.pompe_doseuses_esphome_p_riode_1_doses
+            name: Doses Période 1
+            icon: mdi:counter
+            icon_color: pink
+          - type: custom:mushroom-title-card
+            subtitle: 🕒 Période 2
+          - type: grid
+            columns: 4
+            square: false
+            cards:
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_2_start_hour
+                name: Début h
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_2_start_minute
+                name: Début min
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_2_end_hour
+                name: Fin h
+                icon: mdi:clock-time-eight-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_2_end_minute
+                name: Fin min
+                icon: mdi:clock-outline
+          - type: custom:mushroom-number-card
+            entity: number.pompe_doseuses_esphome_p_riode_2_doses
+            name: Doses Période 2
+            icon: mdi:counter
+            icon_color: pink
+          - type: custom:mushroom-title-card
+            subtitle: 🕒 Période 3
+          - type: grid
+            columns: 4
+            square: false
+            cards:
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_3_start_hour
+                name: Début h
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_3_start_minute
+                name: Début min
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_3_end_hour
+                name: Fin h
+                icon: mdi:clock-time-eight-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_3_end_minute
+                name: Fin min
+                icon: mdi:clock-outline
+          - type: custom:mushroom-number-card
+            entity: number.pompe_doseuses_esphome_p_riode_3_doses
+            name: Doses Période 3
+            icon: mdi:counter
+            icon_color: pink
+          - type: custom:mushroom-title-card
+            subtitle: 🕒 Période 4
+          - type: grid
+            columns: 4
+            square: false
+            cards:
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_4_start_hour
+                name: Début h
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_4_start_minute
+                name: Début min
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_4_end_hour
+                name: Fin h
+                icon: mdi:clock-time-eight-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_4_end_minute
+                name: Fin min
+                icon: mdi:clock-outline
+          - type: custom:mushroom-number-card
+            entity: number.pompe_doseuses_esphome_p_riode_4_doses
+            name: Doses Période 4
+            icon: mdi:counter
+            icon_color: pink
+          - type: custom:mushroom-title-card
+            subtitle: 🕒 Période 5
+          - type: grid
+            columns: 4
+            square: false
+            cards:
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_5_start_hour
+                name: Début h
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_5_start_minute
+                name: Début min
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_5_end_hour
+                name: Fin h
+                icon: mdi:clock-time-eight-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_5_end_minute
+                name: Fin min
+                icon: mdi:clock-outline
+          - type: custom:mushroom-number-card
+            entity: number.pompe_doseuses_esphome_p_riode_5_doses
+            name: Doses Période 5
+            icon: mdi:counter
+            icon_color: pink
+          - type: custom:mushroom-title-card
+            subtitle: 🕒 Période 6
+          - type: grid
+            columns: 4
+            square: false
+            cards:
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_6_start_hour
+                name: Début h
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_6_start_minute
+                name: Début min
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_6_end_hour
+                name: Fin h
+                icon: mdi:clock-time-eight-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_p_riode_6_end_minute
+                name: Fin min
+                icon: mdi:clock-outline
+          - type: custom:mushroom-number-card
+            entity: number.pompe_doseuses_esphome_p_riode_6_doses
+            name: Doses Période 6
+            icon: mdi:counter
+            icon_color: pink
+      "Mode 4: Minuteur":
+        type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: ⏲️ Minuteurs Programmés
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_1_hour
+                name: Heure 1
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_1_minute
+                name: Minute 1
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_1_quantity_ml
+                name: Qté (ml) 1
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_2_hour
+                name: Heure 2
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_2_minute
+                name: Minute 2
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_2_quantity_ml
+                name: Qté (ml) 2
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_3_hour
+                name: Heure 3
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_3_minute
+                name: Minute 3
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_3_quantity_ml
+                name: Qté (ml) 3
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_4_hour
+                name: Heure 4
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_4_minute
+                name: Minute 4
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_4_quantity_ml
+                name: Qté (ml) 4
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_5_hour
+                name: Heure 5
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_5_minute
+                name: Minute 5
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_5_quantity_ml
+                name: Qté (ml) 5
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_6_hour
+                name: Heure 6
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_6_minute
+                name: Minute 6
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_6_quantity_ml
+                name: Qté (ml) 6
+                icon: mdi:counter
+                icon_color: green
   - type: custom:mushroom-title-card
     title: ⚙️ Actions & Maintenance
   - type: grid
@@ -322,41 +333,74 @@ cards:
         name: Activer
         icon: mdi:play
         icon_color: green
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
       - type: custom:mushroom-entity-card
         entity: switch.pompe_doseuses_esphome_amorcer_pompe_1_priming
-        name: Priming
+        name: Amorcer
         icon: mdi:water-pump
         icon_color: blue
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
       - type: custom:mushroom-entity-card
         entity: switch.pompe_doseuses_esphome_mode_test_simulation
         name: Test
         icon: mdi:flask-outline
         icon_color: orange
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
       - type: custom:mushroom-entity-card
         entity: switch.pompe_doseuses_esphome_lancer_calibration_pompe_1
         name: Calibration
         icon: mdi:tune
         icon_color: purple
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
       - type: custom:mushroom-entity-card
         entity: switch.pompe_doseuses_esphome_valider_calibration_pompe_1
         name: Valider Calib.
         icon: mdi:check
         icon_color: green
+        tap_action:
+          action: toggle
+        hold_action:
+          action: toggle
       - type: custom:mushroom-number-card
         entity: number.pompe_doseuses_esphome_pompe_1_volume_mesur_ml
         name: Volume calibration (ml)
         icon: mdi:beaker-check
         icon_color: orange
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
       - type: custom:mushroom-number-card
         entity: number.pompe_doseuses_esphome_pompe_1_capacit_r_servoir_ml
         name: Capacité réservoir (ml)
         icon: mdi:bottle-tonic
         icon_color: green
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        display_mode: slider
       - type: custom:mushroom-entity-card
         entity: button.pompe_doseuses_esphome_remplir_r_servoir_pompe_1
         name: Remplir réservoir
         icon: mdi:bottle-tonic-plus
         icon_color: green
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
   - type: custom:mushroom-title-card
     title: 📊 Suivi & Statut
   - type: entities

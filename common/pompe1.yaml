@@ -103,7 +103,7 @@ globals:
   - id: pump1_period1_start_hour
     type: int
     restore_value: true
-    initial_value: '8'
+    initial_value: '0'
   - id: pump1_period1_start_minute
     type: int
     restore_value: true
@@ -111,7 +111,7 @@ globals:
   - id: pump1_period1_end_hour
     type: int
     restore_value: true
-    initial_value: '10'
+    initial_value: '0'
   - id: pump1_period1_end_minute
     type: int
     restore_value: true
@@ -119,11 +119,11 @@ globals:
   - id: pump1_period1_doses
     type: int
     restore_value: true
-    initial_value: '1'
+    initial_value: '0'
   - id: pump1_period2_start_hour
     type: int
     restore_value: true
-    initial_value: '12'
+    initial_value: '0'
   - id: pump1_period2_start_minute
     type: int
     restore_value: true
@@ -131,7 +131,7 @@ globals:
   - id: pump1_period2_end_hour
     type: int
     restore_value: true
-    initial_value: '14'
+    initial_value: '0'
   - id: pump1_period2_end_minute
     type: int
     restore_value: true
@@ -139,12 +139,12 @@ globals:
   - id: pump1_period2_doses
     type: int
     restore_value: true
-    initial_value: '1'
+    initial_value: '0'
 
   - id: pump1_period3_start_hour
     type: int
     restore_value: true
-    initial_value: '18'
+    initial_value: '0'
   - id: pump1_period3_start_minute
     type: int
     restore_value: true
@@ -152,7 +152,7 @@ globals:
   - id: pump1_period3_end_hour
     type: int
     restore_value: true
-    initial_value: '19'
+    initial_value: '0'
   - id: pump1_period3_end_minute
     type: int
     restore_value: true
@@ -160,7 +160,7 @@ globals:
   - id: pump1_period3_doses
     type: int
     restore_value: true
-    initial_value: '1'
+    initial_value: '0'
 
   - id: pump1_period4_start_hour
     type: int

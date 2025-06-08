@@ -66,8 +66,7 @@ cards:
         icon_color: lime
   - type: custom:mushroom-title-card
     title: 🗓️ Périodes de Distribution
-  - type: markdown
-    content: "### 🕒 Période 1"
+    subtitle: 🕒 Période 1
   - type: grid
     columns: 4
     square: false
@@ -93,8 +92,8 @@ cards:
     name: Doses Période 1
     icon: mdi:counter
     icon_color: pink
-  - type: markdown
-    content: "### 🕒 Période 2"
+  - type: custom:mushroom-title-card
+    subtitle: 🕒 Période 2
   - type: grid
     columns: 4
     square: false
@@ -120,8 +119,8 @@ cards:
     name: Doses Période 2
     icon: mdi:counter
     icon_color: pink
-  - type: markdown
-    content: "### 🕒 Période 3"
+  - type: custom:mushroom-title-card
+    subtitle: 🕒 Période 3
   - type: grid
     columns: 4
     square: false
@@ -147,8 +146,8 @@ cards:
     name: Doses Période 3
     icon: mdi:counter
     icon_color: pink
-  - type: markdown
-    content: "### 🕒 Période 4"
+  - type: custom:mushroom-title-card
+    subtitle: 🕒 Période 4
   - type: grid
     columns: 4
     square: false
@@ -174,8 +173,8 @@ cards:
     name: Doses Période 4
     icon: mdi:counter
     icon_color: pink
-  - type: markdown
-    content: "### 🕒 Période 5"
+  - type: custom:mushroom-title-card
+    subtitle: 🕒 Période 5
   - type: grid
     columns: 4
     square: false
@@ -201,8 +200,8 @@ cards:
     name: Doses Période 5
     icon: mdi:counter
     icon_color: pink
-  - type: markdown
-    content: "### 🕒 Période 6"
+  - type: custom:mushroom-title-card
+    subtitle: 🕒 Période 6
   - type: grid
     columns: 4
     square: false
@@ -344,12 +343,17 @@ cards:
         icon: mdi:check
         icon_color: green
       - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_pump1_reservoir_capacity_num
+        entity: number.pompe_doseuses_esphome_pompe_1_calibration_value_num
+        name: Volume calibration (ml)
+        icon: mdi:beaker-check
+        icon_color: orange
+      - type: custom:mushroom-number-card
+        entity: number.pompe_doseuses_esphome_pompe_1_capacit_r_servoir_ml
         name: Capacité réservoir (ml)
         icon: mdi:bottle-tonic
         icon_color: green
       - type: custom:mushroom-entity-card
-        entity: button.pompe_doseuses_esphome_pump1_refill_button
+        entity: button.pompe_doseuses_esphome_remplir_r_servoir_pompe_1
         name: Remplir réservoir
         icon: mdi:bottle-tonic-plus
         icon_color: green

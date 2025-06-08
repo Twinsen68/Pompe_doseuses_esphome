@@ -485,7 +485,7 @@ sensor:
     name: "Pompe 1 - Volume restant (ml)"
     id: pump1_volume_remaining_sensor
     unit_of_measurement: "ml"
-    accuracy_decimals: 1
+    accuracy_decimals: 0
     lambda: |-
       return id(pump1_volume_remaining);
     update_interval: 60s

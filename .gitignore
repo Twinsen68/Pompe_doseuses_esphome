@@ -5,6 +5,7 @@
 /secrets.yaml
 # Ignore secrets and sensitive files
 secrets.yaml
+terminal_mac
 
 # Ignore build outputs and ESPHome cache
 build/

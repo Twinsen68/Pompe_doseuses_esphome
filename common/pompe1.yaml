@@ -1528,7 +1528,7 @@ script:
       - wait_until:
           condition:
             lambda: 'return !id(pump1_stepper).is_running();'
-      - stepper.deenergize: pump1_stepper
+      # - stepper.deenergize: pump1_stepper
       - lambda: |-
           char buffer[40];
           auto now = id(my_time).now();
@@ -1568,7 +1568,7 @@ script:
       - wait_until:
           condition:
             lambda: 'return !id(pump1_stepper).is_running();'
-      - stepper.deenergize: pump1_stepper
+      # - stepper.deenergize: pump1_stepper
       - lambda: |-
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Amorçage terminé.");
@@ -1583,7 +1583,7 @@ script:
       - wait_until:
           condition:
             lambda: 'return !id(pump1_stepper).is_running();'
-      - stepper.deenergize: pump1_stepper
+      # - stepper.deenergize: pump1_stepper
       - lambda: |-
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Calibration terminée.");

@@ -1674,6 +1674,7 @@ switch:
     web_server:
       sorting_group_id: sorting_group_general
 
+select:
   - platform: template
     name: "Pompe 1 - Vitesse"
     id: pump1_speed_select

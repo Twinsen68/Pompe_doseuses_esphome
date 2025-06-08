@@ -1,7 +1,7 @@
 logger:
   level: WARN
   logs:
-    pump: DEBUG
+    pump: DEBUG 
     sensor: WARN
     number: WARN
     text_sensor: WARN
@@ -18,6 +18,10 @@ logger:
 #####################################
 # Globales pour la gestion de la pompe 1
 globals:
+  - id: pump1_reservoir_capacity
+    type: float
+    restore_value: true
+    initial_value: '1000.0'
   # Activation de la pompe
   - id: pump1_enabled
     type: bool
@@ -478,6 +482,15 @@ sensor:
       sorting_group_id: sorting_group_general
 
   - platform: template
+    name: "Pompe 1 - Volume restant (ml)"
+    id: pump1_volume_remaining_sensor
+    unit_of_measurement: "ml"
+    accuracy_decimals: 1
+    lambda: |-
+      return id(pump1_volume_remaining);
+    update_interval: 60s
+
+  - platform: template
     name: "Pompe 1 - Volume distribué (aujourd'hui)"
     id: pump1_distributed_today_sensor
     unit_of_measurement: "ml"
@@ -648,6 +661,19 @@ number:
       - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode0
+  - platform: template
+    name: "Pompe 1 - Capacité réservoir (ml)"
+    id: pump1_reservoir_capacity_num
+    icon: mdi:bottle-tonic
+    min_value: 100
+    max_value: 5000
+    step: 10
+    lambda: |-
+      return id(pump1_reservoir_capacity);
+    set_action:
+      - lambda: |-
+          id(pump1_reservoir_capacity) = x;
+          ESP_LOGI("pump", "Capacité du réservoir mise à jour: %.0f ml", x);
   # ╔════════════════════════════════════════╗
   # ║   MODE 1 - Répartition sur 24 doses    ║
   # ╚════════════════════════════════════════╝
@@ -1510,6 +1536,8 @@ script:
           sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, dose_ml);
           id(pump1_distributed_today) += dose_ml;
           id(pump1_used_today) += dose_ml;
+          id(pump1_volume_remaining) = std::max(0.0f, id(pump1_volume_remaining) - dose_ml);
+          id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
           id(pump1_last_dose_log) = buffer;
           id(pump1_last_dose_text).update();
           id(pump1_manual_dose_active) = false;
@@ -1693,6 +1721,15 @@ button:
             id(run_pump1_steps).execute();
     web_server:
       sorting_group_id: sorting_group_mode0
+  - platform: template
+    name: "Remplir réservoir Pompe 1"
+    id: pump1_refill_button
+    on_press:
+      then:
+        - lambda: |-
+            id(pump1_volume_remaining) = id(pump1_reservoir_capacity);
+            id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+            ESP_LOGI("pump", "Réservoir remis à %.0f ml", id(pump1_reservoir_capacity));
 #####################################
 #        AUTOMATISMES (SCHEDULE)     #
 #####################################

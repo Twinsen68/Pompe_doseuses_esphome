@@ -343,7 +343,7 @@ cards:
         icon: mdi:check
         icon_color: green
       - type: custom:mushroom-number-card
-        entity: number.pompe_doseuses_esphome_pompe_1_calibration_value_num
+        entity: number.pompe_doseuses_esphome_pompe_1_volume_mesur_ml
         name: Volume calibration (ml)
         icon: mdi:beaker-check
         icon_color: orange

@@ -401,6 +401,15 @@ cards:
           action: toggle
         hold_action:
           action: more-info
+      - type: custom:mushroom-entity-card
+        icon: mdi:plus-circle-multiple-outline
+        icon_color: deep-purple
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+        entity: button.pompe_doseuses_esphome_doser_manuellement_pompe_1
+        name: Dose manuelle
   - type: custom:mushroom-title-card
     title: 📊 Suivi & Statut
   - type: entities

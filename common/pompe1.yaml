@@ -455,7 +455,7 @@ sensor:
   - platform: template
     name: "Volume quotidien Pompe 1 (ml)"
     id: pump1_daily_quantity_sensor
-    update_interval: 60s
+    update_interval: 10s
     unit_of_measurement: "ml"
     entity_category: diagnostic
     lambda: |-
@@ -476,7 +476,7 @@ sensor:
     accuracy_decimals: 1
     lambda: |-
       return id(pump1_used_today);
-    update_interval: 60s
+    update_interval: 10s
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_general
@@ -488,7 +488,7 @@ sensor:
     accuracy_decimals: 0
     lambda: |-
       return id(pump1_volume_remaining);
-    update_interval: 60s
+    update_interval: 10s
 
   - platform: template
     name: "Pompe 1 - Volume distribué (aujourd'hui)"
@@ -497,7 +497,7 @@ sensor:
     accuracy_decimals: 1
     lambda: |-
       return id(pump1_distributed_today);
-    update_interval: 60s
+    update_interval: 10s
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_general
@@ -575,7 +575,7 @@ text_sensor:
     name: "Pompe 1 - Dernière dose"
     lambda: |-
       return optional<std::string>(id(pump1_last_dose_log));
-    update_interval: never
+    update_interval: 1ever
     entity_category: diagnostic
     icon: mdi:clock
     id: pump1_last_dose_text
@@ -586,7 +586,7 @@ text_sensor:
     id: pump1_status
     lambda: |-
       return optional<std::string>("Prêt");
-    update_interval: never
+    update_interval: 1ever
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_mode0

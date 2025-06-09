@@ -322,6 +322,84 @@ cards:
                 name: Qté (ml) 6
                 icon: mdi:counter
                 icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_7_hour
+                name: Heure 7
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_7_minute
+                name: Minute 7
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_7_quantity_ml
+                name: Qté (ml) 7
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_8_hour
+                name: Heure 8
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_8_minute
+                name: Minute 8
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_8_quantity_ml
+                name: Qté (ml) 8
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_9_hour
+                name: Heure 9
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_9_minute
+                name: Minute 9
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_9_quantity_ml
+                name: Qté (ml) 9
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_10_hour
+                name: Heure 10
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_10_minute
+                name: Minute 10
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_10_quantity_ml
+                name: Qté (ml) 10
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_11_hour
+                name: Heure 11
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_11_minute
+                name: Minute 11
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_11_quantity_ml
+                name: Qté (ml) 11
+                icon: mdi:counter
+                icon_color: green
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_12_hour
+                name: Heure 12
+                icon: mdi:clock-time-four-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_12_minute
+                name: Minute 12
+                icon: mdi:clock-outline
+              - type: custom:mushroom-number-card
+                entity: number.pompe_doseuses_esphome_minuteur_dose_12_quantity_ml
+                name: Qté (ml) 12
+                icon: mdi:counter
+                icon_color: green
   - type: custom:mushroom-title-card
     title: ⚙️ Actions & Maintenance
   - type: grid

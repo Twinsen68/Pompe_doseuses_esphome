@@ -574,7 +574,7 @@ text_sensor:
     name: "Pompe 1 - Dernière dose"
     lambda: |-
       return optional<std::string>(id(pump1_last_dose_log));
-    update_interval: 1ever
+    update_interval: never
     entity_category: diagnostic
     icon: mdi:clock
     id: pump1_last_dose_text

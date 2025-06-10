@@ -585,7 +585,7 @@ text_sensor:
     id: pump1_status
     lambda: |-
       return optional<std::string>("Prêt");
-    update_interval: 1ever
+    update_interval: never
     entity_category: diagnostic
     web_server:
       sorting_group_id: sorting_group_mode0

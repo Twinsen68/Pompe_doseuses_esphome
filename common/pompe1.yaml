@@ -1816,10 +1816,10 @@ interval:
   - interval: 60s
     then:
       - lambda: |-
-          // Vérification uniquement si la pompe est activée
+          # Vérification uniquement si la pompe est activée
           if (!id(pump1_enabled)) return;
 
-          // Récupération de l’heure actuelle
+          # Récupération de l’heure actuelle
           auto now = id(my_time).now();
           if (id(pump1_test_mode)) {
             now.minute = (int)((id(uptime_sensor).state / 2)) % 60;

@@ -1636,11 +1636,6 @@ script:
       - delay: 10ms
       - switch.turn_off: pump1_priming_switch
 
-interval:
-  - interval: 60s
-    then:
-      - lambda: |-
-          // Vérification uniquement si la pompe est activée
           if (!id(pump1_enabled)) return;
 
           // Récupération de l’heure actuelle

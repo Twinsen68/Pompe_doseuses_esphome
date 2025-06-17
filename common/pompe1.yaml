@@ -1579,7 +1579,13 @@ script:
                         id(pump1_minute_dose_3_quantity) +
                         id(pump1_minute_dose_4_quantity) +
                         id(pump1_minute_dose_5_quantity) +
-                        id(pump1_minute_dose_6_quantity);
+                        id(pump1_minute_dose_6_quantity) +
+                        id(pump1_minute_dose_7_quantity) +
+                        id(pump1_minute_dose_8_quantity) +
+                        id(pump1_minute_dose_9_quantity) +
+                        id(pump1_minute_dose_10_quantity) +
+                        id(pump1_minute_dose_11_quantity) +
+                        id(pump1_minute_dose_12_quantity);
           id(pump1_daily_quantity_computed) = total;
           ESP_LOGD("pump", "Recalcul immédiat du volume total : %.1f ml", total);
   - id: priming_pump1_steps
@@ -1608,11 +1614,10 @@ script:
           ESP_LOGI("pump", "✅ Calibration terminée.");
       - delay: 10ms
       - switch.turn_off: pump1_start_calibration_switch
-
-#-------------------------------------
-# SCRIPT D'AMORÇAGE : vitesse rapide
-#-------------------------------------
-  - id: priming_pump1_steps
+  #-------------------------------------
+  # SCRIPT D'AMORÇAGE : vitesse rapide
+  #-------------------------------------
+  - id: priming_pump1_steps_fast
     mode: restart
     then:
       - lambda: |-

@@ -1275,7 +1275,7 @@ number:
 
     web_server:
       sorting_group_id: sorting_group_mode4
-      # Minuteur 3
+# Minuteur 3
   - platform: template
     name: "Minuteur Dose 3 - Hour"
     id: pump1_minute_dose_3_hour_num
@@ -1325,7 +1325,7 @@ number:
       - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
-      # Minuteur 4
+# Minuteur 4
   - platform: template
     name: "Minuteur Dose 4 - Hour"
     id: pump1_minute_dose_4_hour_num
@@ -1375,7 +1375,7 @@ number:
       - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
-      # Minuteur 5
+# Minuteur 5
   - platform: template
     name: "Minuteur Dose 5 - Hour"
     id: pump1_minute_dose_5_hour_num
@@ -1425,7 +1425,7 @@ number:
       - script.execute: refresh_daily_quantity_sensor
     web_server:
       sorting_group_id: sorting_group_mode4
-      # Minuteur 6
+# Minuteur 6
   - platform: template
     name: "Minuteur Dose 6 - Hour"
     id: pump1_minute_dose_6_hour_num

@@ -1549,7 +1549,7 @@ script:
           ESP_LOGI("pump", "⚙️ Début distribution : %d pas", id(pump1_steps_to_run));
       - stepper.set_target:
           id: pump1_stepper
-          target: !lambda 'return id(pump1_stepper).current_position + id(pump1_steps_to_run);'
+          target: !lambda 'return id(pump1_stepper).current_position + id(pump1_steps_to_run;'
       - delay: !lambda 'return (id(pump1_steps_to_run) * 2) / 1000;'
       # - stepper.deenergize: pump1_stepper
       - lambda: |-
@@ -1635,6 +1635,68 @@ script:
           ESP_LOGI("pump", "✅ Amorçage terminé.");
       - delay: 10ms
       - switch.turn_off: pump1_priming_switch
+
+interval:
+  - interval: 60s
+    then:
+      - lambda: |-
+          // Vérification uniquement si la pompe est activée
+          if (!id(pump1_enabled)) return;
+
+          // Récupération de l’heure actuelle
+          auto now = id(my_time).now();
+          if (id(pump1_test_mode)) {
+            now.minute = (int)((id(uptime_sensor).state / 2)) % 60;
+            now.hour = (int)((id(uptime_sensor).state / 120)) % 24;
+          }
+          int current_hour = now.hour;
+          int current_minute = now.minute;
+          // Mode de distribution
+          int mode = id(pump1_distribution_mode);
+
+          // 🔹 Log de debug : mode + heure
+          ESP_LOGD("pump", "Mode actif : %d - Heure actuelle : %02d:%02d", mode, current_hour, current_minute);
+
+          // --- Mode 0 : Dose unique ---
+          if (mode == 0) {
+            // Dose unique à l'heure définie
+            if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute)) {
+              static int last_dose_day = -1;
+              if (now.day_of_month != last_dose_day) {
+                last_dose_day = now.day_of_month;
+                id(pump1_dose_ml) = id(pump1_daily_quantity);
+                ESP_LOGD("pump", "Dose unique déclenchée: %.2f ml", id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
+                if (id(pump1_test_mode)) {
+                  ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 0 : %.2f ml", id(pump1_dose_ml));
+                  id(pump1_distributed_today) += id(pump1_dose_ml);
+                } else {
+                  id(run_pump1_steps).execute();
+                }
+              }  // end if (now.day_of_month != last_dose_day)
+            }    // end if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute))
+          }      // end if (mode == 0)
+          // --- Mode 1 : 24 doses par jour (chaque heure) ---
+          else if (mode == 1) {
+            if (current_minute == id(pump1_dose_offset_minute)) {
+              static int last_dose_hour = -1;
+              if (current_hour != last_dose_hour) {
+                last_dose_hour = current_hour;
+                id(pump1_dose_ml) = id(pump1_daily_quantity) / 24.0;
+                ESP_LOGD("pump", "Dose horaire (24 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
+                if (id(pump1_test_mode)) {
+                  ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 1 à %dh : %.2f ml", current_hour, id(pump1_dose_ml));
+                  id(pump1_distributed_today) += id(pump1_dose_ml);
+                } else {
+                  id(run_pump1_steps).execute();
+                }
+              }
+            }
+          // --- Mode 2 : 12 doses par jour (toutes les 2 heures) ---
+          } else if (mode == 2) {
+            if (current_minute == id(pump1_dose_offset_minute) && (current_hour % 2 == 0)) {
+              static int last_dose_hour = -1;
 #####################################
 #            SWITCHES               #
 #####################################
@@ -1756,67 +1818,12 @@ button:
 #####################################
 #        AUTOMATISMES (SCHEDULE)     #
 #####################################
-interval:
-  - interval: 60s
+  - interval: 24h
     then:
       - lambda: |-
-          // Vérification uniquement si la pompe est activée
-          if (!id(pump1_enabled)) return;
-
-          // Récupération de l’heure actuelle
-          auto now = id(my_time).now();
-          if (id(pump1_test_mode)) {
-            now.minute = (int)((id(uptime_sensor).state / 2)) % 60;
-            now.hour = (int)((id(uptime_sensor).state / 120)) % 24;
-          }
-          int current_hour = now.hour;
-          int current_minute = now.minute;
-          // Mode de distribution
-          int mode = id(pump1_distribution_mode);
-
-          // 🔹 Log de debug : mode + heure
-          ESP_LOGD("pump", "Mode actif : %d - Heure actuelle : %02d:%02d", mode, current_hour, current_minute);
-
-          // --- Mode 0 : Dose unique ---
-          if (mode == 0) {
-            // Dose unique à l'heure définie
-            if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute)) {
-              static int last_dose_day = -1;
-              if (now.day_of_month != last_dose_day) {
-                last_dose_day = now.day_of_month;
-                id(pump1_dose_ml) = id(pump1_daily_quantity);
-                ESP_LOGD("pump", "Dose unique déclenchée: %.2f ml", id(pump1_dose_ml));
-                id(pump1_distributed_today) += id(pump1_dose_ml);
-                if (id(pump1_test_mode)) {
-                  ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 0 : %.2f ml", id(pump1_dose_ml));
-                  id(pump1_distributed_today) += id(pump1_dose_ml);
-                } else {
-                  id(run_pump1_steps).execute();
-                }
-              }  // end if (now.day_of_month != last_dose_day)
-            }    // end if (current_hour == id(pump1_dose_time_hour) && current_minute == id(pump1_dose_time_minute))
-          }      // end if (mode == 0)
-          // --- Mode 1 : 24 doses par jour (chaque heure) ---
-          else if (mode == 1) {
-            if (current_minute == id(pump1_dose_offset_minute)) {
-              static int last_dose_hour = -1;
-              if (current_hour != last_dose_hour) {
-                last_dose_hour = current_hour;
-                id(pump1_dose_ml) = id(pump1_daily_quantity) / 24.0;
-                ESP_LOGD("pump", "Dose horaire (24 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
-                id(pump1_distributed_today) += id(pump1_dose_ml);
-                if (id(pump1_test_mode)) {
-                  ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 1 à %dh : %.2f ml", current_hour, id(pump1_dose_ml));
-                  id(pump1_distributed_today) += id(pump1_dose_ml);
-                } else {
-                  id(run_pump1_steps).execute();
-                }
-              }
-            }
-          // --- Mode 2 : 12 doses par jour (toutes les 2 heures) ---
-          } else if (mode == 2) {
-            if (current_minute == id(pump1_dose_offset_minute) && (current_hour % 2 == 0)) {
-              static int last_dose_hour = -1;
+          id(pump1_used_today) = 0.0;
+          id(pump1_distributed_today) = 0.0;
+          ESP_LOGI("pump", "Remise à zéro des volumes journaliers.");
   - interval: 24h
     then:
       - lambda: |-

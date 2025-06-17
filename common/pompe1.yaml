@@ -618,28 +618,6 @@ stepper:
     max_speed: 500 steps/s
     acceleration: 300 steps/s^2
     sleep_when_done: true
-#-------------------------------------
-# SCRIPT D'AMORÇAGE : vitesse rapide
-#-------------------------------------
-script:
-  - id: priming_pump1_steps
-    mode: restart
-    then:
-      - lambda: |-
-          id(pump1_stepper_speed_saved) = id(pump1_stepper).get_max_speed();
-          id(pump1_stepper).set_max_speed(1500);
-      - stepper.set_target:
-          id: pump1_stepper
-          target: !lambda 'return id(pump1_stepper).current_position + id(pump1_priming_steps_remaining);'
-      - wait_until:
-          condition:
-            lambda: 'return id(pump1_stepper).current_position == (id(pump1_stepper).current_position + id(pump1_priming_steps_remaining));'
-      - lambda: |-
-          id(pump1_stepper).set_max_speed(id(pump1_stepper_speed_saved));
-          id(pump1_status).publish_state("Prêt");
-          ESP_LOGI("pump", "✅ Amorçage terminé.");
-      - delay: 10ms
-      - switch.turn_off: pump1_priming_switch
 
 ################################################
 #     COMPOSANTS NUMBER & SELECT (UI)          #
@@ -1630,6 +1608,28 @@ script:
           ESP_LOGI("pump", "✅ Calibration terminée.");
       - delay: 10ms
       - switch.turn_off: pump1_start_calibration_switch
+
+#-------------------------------------
+# SCRIPT D'AMORÇAGE : vitesse rapide
+#-------------------------------------
+  - id: priming_pump1_steps
+    mode: restart
+    then:
+      - lambda: |-
+          id(pump1_stepper_speed_saved) = id(pump1_stepper).get_max_speed();
+          id(pump1_stepper).set_max_speed(1500);
+      - stepper.set_target:
+          id: pump1_stepper
+          target: !lambda 'return id(pump1_stepper).current_position + id(pump1_priming_steps_remaining);'
+      - wait_until:
+          condition:
+            lambda: 'return id(pump1_stepper).current_position == (id(pump1_stepper).current_position + id(pump1_priming_steps_remaining));'
+      - lambda: |-
+          id(pump1_stepper).set_max_speed(id(pump1_stepper_speed_saved));
+          id(pump1_status).publish_state("Prêt");
+          ESP_LOGI("pump", "✅ Amorçage terminé.");
+      - delay: 10ms
+      - switch.turn_off: pump1_priming_switch
 #####################################
 #            SWITCHES               #
 #####################################

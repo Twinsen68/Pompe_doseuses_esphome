@@ -1874,3 +1874,27 @@ interval:
           else if (mode == 2) {
             if (current_minute == id(pump1_dose_offset_minute) && (current_hour % 2 == 0)) {
               static int last_dose_hour = -1;
+              if (current_hour != last_dose_hour) {
+                last_dose_hour = current_hour;
+                id(pump1_dose_ml) = id(pump1_daily_quantity) / 12.0;
+                ESP_LOGD("pump", "Dose toutes les 2h (12 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
+                id(pump1_distributed_today) += id(pump1_dose_ml);
+                if (id(pump1_test_mode)) {
+                  ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 2 à %dh : %.2f ml", current_hour, id(pump1_dose_ml));
+                  id(pump1_distributed_today) += id(pump1_dose_ml);
+                } else {
+                  id(run_pump1_steps).execute();
+                }
+              }
+            }
+          }
+          // --- Mode 3 : Périodes personnalisées ---
+          else if (mode == 3) {
+            // Pour chaque période active, vérifier si l'heure/minute actuelle correspond à une dose programmée
+            // (À compléter selon la logique de distribution des périodes personnalisées)
+          }
+          // --- Mode 4 : Minuteur (doses individuelles programmées) ---
+          else if (mode == 4) {
+            // Pour chaque minuterie programmée, vérifier si l'heure/minute actuelle correspond à une dose
+            // (À compléter selon la logique de distribution du mode minuterie)
+          }

@@ -1,0 +1,5 @@
+python3 -m venv venv
+source venv/bin/activate
+pip install esphome
+rm -rf /Users/raph/Documents/GitHub/Twinsen68/Pompe_doseuses_esphome/.esphome
+esphome run /Users/raph/Documents/GitHub/Twinsen68/Pompe_doseuses_esphome/install.yaml

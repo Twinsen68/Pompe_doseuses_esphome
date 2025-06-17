@@ -1549,7 +1549,7 @@ script:
           ESP_LOGI("pump", "⚙️ Début distribution : %d pas", id(pump1_steps_to_run));
       - stepper.set_target:
           id: pump1_stepper
-          target: !lambda 'return id(pump1_stepper).current_position + id(pump1_steps_to_run;'
+          target: !lambda 'return id(pump1_stepper).current_position + id(pump1_steps_to_run);'
       - delay: !lambda 'return (id(pump1_steps_to_run) * 2) / 1000;'
       # - stepper.deenergize: pump1_stepper
       - lambda: |-

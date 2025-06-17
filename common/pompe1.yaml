@@ -1688,8 +1688,9 @@ script:
                 }
               }
             }
+          }
           // --- Mode 2 : 12 doses par jour (toutes les 2 heures) ---
-          } else if (mode == 2) {
+          else if (mode == 2) {
             if (current_minute == id(pump1_dose_offset_minute) && (current_hour % 2 == 0)) {
               static int last_dose_hour = -1;
 #####################################

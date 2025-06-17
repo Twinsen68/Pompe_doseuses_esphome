@@ -1817,6 +1817,13 @@ interval:
           } else if (mode == 2) {
             if (current_minute == id(pump1_dose_offset_minute) && (current_hour % 2 == 0)) {
               static int last_dose_hour = -1;
+  - interval: 24h
+    then:
+      - lambda: |-
+          // Réinitialisation quotidienne des volumes distribués
+          id(pump1_used_today) = 0.0;
+          id(pump1_distributed_today) = 0.0;
+          ESP_LOGD("pump", "Remise à zéro quotidienne des volumes distribués.");
               if (current_hour != last_dose_hour) {
                 last_dose_hour = current_hour;
                 id(pump1_dose_ml) = id(pump1_daily_quantity) / 12.0;

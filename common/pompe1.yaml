@@ -1621,7 +1621,7 @@ script:
     mode: restart
     then:
       - lambda: |-
-          id(pump1_stepper_speed_saved) = id(pump1_stepper).get_max_speed();
+          id(pump1_stepper_speed_saved) = 500;
           id(pump1_stepper).set_max_speed(1500);
       - stepper.set_target:
           id: pump1_stepper
@@ -1693,6 +1693,20 @@ script:
             else if (mode == 2) {
               if (current_minute == id(pump1_dose_offset_minute) && (current_hour % 2 == 0)) {
                 static int last_dose_hour = -1;
+                if (current_hour != last_dose_hour) {
+                  last_dose_hour = current_hour;
+                  id(pump1_dose_ml) = id(pump1_daily_quantity) / 12.0;
+                  ESP_LOGD("pump", "Dose toutes les 2h (12 doses) déclenchée pour %dh: %.2f ml", current_hour, id(pump1_dose_ml));
+                  id(pump1_distributed_today) += id(pump1_dose_ml);
+                  if (id(pump1_test_mode)) {
+                    ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 2 à %dh : %.2f ml", current_hour, id(pump1_dose_ml));
+                    id(pump1_distributed_today) += id(pump1_dose_ml);
+                  } else {
+                    id(run_pump1_steps).execute();
+                  }
+                }
+              }
+            }
 #####################################
 #            SWITCHES               #
 #####################################

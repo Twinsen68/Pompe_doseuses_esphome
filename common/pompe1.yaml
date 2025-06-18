@@ -1635,8 +1635,8 @@ script:
           ESP_LOGI("pump", "✅ Amorçage terminé.");
       - delay: 10ms
       - switch.turn_off: pump1_priming_switch
-
-          if (!id(pump1_enabled)) return;
+      - lambda: |-
+            if (!id(pump1_enabled)) return;
 
           // Récupération de l’heure actuelle
           auto now = id(my_time).now();

@@ -12,6 +12,8 @@ Ce projet propose une configuration ESPHome pour piloter **une pompe doseuse** m
   Utilisation de switches template pour déclencher manuellement les scripts de contrôle.
 - **Configuration flexible :**
   Possibilité d’ajuster les pins, le nombre de pas et les délais selon vos besoins.
+- **Réglage dynamique de la vitesse :**
+  Choisissez entre **Lent**, **Moyen** ou **Rapide** grâce à un sélecteur intégré.
 
 ## Matériel Requis
 
@@ -372,6 +374,10 @@ Un bouton permet d'injecter manuellement la quantité configurée :
 - **Bouton** : `Doser manuellement Pompe 1`
 - **Fonctionnement** : envoie immédiatement une dose égale au volume quotidien paramétré.
 - **Précaution** : la pompe doit être activée et aucune autre dose manuelle ne doit être en cours.
+
+### Réglage de la vitesse
+Un sélecteur "Pompe 1 - Vitesse" est maintenant disponible dans ESPHome et Home Assistant.
+Il permet de choisir entre **Lent**, **Moyen** ou **Rapide** pour adapter la vitesse du moteur pas à pas selon vos besoins.
 
 ### Mode Test / Simulation
 Pour valider votre configuration sans consommer de produit, activez le switch `Mode Test / Simulation`.

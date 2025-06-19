@@ -452,6 +452,16 @@ globals:
     type: int
     restore_value: false
     initial_value: '500'
+  # Vitesse actuellement appliquée au moteur
+  - id: pump1_current_speed
+    type: int
+    restore_value: false
+    initial_value: '500'
+  # Position cible utilisée pour l'amorçage rapide
+  - id: pump1_fast_target
+    type: int
+    restore_value: false
+    initial_value: '0'
 #####################################
 #         sensor         #
 #####################################
@@ -1547,10 +1557,17 @@ script:
           id(pump1_manual_dose_active) = true;
           id(pump1_status).publish_state("Distribution en cours…");
           ESP_LOGI("pump", "⚙️ Début distribution : %d pas", id(pump1_steps_to_run));
+      - lambda: |-
+          int lvl = id(pump1_speed_level);
+          int speed = 500;
+          if (lvl == 0) speed = 300;
+          else if (lvl == 2) speed = 700;
+          id(pump1_stepper).set_max_speed(speed);
+          id(pump1_current_speed) = speed;
       - stepper.set_target:
           id: pump1_stepper
           target: !lambda 'return id(pump1_stepper).current_position + id(pump1_steps_to_run);'
-      - delay: !lambda 'return (id(pump1_steps_to_run) * 2) / 1000;'
+      - delay: !lambda 'return (id(pump1_steps_to_run) * 1.0f) / id(pump1_current_speed);'
       # - stepper.deenergize: pump1_stepper
       - lambda: |-
           char buffer[40];
@@ -1591,10 +1608,17 @@ script:
   - id: priming_pump1_steps
     mode: restart
     then:
+      - lambda: |-
+          int lvl = id(pump1_speed_level);
+          int speed = 500;
+          if (lvl == 0) speed = 300;
+          else if (lvl == 2) speed = 700;
+          id(pump1_stepper).set_max_speed(speed);
+          id(pump1_current_speed) = speed;
       - stepper.set_target:
           id: pump1_stepper
           target: !lambda 'return id(pump1_stepper).current_position + id(pump1_priming_steps_remaining);'
-      - delay: !lambda 'return (id(pump1_priming_steps_remaining) * 2) / 1000;'
+      - delay: !lambda 'return (id(pump1_priming_steps_remaining) * 1.0f) / id(pump1_current_speed);'
       # - stepper.deenergize: pump1_stepper
       - lambda: |-
           id(pump1_status).publish_state("Prêt");
@@ -1604,10 +1628,17 @@ script:
   - id: calibration_pump1_steps
     mode: restart
     then:
+      - lambda: |-
+          int lvl = id(pump1_speed_level);
+          int speed = 500;
+          if (lvl == 0) speed = 300;
+          else if (lvl == 2) speed = 700;
+          id(pump1_stepper).set_max_speed(speed);
+          id(pump1_current_speed) = speed;
       - stepper.set_target:
           id: pump1_stepper
           target: !lambda 'return id(pump1_stepper).current_position + id(pump1_calibration_steps_remaining);'
-      - delay: !lambda 'return (id(pump1_calibration_steps_remaining) * 2) / 1000;'
+      - delay: !lambda 'return (id(pump1_calibration_steps_remaining) * 1.0f) / id(pump1_current_speed);'
       # - stepper.deenergize: pump1_stepper
       - lambda: |-
           id(pump1_status).publish_state("Prêt");
@@ -1621,16 +1652,18 @@ script:
     mode: restart
     then:
       - lambda: |-
-          id(pump1_stepper_speed_saved) = 500;
+          id(pump1_stepper_speed_saved) = id(pump1_current_speed);
+          id(pump1_fast_target) = id(pump1_stepper).current_position + id(pump1_priming_steps_remaining);
           id(pump1_stepper).set_max_speed(1500);
       - stepper.set_target:
           id: pump1_stepper
-          target: !lambda 'return id(pump1_stepper).current_position + id(pump1_priming_steps_remaining);'
+          target: !lambda 'return id(pump1_fast_target);'
       - wait_until:
           condition:
-            lambda: 'return id(pump1_stepper).current_position == (id(pump1_stepper).current_position + id(pump1_priming_steps_remaining));'
+            lambda: 'return id(pump1_stepper).current_position >= id(pump1_fast_target);'
       - lambda: |-
           id(pump1_stepper).set_max_speed(id(pump1_stepper_speed_saved));
+          id(pump1_current_speed) = id(pump1_stepper_speed_saved);
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Amorçage terminé.");
       - delay: 10ms

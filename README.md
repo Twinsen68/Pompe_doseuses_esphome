@@ -45,7 +45,8 @@ Le fichier de configuration inclut :
   Configuration des sorties pour piloter les bobines.
 - **Scripts de contrôle :**
   Chaque script exécute la séquence de 8 demi-pas pour actionner le moteur (avec 512 demi-pas par défaut).
-  Pour éviter un blocage quand le nombre de pas est très élevé, la distribution est découpée en petits scripts asynchrones exécutés par tranches d'une trentaine de pas.
+  Pour éviter un blocage quand le nombre de pas est très élevé, la distribution est désormais découpée en petites tranches exécutées récursivement.
+  Chaque tranche met à jour les composants avec `component.update` afin de conserver l'état `pump1_manual_dose_active` cohérent durant toute l'exécution.
 - **Switches Template :**
   Permettent de lancer les scripts via Home Assistant.
 

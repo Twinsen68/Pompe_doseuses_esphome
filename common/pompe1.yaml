@@ -1937,11 +1937,95 @@ interval:
           }
           // --- Mode 3 : Périodes personnalisées ---
           else if (mode == 3) {
-            // Pour chaque période active, vérifier si l'heure/minute actuelle correspond à une dose programmée
-            // (À compléter selon la logique de distribution des périodes personnalisées)
+            const int periods = id(pump1_active_periods);
+            int start_hours[6]  = {id(pump1_period1_start_hour), id(pump1_period2_start_hour),
+                                   id(pump1_period3_start_hour), id(pump1_period4_start_hour),
+                                   id(pump1_period5_start_hour), id(pump1_period6_start_hour)};
+            int start_minutes[6] = {id(pump1_period1_start_minute), id(pump1_period2_start_minute),
+                                   id(pump1_period3_start_minute), id(pump1_period4_start_minute),
+                                   id(pump1_period5_start_minute), id(pump1_period6_start_minute)};
+            int end_hours[6]   = {id(pump1_period1_end_hour), id(pump1_period2_end_hour),
+                                   id(pump1_period3_end_hour), id(pump1_period4_end_hour),
+                                   id(pump1_period5_end_hour), id(pump1_period6_end_hour)};
+            int end_minutes[6] = {id(pump1_period1_end_minute), id(pump1_period2_end_minute),
+                                   id(pump1_period3_end_minute), id(pump1_period4_end_minute),
+                                   id(pump1_period5_end_minute), id(pump1_period6_end_minute)};
+            int doses[6]       = {id(pump1_period1_doses), id(pump1_period2_doses),
+                                   id(pump1_period3_doses), id(pump1_period4_doses),
+                                   id(pump1_period5_doses), id(pump1_period6_doses)};
+            bool enabled[6]    = {id(pump1_period1_enabled), id(pump1_period2_enabled),
+                                   id(pump1_period3_enabled), id(pump1_period4_enabled),
+                                   id(pump1_period5_enabled), id(pump1_period6_enabled)};
+            static int last_minute[6] = {-1, -1, -1, -1, -1, -1};
+
+            int now_min = current_hour * 60 + current_minute;
+
+            float total_doses = 0;
+            for (int i = 0; i < periods && i < 6; i++) {
+              if (enabled[i]) total_doses += doses[i];
+            }
+            if (total_doses <= 0) return;
+
+            float ml_per_dose = id(pump1_daily_quantity) / total_doses;
+
+            for (int i = 0; i < periods && i < 6; i++) {
+              if (!enabled[i]) continue;
+              int start = start_hours[i] * 60 + start_minutes[i];
+              int end = end_hours[i] * 60 + end_minutes[i];
+              int n = doses[i];
+              if (n <= 0 || end <= start) continue;
+              if (now_min >= start && now_min <= end) {
+                int interval = (end - start) / n;
+                if (interval <= 0) interval = 1;
+                if (((now_min - start) % interval) == 0 && last_minute[i] != now_min) {
+                  last_minute[i] = now_min;
+                  id(pump1_dose_ml) = ml_per_dose;
+                  ESP_LOGD("pump", "Dose période %d à %02d:%02d : %.2f ml", i + 1, current_hour, current_minute, id(pump1_dose_ml));
+                  if (id(pump1_test_mode)) {
+                    ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 3 période %d", i + 1);
+                    id(pump1_distributed_today) += id(pump1_dose_ml);
+                  } else {
+                    id(run_pump1_steps).execute();
+                  }
+                }
+              }
+            }
           }
           // --- Mode 4 : Minuteur (doses individuelles programmées) ---
           else if (mode == 4) {
-            // Pour chaque minuterie programmée, vérifier si l'heure/minute actuelle correspond à une dose
-            // (À compléter selon la logique de distribution du mode minuterie)
+            int hours[12]    = {id(pump1_minute_dose_1_hour),  id(pump1_minute_dose_2_hour),
+                                id(pump1_minute_dose_3_hour),  id(pump1_minute_dose_4_hour),
+                                id(pump1_minute_dose_5_hour),  id(pump1_minute_dose_6_hour),
+                                id(pump1_minute_dose_7_hour),  id(pump1_minute_dose_8_hour),
+                                id(pump1_minute_dose_9_hour),  id(pump1_minute_dose_10_hour),
+                                id(pump1_minute_dose_11_hour), id(pump1_minute_dose_12_hour)};
+            int minutes[12]  = {id(pump1_minute_dose_1_minute),  id(pump1_minute_dose_2_minute),
+                                id(pump1_minute_dose_3_minute),  id(pump1_minute_dose_4_minute),
+                                id(pump1_minute_dose_5_minute),  id(pump1_minute_dose_6_minute),
+                                id(pump1_minute_dose_7_minute),  id(pump1_minute_dose_8_minute),
+                                id(pump1_minute_dose_9_minute),  id(pump1_minute_dose_10_minute),
+                                id(pump1_minute_dose_11_minute), id(pump1_minute_dose_12_minute)};
+            float qty[12]    = {id(pump1_minute_dose_1_quantity),  id(pump1_minute_dose_2_quantity),
+                                id(pump1_minute_dose_3_quantity),  id(pump1_minute_dose_4_quantity),
+                                id(pump1_minute_dose_5_quantity),  id(pump1_minute_dose_6_quantity),
+                                id(pump1_minute_dose_7_quantity),  id(pump1_minute_dose_8_quantity),
+                                id(pump1_minute_dose_9_quantity),  id(pump1_minute_dose_10_quantity),
+                                id(pump1_minute_dose_11_quantity), id(pump1_minute_dose_12_quantity)};
+            static int last_day[12] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+
+            for (int i = 0; i < 12; i++) {
+              if (current_hour == hours[i] && current_minute == minutes[i] && qty[i] > 0) {
+                if (now.day_of_month != last_day[i]) {
+                  last_day[i] = now.day_of_month;
+                  id(pump1_dose_ml) = qty[i];
+                  ESP_LOGD("pump", "Minuteur dose %d: %.2f ml", i + 1, id(pump1_dose_ml));
+                  if (id(pump1_test_mode)) {
+                    ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 4 minuteur %d", i + 1);
+                    id(pump1_distributed_today) += id(pump1_dose_ml);
+                  } else {
+                    id(run_pump1_steps).execute();
+                  }
+                }
+              }
+            }
           }

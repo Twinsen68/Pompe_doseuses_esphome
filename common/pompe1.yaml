@@ -1547,6 +1547,12 @@ script:
     mode: restart
     then:
       - lambda: |-
+          if (id(pump1_volume_remaining) <= 0) {
+            ESP_LOGW("pump", "⚠️ Volume insuffisant, distribution annulée.");
+            id(pump1_status).publish_state("Réservoir vide");
+            id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+            return;
+          }
           if (id(pump1_manual_dose_active)) {
             ESP_LOGW("pump", "⚠️ Une distribution est déjà en cours, exécution ignorée.");
             return;

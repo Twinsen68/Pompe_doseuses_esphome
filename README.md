@@ -307,19 +307,19 @@ Cette option permet de mieux identifier les pompes et leurs fonctions spécifiqu
 
 3. **Validation et Suivi**
    - Consultez les logs ESPHome (`Logs en direct`) pour vérifier l'exécution des doses.
-   - Activez `Valider Calibration Pompe X` après une calibration pour mettre à jour les paramètres internes.
+   - Appuyez sur le bouton `Valider Calibration Pompe X` après une calibration pour mettre à jour les paramètres internes.
    - Vérifiez régulièrement la précision des doses et ajustez la calibration si nécessaire.
 
 ### Calibration et enregistrement du facteur
 
 Lors de la calibration, vous pouvez mesurer le volume réellement délivré (ex. dans une seringue graduée), puis saisir cette valeur dans le champ **"Pompe X - Volume mesuré (ml)"**.
 
-Ensuite, cliquez sur **"Valider Calibration Pompe X"** pour enregistrer le nouveau facteur (ml/pas), automatiquement calculé.
+Ensuite, appuyez sur **"Valider Calibration Pompe X"** pour enregistrer le nouveau facteur (ml/pas), automatiquement calculé.
 
 Ce facteur sera utilisé dans tous les modes pour déterminer la quantité à distribuer.
 
-> ⚠️ Le lancement de la calibration est bloqué si les switches "Amorcer" ou "Valider Calibration" sont actifs.
-> Ces actions sont exclusives afin d’éviter les conflits moteurs. Chaque switch revient automatiquement à l'état OFF une fois son action terminée.
+> ⚠️ Le lancement de la calibration est bloqué si le switch "Amorcer" est actif.
+> Ces actions sont exclusives afin d’éviter les conflits moteurs.
 
 ### Conseils d'Utilisation
 - Pour garantir la fiabilité du système, testez chaque mode avant de l'appliquer en condition réelle.

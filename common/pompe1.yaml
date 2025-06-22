@@ -1875,6 +1875,24 @@ button:
     web_server:
       sorting_group_id: sorting_group_mode0
   - platform: template
+    name: "Stopper distribution Pompe 1"
+    id: pump1_stop_button
+    entity_category: diagnostic
+    icon: mdi:stop-circle
+    on_press:
+      then:
+        - lambda: |-
+            if (!id(pump1_manual_dose_active)) {
+              ESP_LOGW("pump", "Aucune distribution en cours.");
+              return;
+            }
+            id(pump1_steps_remaining) = 0;
+            id(pump1_manual_dose_active) = false;
+            id(pump1_status).publish_state("Interrompu");
+            ESP_LOGI("pump", "⛔ Distribution arrêtée.");
+    web_server:
+      sorting_group_id: sorting_group_mode0
+  - platform: template
     name: "Remplir réservoir Pompe 1"
     id: pump1_refill_button
     on_press:

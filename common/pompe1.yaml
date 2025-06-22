@@ -447,6 +447,11 @@ globals:
     type: int
     restore_value: false
     initial_value: '0'
+  # Position cible du mouvement en cours
+  - id: pump1_chunk_target
+    type: int
+    restore_value: false
+    initial_value: '0'
   - id: pump1_priming_steps_remaining
     type: int
     restore_value: false
@@ -1607,10 +1612,13 @@ script:
           id(pump1_current_speed) = speed;
           id(pump1_current_chunk) = chunk;
           id(pump1_steps_remaining) -= chunk;
+          id(pump1_chunk_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
       - stepper.set_target:
           id: pump1_stepper
-          target: !lambda 'return id(pump1_stepper).current_position + id(pump1_current_chunk);'
-      - delay: !lambda 'return (id(pump1_current_chunk) * 1.0f) / id(pump1_current_speed);'
+          target: !lambda 'return id(pump1_chunk_target);'
+      - wait_until:
+          condition:
+            lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
       - component.update: pump1_volume_remaining_sensor
       - script.execute: run_pump1_step_chunk
   - id: refresh_daily_quantity_sensor

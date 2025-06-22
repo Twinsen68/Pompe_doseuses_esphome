@@ -1677,7 +1677,6 @@ script:
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Calibration terminée.");
       - delay: 10ms
-      - switch.turn_off: pump1_start_calibration_switch
   #-------------------------------------
   # SCRIPT D'AMORÇAGE : vitesse rapide
   #-------------------------------------
@@ -1813,35 +1812,6 @@ switch:
       - switch.turn_off: pump1_priming_switch
     web_server:
       sorting_group_id: sorting_group_calibration
-  # Bouton pour lancer la calibration
-  - platform: template
-    name: "Lancer Calibration Pompe 1"
-    id: pump1_start_calibration_switch
-    entity_category: diagnostic
-    lambda: return false;
-    turn_on_action:
-      - lambda: |-
-          ESP_LOGD("pump", "Lancement de la calibration (mode asynchrone)...");
-          id(pump1_status).publish_state("Calibration en cours…");
-          // Lance la calibration sur le nombre de pas configuré
-          id(pump1_calibration_steps_remaining) = id(pump1_calibration_steps);
-      - script.execute: calibration_pump1_steps
-    web_server:
-      sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
-  # Bouton pour valider la calibration
-  - platform: template
-    name: "Valider Calibration Pompe 1"
-    id: pump1_validate_calibration_switch
-    entity_category: diagnostic
-    lambda: return false;
-    turn_on_action:
-      - lambda: |-
-          id(pump1_calibration_factor) = id(pump1_calibration_value) / id(pump1_calibration_steps);
-          id(pump1_last_calibration) = id(my_time).now().timestamp;
-          ESP_LOGW("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
-      - switch.turn_off: pump1_validate_calibration_switch
-    web_server:
-      sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
   # Mode de test
   - platform: template
     name: "🧪 Mode Test / Simulation"
@@ -1861,6 +1831,34 @@ switch:
       sorting_group_id: sorting_group_general
 
 button:
+  # Bouton pour lancer la calibration
+  - platform: template
+    name: "Lancer Calibration Pompe 1"
+    id: pump1_start_calibration_button
+    entity_category: diagnostic
+    on_press:
+      then:
+        - lambda: |-
+            ESP_LOGD("pump", "Lancement de la calibration (mode asynchrone)...");
+            id(pump1_status).publish_state("Calibration en cours…");
+            // Lance la calibration sur le nombre de pas configuré
+            id(pump1_calibration_steps_remaining) = id(pump1_calibration_steps);
+        - script.execute: calibration_pump1_steps
+    web_server:
+      sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
+  # Bouton pour valider la calibration
+  - platform: template
+    name: "Valider Calibration Pompe 1"
+    id: pump1_validate_calibration_button
+    entity_category: diagnostic
+    on_press:
+      then:
+        - lambda: |-
+            id(pump1_calibration_factor) = id(pump1_calibration_value) / id(pump1_calibration_steps);
+            id(pump1_last_calibration) = id(my_time).now().timestamp;
+            ESP_LOGW("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
+    web_server:
+      sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
   - platform: template
     name: "Doser manuellement Pompe 1"
     id: pump1_manual_dose_button

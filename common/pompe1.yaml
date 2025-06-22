@@ -470,6 +470,11 @@ globals:
     type: int
     restore_value: false
     initial_value: '0'
+  # Position cible utilisée pour la calibration
+  - id: pump1_calibration_target
+    type: int
+    restore_value: false
+    initial_value: '0'
 #####################################
 #         sensor         #
 #####################################
@@ -1660,10 +1665,13 @@ script:
           else if (lvl == 2) speed = 700;
           id(pump1_stepper).set_max_speed(speed);
           id(pump1_current_speed) = speed;
+          id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_calibration_steps_remaining);
       - stepper.set_target:
           id: pump1_stepper
-          target: !lambda 'return id(pump1_stepper).current_position + id(pump1_calibration_steps_remaining);'
-      - delay: !lambda 'return (id(pump1_calibration_steps_remaining) * 1.0f) / id(pump1_current_speed);'
+          target: !lambda 'return id(pump1_calibration_target);'
+      - wait_until:
+          condition:
+            lambda: 'return id(pump1_stepper).current_position >= id(pump1_calibration_target);'
       # - stepper.deenergize: pump1_stepper
       - lambda: |-
           id(pump1_status).publish_state("Prêt");

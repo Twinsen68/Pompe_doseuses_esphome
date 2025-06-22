@@ -376,6 +376,12 @@ Un bouton permet d'injecter manuellement la quantité configurée :
 - **Fonctionnement** : envoie immédiatement une dose égale au volume quotidien paramétré.
 - **Précaution** : la pompe doit être activée et aucune autre dose manuelle ne doit être en cours.
 
+### Arrêt manuel
+Un bouton permet d'interrompre une distribution en cours :
+
+- **Bouton** : `Stopper distribution Pompe 1`
+- **Fonctionnement** : arrête immédiatement la séquence active et remet la pompe à l'état "Prêt".
+
 ### Réglage de la vitesse
 Un sélecteur "Pompe 1 - Vitesse" est maintenant disponible dans ESPHome et Home Assistant.
 Il permet de choisir entre **Lent**, **Moyen** ou **Rapide** pour adapter la vitesse du moteur pas à pas selon vos besoins.

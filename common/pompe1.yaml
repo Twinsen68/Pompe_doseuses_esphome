@@ -1912,6 +1912,24 @@ button:
             id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
             ESP_LOGI("pump", "Réservoir remis à %.0f ml", id(pump1_reservoir_capacity));
 
+  - platform: template
+    name: "Réinitialiser Historique Pompe 1"
+    id: pump1_reset_history_button
+    entity_category: diagnostic
+    icon: mdi:history
+    on_press:
+      then:
+        - lambda: |-
+            id(pump1_used_today) = 0.0;
+            id(pump1_distributed_today) = 0.0;
+            id(pump1_last_dose_log) = "Jamais";
+            id(pump1_used_today_sensor).publish_state(id(pump1_used_today));
+            id(pump1_distributed_today_sensor).publish_state(id(pump1_distributed_today));
+            id(pump1_last_dose_text).update();
+            ESP_LOGI("pump", "Historique pompe 1 réinitialisé.");
+    web_server:
+      sorting_group_id: sorting_group_calibration
+
 interval:
   - interval: 60s
     then:

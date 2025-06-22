@@ -1801,6 +1801,8 @@ switch:
           // Pour 5 secondes d’amorçage, calculons le nombre de pas : 5s = 5000ms / 2ms par pas = 2500 pas
           id(pump1_priming_steps_remaining) = 2500;
       - script.execute: priming_pump1_steps_fast
+      - script.wait: priming_pump1_steps_fast
+      - switch.turn_off: pump1_priming_switch
     web_server:
       sorting_group_id: sorting_group_calibration
   # Bouton pour lancer la calibration

@@ -391,5 +391,6 @@ Pour proposer des améliorations, ouvrez une [issue](https://github.com/Twinsen6
 
 ## License
 
-Ce projet est distribué sous la licence [MIT](LICENSE).
+Ce projet est distribué sous la licence [Non-Commercial](LICENSE).
+This project is distributed under the [Non-Commercial](LICENSE) license.
 

@@ -14,7 +14,7 @@ cards:
       - type: template
         icon: |2-
             {% set v = states('sensor.pompe_doseuses_esphome_pompe_1_volume_restant_ml')|float(0) %}
-            {% set cap = 1000 %}
+            {% set cap = states('number.pompe_doseuses_esphome_pompe_1_capacite_reservoir_ml')|float(1000) %}
             {% if v > cap*5/6 %} mdi:hexagon-outline
             {% elif v > cap*4/6 %} mdi:hexagon-slice-5
             {% elif v > cap*3/6 %} mdi:hexagon-slice-4

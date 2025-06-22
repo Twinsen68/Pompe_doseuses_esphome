@@ -464,12 +464,12 @@ globals:
   - id: pump1_stepper_speed_saved
     type: int
     restore_value: false
-    initial_value: '500'
+    initial_value: '700'
   # Vitesse actuellement appliquée au moteur
   - id: pump1_current_speed
     type: int
     restore_value: false
-    initial_value: '500'
+    initial_value: '700'
   # Position cible utilisée pour l'amorçage rapide
   - id: pump1_fast_target
     type: int
@@ -643,7 +643,7 @@ stepper:
     pin_b: GPIO13
     pin_c: GPIO14
     pin_d: GPIO15
-    max_speed: 500 steps/s
+    max_speed: 1000 steps/s
     acceleration: 300 steps/s^2
     sleep_when_done: true
 
@@ -1605,9 +1605,9 @@ script:
           }
           int chunk = id(pump1_steps_remaining) > 30 ? 30 : id(pump1_steps_remaining);
           int lvl = id(pump1_speed_level);
-          int speed = 500;
-          if (lvl == 0) speed = 300;
-          else if (lvl == 2) speed = 700;
+          int speed = 700;
+          if (lvl == 0) speed = 500;
+          else if (lvl == 2) speed = 900;
           id(pump1_stepper).set_max_speed(speed);
           id(pump1_current_speed) = speed;
           id(pump1_current_chunk) = chunk;
@@ -1648,9 +1648,9 @@ script:
     then:
       - lambda: |-
           int lvl = id(pump1_speed_level);
-          int speed = 500;
-          if (lvl == 0) speed = 300;
-          else if (lvl == 2) speed = 700;
+          int speed = 700;
+          if (lvl == 0) speed = 500;
+          else if (lvl == 2) speed = 900;
           id(pump1_stepper).set_max_speed(speed);
           id(pump1_current_speed) = speed;
       - stepper.set_target:
@@ -1668,9 +1668,9 @@ script:
     then:
       - lambda: |-
           int lvl = id(pump1_speed_level);
-          int speed = 500;
-          if (lvl == 0) speed = 300;
-          else if (lvl == 2) speed = 700;
+          int speed = 700;
+          if (lvl == 0) speed = 500;
+          else if (lvl == 2) speed = 900;
           id(pump1_stepper).set_max_speed(speed);
           id(pump1_current_speed) = speed;
           id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_calibration_steps_remaining);

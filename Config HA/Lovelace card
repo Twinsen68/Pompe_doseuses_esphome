@@ -439,7 +439,7 @@ cards:
         hold_action:
           action: more-info
       - type: custom:mushroom-entity-card
-        entity: switch.pompe_doseuses_esphome_lancer_calibration_pompe_1
+        entity: button.pompe_doseuses_esphome_lancer_calibration_pompe_1
         name: Calibration
         icon: mdi:tune
         icon_color: purple
@@ -448,7 +448,7 @@ cards:
         hold_action:
           action: more-info
       - type: custom:mushroom-entity-card
-        entity: switch.pompe_doseuses_esphome_valider_calibration_pompe_1
+        entity: button.pompe_doseuses_esphome_valider_calibration_pompe_1
         name: Valider Calib.
         icon: mdi:check
         icon_color: green
@@ -493,6 +493,24 @@ cards:
           action: more-info
         entity: button.pompe_doseuses_esphome_doser_manuellement_pompe_1
         name: Dose manuelle
+      - type: custom:mushroom-entity-card
+        entity: button.pompe_doseuses_esphome_stopper_distribution_pompe_1
+        name: Stopper distribution
+        icon: mdi:stop-circle
+        icon_color: red
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+      - type: custom:mushroom-entity-card
+        entity: button.pompe_doseuses_esphome_r_initialiser_historique_pompe_1
+        name: Réinitialiser Historique
+        icon: mdi:history
+        icon_color: brown
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
   - type: custom:mushroom-title-card
     title: 📊 Suivi & Statut
   - type: entities

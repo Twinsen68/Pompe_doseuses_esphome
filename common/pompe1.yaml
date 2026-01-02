@@ -1605,7 +1605,7 @@ script:
               return id(pump1_manual_dose_active) && id(pump1_steps_remaining) > 0;
           then:
             - lambda: |-
-                int chunk = id(pump1_steps_remaining) > 30 ? 30 : id(pump1_steps_remaining);
+                int chunk = id(pump1_steps_remaining) > 300 ? 300 : id(pump1_steps_remaining);
                 int lvl = id(pump1_speed_level);
                 int speed = 900;
                 if (lvl == 0) speed = 600;

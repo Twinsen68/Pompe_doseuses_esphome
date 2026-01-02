@@ -1685,25 +1685,53 @@ script:
   - id: calibration_pump1_steps
     mode: restart
     then:
-      - lambda: |-
-          int lvl = id(pump1_speed_level);
-          int speed = 900;
-          if (lvl == 0) speed = 600;
-          else if (lvl == 2) speed = 1200;
-          id(pump1_stepper).set_max_speed(speed);
-          id(pump1_current_speed) = speed;
-          id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_calibration_steps_remaining);
-      - stepper.set_target:
-          id: pump1_stepper
-          target: !lambda 'return id(pump1_calibration_target);'
-      - wait_until:
+      - script.execute: calibration_pump1_step_chunk
+  - id: calibration_pump1_step_chunk
+    mode: restart
+    then:
+      - while:
           condition:
-            lambda: 'return id(pump1_stepper).current_position >= id(pump1_calibration_target);'
-      # - stepper.deenergize: pump1_stepper
-      - lambda: |-
-          id(pump1_status).publish_state("Prêt");
-          ESP_LOGI("pump", "✅ Calibration terminée.");
-      - delay: 10ms
+            lambda: |-
+              return id(pump1_calibration_steps_remaining) > 0;
+          then:
+            - lambda: |-
+                int chunk = id(pump1_calibration_steps_remaining) > 300 ? 300 : id(pump1_calibration_steps_remaining);
+                int lvl = id(pump1_speed_level);
+                int speed = 900;
+                if (lvl == 0) speed = 600;
+                else if (lvl == 2) speed = 1200;
+                id(pump1_stepper).set_max_speed(speed);
+                id(pump1_current_speed) = speed;
+                id(pump1_current_chunk) = chunk;
+                id(pump1_calibration_steps_remaining) -= chunk;
+                id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
+            - stepper.set_target:
+                id: pump1_stepper
+                target: !lambda 'return id(pump1_calibration_target);'
+            - wait_until:
+                condition:
+                  lambda: 'return id(pump1_stepper).current_position >= id(pump1_calibration_target);'
+                timeout: 5s
+            - if:
+                condition:
+                  lambda: 'return id(pump1_stepper).current_position >= id(pump1_calibration_target);'
+                then:
+                  - delay: 10ms
+                else:
+                  - lambda: |-
+                      id(pump1_calibration_steps_remaining) = 0;
+                      id(pump1_status).publish_state("Erreur");
+                      ESP_LOGW("pump", "⚠️ Mouvement non terminé (timeout). Calibration interrompue.");
+      - if:
+          condition:
+            lambda: |-
+              return id(pump1_calibration_steps_remaining) <= 0;
+          then:
+            # - stepper.deenergize: pump1_stepper
+            - lambda: |-
+                id(pump1_status).publish_state("Prêt");
+                ESP_LOGI("pump", "✅ Calibration terminée.");
+            - delay: 10ms
   #-------------------------------------
   # SCRIPT D'AMORÇAGE : vitesse rapide
   #-------------------------------------

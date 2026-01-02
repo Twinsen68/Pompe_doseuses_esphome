@@ -447,6 +447,11 @@ globals:
     type: int
     restore_value: false
     initial_value: '0'
+  # Taille maximale d'un chunk de déplacement
+  - id: pump1_chunk_size
+    type: int
+    restore_value: false
+    initial_value: '600'
   # Position cible du mouvement en cours
   - id: pump1_chunk_target
     type: int
@@ -1549,6 +1554,11 @@ select:
           if (x == "Lent") id(pump1_speed_level) = 0;
           else if (x == "Moyen") id(pump1_speed_level) = 1;
           else if (x == "Rapide") id(pump1_speed_level) = 2;
+          int speed = 900;
+          if (id(pump1_speed_level) == 0) speed = 600;
+          else if (id(pump1_speed_level) == 2) speed = 1200;
+          id(pump1_stepper).set_max_speed(speed);
+          id(pump1_current_speed) = speed;
           ESP_LOGD("pump", "Niveau de vitesse mis à %d", id(pump1_speed_level));
     web_server:
       sorting_group_id: sorting_group_general
@@ -1605,7 +1615,9 @@ script:
               return id(pump1_manual_dose_active) && id(pump1_steps_remaining) > 0;
           then:
             - lambda: |-
-                int chunk = id(pump1_steps_remaining) > 300 ? 300 : id(pump1_steps_remaining);
+                int chunk = id(pump1_steps_remaining) > id(pump1_chunk_size)
+                    ? id(pump1_chunk_size)
+                    : id(pump1_steps_remaining);
                 int lvl = id(pump1_speed_level);
                 int speed = 900;
                 if (lvl == 0) speed = 600;
@@ -1695,7 +1707,9 @@ script:
               return id(pump1_calibration_steps_remaining) > 0;
           then:
             - lambda: |-
-                int chunk = id(pump1_calibration_steps_remaining) > 300 ? 300 : id(pump1_calibration_steps_remaining);
+                int chunk = id(pump1_calibration_steps_remaining) > id(pump1_chunk_size)
+                    ? id(pump1_chunk_size)
+                    : id(pump1_calibration_steps_remaining);
                 int lvl = id(pump1_speed_level);
                 int speed = 900;
                 if (lvl == 0) speed = 600;

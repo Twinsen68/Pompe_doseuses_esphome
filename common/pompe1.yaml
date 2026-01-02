@@ -645,7 +645,7 @@ stepper:
     pin_c: GPIO26
     pin_d: GPIO27
     max_speed: 1500 steps/s
-    acceleration: 300 steps/s^2
+    acceleration: 200 steps/s^2
     sleep_when_done: true
 
 ################################################

@@ -1597,51 +1597,49 @@ script:
           ESP_LOGI("pump", "⚙️ Début distribution : %d pas", id(pump1_steps_to_run));
       - script.execute: run_pump1_step_chunk
   - id: run_pump1_step_chunk
-    mode: queued
+    mode: restart
     then:
-      - lambda: |-
-          if (!id(pump1_manual_dose_active)) {
-            return;
-          }
-          if (id(pump1_steps_remaining) <= 0) {
-            id(finalize_pump1_manual_dose).execute();
-            return;
-          }
-          int chunk = id(pump1_steps_remaining) > 30 ? 30 : id(pump1_steps_remaining);
-          int lvl = id(pump1_speed_level);
-          int speed = 900;
-          if (lvl == 0) speed = 600;
-          else if (lvl == 2) speed = 1200;
-          id(pump1_stepper).set_max_speed(speed);
-          id(pump1_current_speed) = speed;
-          id(pump1_current_chunk) = chunk;
-          id(pump1_steps_remaining) -= chunk;
-          id(pump1_chunk_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
-      - stepper.set_target:
-          id: pump1_stepper
-          target: !lambda 'return id(pump1_chunk_target);'
-      - wait_until:
+      - while:
           condition:
-            lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
-          timeout: 5s
-      - if:
-          condition:
-            lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
+            lambda: |-
+              return id(pump1_manual_dose_active) && id(pump1_steps_remaining) > 0;
           then:
             - lambda: |-
-                if (id(pump1_steps_remaining) <= 0) {
-                  id(finalize_pump1_manual_dose).execute();
-                  return;
-                }
-            - component.update: pump1_volume_remaining_sensor
-            - delay: 10ms
-            - script.execute: run_pump1_step_chunk
-          else:
-            - lambda: |-
-                id(pump1_steps_remaining) = 0;
-                id(pump1_manual_dose_active) = false;
-                id(pump1_status).publish_state("Erreur");
-                ESP_LOGW("pump", "⚠️ Mouvement non terminé (timeout). Distribution interrompue.");
+                int chunk = id(pump1_steps_remaining) > 300 ? 300 : id(pump1_steps_remaining);
+                int lvl = id(pump1_speed_level);
+                int speed = 900;
+                if (lvl == 0) speed = 600;
+                else if (lvl == 2) speed = 1200;
+                id(pump1_stepper).set_max_speed(speed);
+                id(pump1_current_speed) = speed;
+                id(pump1_current_chunk) = chunk;
+                id(pump1_steps_remaining) -= chunk;
+                id(pump1_chunk_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
+            - stepper.set_target:
+                id: pump1_stepper
+                target: !lambda 'return id(pump1_chunk_target);'
+            - wait_until:
+                condition:
+                  lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
+                timeout: 5s
+            - if:
+                condition:
+                  lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
+                then:
+                  - component.update: pump1_volume_remaining_sensor
+                  - delay: 10ms
+                else:
+                  - lambda: |-
+                      id(pump1_steps_remaining) = 0;
+                      id(pump1_manual_dose_active) = false;
+                      id(pump1_status).publish_state("Erreur");
+                      ESP_LOGW("pump", "⚠️ Mouvement non terminé (timeout). Distribution interrompue.");
+      - if:
+          condition:
+            lambda: |-
+              return id(pump1_manual_dose_active) && id(pump1_steps_remaining) <= 0;
+          then:
+            - script.execute: finalize_pump1_manual_dose
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:

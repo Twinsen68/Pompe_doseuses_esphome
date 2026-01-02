@@ -22,6 +22,49 @@ Ce projet propose une configuration ESPHome pour piloter **une pompe doseuse** m
 - Alimentation 5V adaptée aux moteurs
 - Câblage et connecteurs
 
+## Schéma de câblage (illustration)
+
+L’illustration ci-dessous résume les connexions essentielles entre l’ESP, le driver ULN2003 et le moteur 28BYJ-48. Les numéros de GPIO exacts sont à adapter en fonction des `substitutions` définies dans vos fichiers YAML.
+
+```mermaid
+flowchart LR
+  subgraph Alimentation
+    PSU[Alim 5V] -->|5V| ULN_VCC[VCC ULN2003]
+    PSU -->|GND| GND[Commun GND]
+  end
+
+  subgraph ESPHome
+    ESP[ESP32/ESP8266]
+    ESP -->|GPIO IN1| IN1[ULN2003 IN1]
+    ESP -->|GPIO IN2| IN2[ULN2003 IN2]
+    ESP -->|GPIO IN3| IN3[ULN2003 IN3]
+    ESP -->|GPIO IN4| IN4[ULN2003 IN4]
+    ESP --- GND
+  end
+
+  subgraph Driver
+    ULN[ULN2003]
+  end
+
+  subgraph Moteur
+    MOTOR[28BYJ-48]
+  end
+
+  IN1 --> ULN
+  IN2 --> ULN
+  IN3 --> ULN
+  IN4 --> ULN
+  ULN -->|Sortie moteur| MOTOR
+  ULN_VCC --> ULN
+  GND --> ULN
+  GND --> MOTOR
+```
+
+**Rappels importants :**
+- Les broches IN1 à IN4 correspondent aux sorties GPIO déclarées dans votre configuration ESPHome.
+- **GND de l’ESP et de l’alimentation 5V doivent être communs**.
+- Le moteur 28BYJ-48 se branche directement sur le connecteur du module ULN2003.
+
 ## Installation
 
 1. **Copiez le contenu du fichier `install.yaml` :**  
@@ -403,4 +446,3 @@ Pour proposer des améliorations, ouvrez une [issue](https://github.com/Twinsen6
 
 Ce projet est distribué sous la licence [Non-Commercial](LICENSE).
 This project is distributed under the [Non-Commercial](LICENSE) license.
-

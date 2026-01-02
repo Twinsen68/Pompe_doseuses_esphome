@@ -568,7 +568,5 @@ cards:
         name: Température interne
       - entity: sensor.pompe_doseuses_esphome_force_du_signal_wifi
         name: Force du signal WiFi
-      - entity: sensor.pompe_doseuses_esphome_esp32_hall_sensor
-        name: ESP32 Hall Sensor
       - entity: sensor.pompe_doseuses_esphome_device_info
         name: Device Info

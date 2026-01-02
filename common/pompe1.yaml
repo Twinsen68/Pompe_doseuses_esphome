@@ -1557,6 +1557,23 @@ select:
 #####################################
 # Ce script exécute le moteur pour délivrer un volume dose_ml calculé
 script:
+  - id: finalize_pump1_manual_dose
+    mode: restart
+    then:
+      - lambda: |-
+          char buffer[40];
+          auto now = id(my_time).now();
+          float dose_ml = id(pump1_dose_ml);
+          sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, dose_ml);
+          id(pump1_distributed_today) += dose_ml;
+          id(pump1_used_today) += dose_ml;
+          id(pump1_volume_remaining) = std::max(0.0f, id(pump1_volume_remaining) - dose_ml);
+          id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+          id(pump1_last_dose_log) = buffer;
+          id(pump1_last_dose_text).update();
+          id(pump1_manual_dose_active) = false;
+          id(pump1_status).publish_state("Prêt");
+          ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
   - id: run_pump1_steps
     mode: restart
     then:
@@ -1584,19 +1601,7 @@ script:
     then:
       - lambda: |-
           if (id(pump1_steps_remaining) <= 0) {
-            char buffer[40];
-            auto now = id(my_time).now();
-            float dose_ml = id(pump1_dose_ml);
-            sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, dose_ml);
-            id(pump1_distributed_today) += dose_ml;
-            id(pump1_used_today) += dose_ml;
-            id(pump1_volume_remaining) = std::max(0.0f, id(pump1_volume_remaining) - dose_ml);
-            id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
-            id(pump1_last_dose_log) = buffer;
-            id(pump1_last_dose_text).update();
-            id(pump1_manual_dose_active) = false;
-            id(pump1_status).publish_state("Prêt");
-            ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
+            id(finalize_pump1_manual_dose).execute();
             return;
           }
           int chunk = id(pump1_steps_remaining) > 30 ? 30 : id(pump1_steps_remaining);
@@ -1620,6 +1625,11 @@ script:
           condition:
             lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
           then:
+            - lambda: |-
+                if (id(pump1_steps_remaining) <= 0) {
+                  id(finalize_pump1_manual_dose).execute();
+                  return;
+                }
             - component.update: pump1_volume_remaining_sensor
             - script.execute: run_pump1_step_chunk
           else:

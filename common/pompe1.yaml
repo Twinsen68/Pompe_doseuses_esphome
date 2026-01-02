@@ -497,10 +497,6 @@ sensor:
         return id(pump1_daily_quantity);
     web_server:
       sorting_group_id: sorting_group_general
-  - platform: uptime
-    name: Uptime
-    id: uptime_sensor
-    update_interval: 10s
   - platform: template
     name: "Pompe 1 - Volume utilisé (aujourd'hui)"
     id: pump1_used_today_sensor

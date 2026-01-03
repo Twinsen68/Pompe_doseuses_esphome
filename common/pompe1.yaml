@@ -1948,7 +1948,7 @@ button:
     on_press:
       then:
         - lambda: |-
-            int steps = id(pump1_calibration_steps);
+            int steps = id(pump1_calibration_steps) * 2;
             if (steps <= 0) {
               ESP_LOGW("pump", "⚠️ Calibration invalide : nombre de pas <= 0.");
               return;

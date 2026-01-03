@@ -451,7 +451,7 @@ globals:
   - id: pump1_chunk_size
     type: int
     restore_value: false
-    initial_value: '300'
+    initial_value: '600'
   # Position cible du mouvement en cours
   - id: pump1_chunk_target
     type: int
@@ -469,12 +469,12 @@ globals:
   - id: pump1_stepper_speed_saved
     type: int
     restore_value: false
-    initial_value: '700'
+    initial_value: '900'
   # Vitesse actuellement appliquée au moteur
   - id: pump1_current_speed
     type: int
     restore_value: false
-    initial_value: '700'
+    initial_value: '900'
   # Position cible utilisée pour l'amorçage rapide
   - id: pump1_fast_target
     type: int
@@ -645,9 +645,9 @@ stepper:
     pin_c: GPIO26
     pin_d: GPIO27
     step_mode: HALF_STEP
-    max_speed: 600 steps/s
-    acceleration: 200 steps/s^2
-    sleep_when_done: false
+    max_speed: 1500 steps/s
+    acceleration: 500 steps/s^2
+    sleep_when_done: true
 
 ################################################
 #     COMPOSANTS NUMBER & SELECT (UI)          #
@@ -1555,12 +1555,8 @@ select:
           if (x == "Lent") id(pump1_speed_level) = 0;
           else if (x == "Moyen") id(pump1_speed_level) = 1;
           else if (x == "Rapide") id(pump1_speed_level) = 2;
-          int speed = 900;
-          if (id(pump1_speed_level) == 0) speed = 600;
-          else if (id(pump1_speed_level) == 2) speed = 1200;
-          id(pump1_stepper).set_max_speed(speed);
-          id(pump1_current_speed) = speed;
           ESP_LOGD("pump", "Niveau de vitesse mis à %d", id(pump1_speed_level));
+      - script.execute: apply_pump1_speed_profile
     web_server:
       sorting_group_id: sorting_group_general
 #####################################
@@ -1568,6 +1564,24 @@ select:
 #####################################
 # Ce script exécute le moteur pour délivrer un volume dose_ml calculé
 script:
+  - id: apply_pump1_speed_profile
+    mode: restart
+    then:
+      - lambda: |-
+          int lvl = id(pump1_speed_level);
+          int speed = 900;
+          int chunk = 600;
+          if (lvl == 0) {
+            speed = 600;
+            chunk = 300;
+          } else if (lvl == 2) {
+            speed = 1200;
+            chunk = 900;
+          }
+          id(pump1_stepper).set_max_speed(speed);
+          id(pump1_current_speed) = speed;
+          id(pump1_chunk_size) = chunk;
+          ESP_LOGD("pump", "Profil vitesse: niveau=%d speed=%d chunk=%d", lvl, speed, chunk);
   - id: finalize_pump1_manual_dose
     mode: restart
     then:
@@ -1588,6 +1602,7 @@ script:
   - id: run_pump1_steps
     mode: restart
     then:
+      - script.execute: apply_pump1_speed_profile
       - lambda: |-
           if (id(pump1_volume_remaining) <= 0) {
             ESP_LOGW("pump", "⚠️ Volume insuffisant, distribution annulée.");
@@ -1618,12 +1633,6 @@ script:
           int chunk = id(pump1_steps_remaining) > id(pump1_chunk_size)
               ? id(pump1_chunk_size)
               : id(pump1_steps_remaining);
-          int lvl = id(pump1_speed_level);
-          int speed = 500;
-          if (lvl == 0) speed = 350;
-          else if (lvl == 2) speed = 650;
-          id(pump1_stepper).set_max_speed(speed);
-          id(pump1_current_speed) = speed;
           id(pump1_current_chunk) = chunk;
           id(pump1_steps_remaining) -= chunk;
           id(pump1_chunk_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
@@ -1679,18 +1688,14 @@ script:
   - id: priming_pump1_steps
     mode: restart
     then:
+      - script.execute: apply_pump1_speed_profile
       - lambda: |-
-          int lvl = id(pump1_speed_level);
-          int speed = 700;
-          if (lvl == 0) speed = 500;
-          else if (lvl == 2) speed = 900;
-          id(pump1_stepper).set_max_speed(speed);
-          id(pump1_current_speed) = speed;
+          id(pump1_current_speed) = std::max(id(pump1_current_speed), 700);
+          id(pump1_stepper).set_max_speed(id(pump1_current_speed));
       - stepper.set_target:
           id: pump1_stepper
           target: !lambda 'return id(pump1_stepper).current_position + id(pump1_priming_steps_remaining);'
       - delay: !lambda 'return (id(pump1_priming_steps_remaining) * 1.0f) / id(pump1_current_speed);'
-      # - stepper.deenergize: pump1_stepper
       - lambda: |-
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Amorçage terminé.");
@@ -1699,13 +1704,10 @@ script:
   - id: calibration_pump1_steps
     mode: restart
     then:
+      - script.execute: apply_pump1_speed_profile
       - lambda: |-
-          int lvl = id(pump1_speed_level);
-          int speed = 700;
-          if (lvl == 0) speed = 500;
-          else if (lvl == 2) speed = 900;
-          id(pump1_stepper).set_max_speed(speed);
-          id(pump1_current_speed) = speed;
+          id(pump1_current_speed) = std::max(id(pump1_current_speed), 700);
+          id(pump1_stepper).set_max_speed(id(pump1_current_speed));
           id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_calibration_steps_remaining);
       - stepper.set_target:
           id: pump1_stepper
@@ -1719,12 +1721,8 @@ script:
                 int chunk = id(pump1_calibration_steps_remaining) > id(pump1_chunk_size)
                     ? id(pump1_chunk_size)
                     : id(pump1_calibration_steps_remaining);
-                int lvl = id(pump1_speed_level);
-                int speed = 900;
-                if (lvl == 0) speed = 600;
-                else if (lvl == 2) speed = 1200;
+                int speed = id(pump1_current_speed);
                 id(pump1_stepper).set_max_speed(speed);
-                id(pump1_current_speed) = speed;
                 id(pump1_current_chunk) = chunk;
                 id(pump1_calibration_steps_remaining) -= chunk;
                 id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
@@ -1750,7 +1748,6 @@ script:
             lambda: |-
               return id(pump1_calibration_steps_remaining) <= 0;
           then:
-            # - stepper.deenergize: pump1_stepper
             - lambda: |-
                 id(pump1_status).publish_state("Prêt");
                 ESP_LOGI("pump", "✅ Calibration terminée.");

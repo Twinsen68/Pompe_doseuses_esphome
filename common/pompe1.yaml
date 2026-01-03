@@ -1625,12 +1625,15 @@ script:
             id(pump1_dose_ml)
           );
           ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
+          id(pump1_motor_power).turn_off();
+          ESP_LOGI("pump", "🔌 Moteur désalimenté (fin distribution).");
           id(pump1_stepper).set_sleep_when_done(true);
           id(pump1_stepper).set_target(id(pump1_stepper).current_position);
   - id: run_pump1_steps
     mode: restart
     then:
       - script.execute: apply_pump1_speed_profile
+      - switch.turn_on: pump1_motor_power
       - lambda: |-
           id(pump1_stepper).set_sleep_when_done(false);
           if (id(pump1_volume_remaining) <= 0) {
@@ -1728,6 +1731,7 @@ script:
     mode: restart
     then:
       - script.execute: apply_pump1_speed_profile
+      - switch.turn_on: pump1_motor_power
       - lambda: |-
           id(pump1_stepper).set_sleep_when_done(false);
           id(pump1_abort_requested) = false;
@@ -1748,8 +1752,10 @@ script:
             return;
           }
           if (id(pump1_calibration_steps_remaining) <= 0) {
-            id(pump1_status).publish_state("Prêt");
-            ESP_LOGI("pump", "✅ Calibration terminée.");
+            id(pump1_status).publish_state("Calibration terminée, mesurer le volume et valider");
+            ESP_LOGI("pump", "✅ Calibration terminée, mesurer le volume et valider.");
+            id(pump1_motor_power).turn_off();
+            ESP_LOGI("pump", "🔌 Moteur désalimenté (fin calibration).");
             id(pump1_stepper).set_sleep_when_done(true);
             id(pump1_stepper).set_target(id(pump1_stepper).current_position);
             return;
@@ -1870,6 +1876,10 @@ script:
 #            SWITCHES               #
 #####################################
 switch:
+  - platform: gpio
+    id: pump1_motor_power
+    pin: GPIO25 # à adapter (MOSFET/transistor/relais)
+    restore_mode: ALWAYS_OFF
   # Activation globale
   - platform: template
     name: "Activation Pompe 1"
@@ -2000,6 +2010,8 @@ button:
             ESP_LOGW("pump", "⛔ Arrêt demandé (distribution ou calibration).");
             id(pump1_stepper).set_sleep_when_done(true);
             id(pump1_stepper).set_target(id(pump1_stepper).current_position);
+            id(pump1_motor_power).turn_off();
+            ESP_LOGW("pump", "🔌 Moteur désalimenté (STOP).");
     web_server:
       sorting_group_id: sorting_group_mode0
   - platform: template

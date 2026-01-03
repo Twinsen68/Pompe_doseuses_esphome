@@ -1706,6 +1706,7 @@ script:
     then:
       - script.execute: apply_pump1_speed_profile
       - lambda: |-
+          ESP_LOGI("pump", "▶️ Calibration démarrée : %d pas", id(pump1_calibration_steps_remaining));
           id(pump1_current_speed) = std::max(id(pump1_current_speed), 700);
           id(pump1_stepper).set_max_speed(id(pump1_current_speed));
           id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_calibration_steps_remaining);
@@ -1914,7 +1915,7 @@ button:
     on_press:
       then:
         - lambda: |-
-            ESP_LOGD("pump", "Lancement de la calibration (mode asynchrone)...");
+            ESP_LOGI("pump", "Lancement de la calibration (mode asynchrone)...");
             id(pump1_status).publish_state("Calibration en cours…");
             // Lance la calibration sur le nombre de pas configuré
             id(pump1_calibration_steps_remaining) = id(pump1_calibration_steps);
@@ -1929,9 +1930,16 @@ button:
     on_press:
       then:
         - lambda: |-
-            id(pump1_calibration_factor) = id(pump1_calibration_value) / id(pump1_calibration_steps);
+            int steps = id(pump1_calibration_steps);
+            if (steps <= 0) {
+              ESP_LOGW("pump", "⚠️ Calibration invalide : nombre de pas <= 0.");
+              return;
+            }
+            float value = id(pump1_calibration_value);
+            float factor = value / steps;
+            id(pump1_calibration_factor) = factor;
             id(pump1_last_calibration) = id(my_time).now().timestamp;
-            ESP_LOGW("pump", "Calibration validée: facteur = %.4f ml/step", id(pump1_calibration_factor));
+            ESP_LOGW("pump", "Calibration validée: volume=%.2f ml, pas=%d, facteur=%.6f ml/step", value, steps, factor);
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.
   - platform: template

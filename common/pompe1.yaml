@@ -451,7 +451,7 @@ globals:
   - id: pump1_chunk_size
     type: int
     restore_value: false
-    initial_value: '2400'
+    initial_value: '300'
   # Position cible du mouvement en cours
   - id: pump1_chunk_target
     type: int

@@ -560,7 +560,6 @@ cards:
         name: BSSID WiFi
       - entity: sensor.pompe_doseuses_esphome_wifi_ssid
         name: SSID WiFi
-      - entity: sensor.pompe_doseuses_esphome_i2c_devices_connected
         name: Périphériques I2C
       - entity: sensor.pompe_doseuses_esphome_adresse_ip_esp32
         name: Adresse IP

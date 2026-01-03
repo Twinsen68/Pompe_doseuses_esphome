@@ -35,6 +35,18 @@ Ce projet propose une configuration ESPHome pour piloter **une pompe doseuse** m
 5. **Intégrer dans Home Assistant :**  
    Ajoutez l’appareil via l’API ESPHome pour contrôler les pompes à distance.
 
+### Organisation des fichiers
+
+La configuration est découpée en modules pour faciliter la maintenance et la duplication des pompes :
+
+- `install.yaml` : point d'entrée minimal à coller dans ESPHome.
+- `pompe_doseuses_config.yaml` : assemble les modules via `packages`.
+- `common/device_base.yaml` : base ESP32 (Wi-Fi, web_server, capteurs système, LED, etc.).
+- `common/pompe_doseuses.yaml` : métadonnées et infos de diagnostic (version, GitHub).
+- `common/pompe1.yaml` : logique complète d'une pompe (modes, calibration, scripts, UI).
+
+Vous pouvez dupliquer `common/pompe1.yaml` (ex. `pompe2.yaml`) et ajouter le package correspondant pour gérer plusieurs pompes.
+
 ## Configuration
 
 Le fichier de configuration inclut :
@@ -403,6 +415,38 @@ Il permet de choisir entre **Lent**, **Moyen** ou **Rapide** pour adapter la vit
 ### Mode Test / Simulation
 Pour valider votre configuration sans consommer de produit, activez le switch `Mode Test / Simulation`.
 Lorsque ce mode est actif, la vitesse d'exécution est accélérée et la distribution est simulée sans actionner réellement la pompe.
+
+---
+## Diagnostics et suivi
+
+Le firmware expose plusieurs entités de diagnostic utiles pour le suivi et le dépannage :
+
+- **Infos système** : température interne, uptime, signal Wi-Fi (dB et %).
+- **Infos réseau** : IP, MAC, SSID, BSSID via `wifi_info`.
+- **Debug** : heap libre, taille max de bloc, loop time, device info, reset reason.
+
+Ces entités sont regroupées dans l'interface web ESPHome (groupes "Diagnostic" et "Debug").
+
+### Suivi du réservoir et des doses
+
+La pompe maintient des informations de suivi (volume restant, volume distribué/consommé, dernier dosage). Elles permettent d'afficher dans Home Assistant :
+
+- **Volume restant** (basé sur la capacité du réservoir et la consommation).
+- **Volume distribué aujourd'hui**.
+- **Dernière dose** (horodatage texte).
+
+Pensez à mettre à jour la **capacité du réservoir** pour un calcul cohérent.
+
+---
+## Home Assistant : carte Lovelace
+
+Un exemple de carte est disponible dans `Config HA/Lovelace card`. Cette carte regroupe :
+
+- La consommation et le volume restant.
+- Les réglages principaux (volume quotidien, offset, mode, vitesse).
+- Les paramètres de chaque période (Mode 3) et des minuteurs (Mode 4).
+
+Copiez le contenu dans une carte manuelle pour obtenir une interface prête à l'emploi.
 
 ---
 ## Contributions

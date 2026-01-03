@@ -6,8 +6,8 @@ Ce projet propose une configuration ESPHome pour piloter **une pompe doseuse** m
 
 - **Contrôle d'une pompe doseuse (duplicable) :**
   La configuration prévoit un moteur 28BYJ-48 et son driver ULN2003. Dupliquez ce bloc pour gérer plusieurs pompes.
-- **Séquence de pas intégrée :**
-  Exécution d'une séquence de 8 demi-pas pour piloter les moteurs (512 demi-pas par défaut, ajustable).
+- **Pilotage via composant `stepper` :**
+  Utilisation du driver ULN2003 avec un moteur 28BYJ-48 en **demi-pas (HALF_STEP)** pour plus de couple.
 - **Activation via Home Assistant :**
   Utilisation de switches template pour déclencher manuellement les scripts de contrôle.
 - **Configuration flexible :**
@@ -29,7 +29,7 @@ Ce projet propose une configuration ESPHome pour piloter **une pompe doseuse** m
 2. **Ouvrir le projet dans ESPHome :**  
    Chargez le fichier copié dans ESPHome.
 3. **Configurer le fichier :**  
-   Adaptez les pins et autres paramètres selon votre câblage.
+   Adaptez les pins et autres paramètres selon votre câblage (voir section **Câblage**).
 4. **Compiler et téléverser :**  
    Compilez la configuration et téléversez-la sur votre carte via ESPHome.
 5. **Intégrer dans Home Assistant :**  
@@ -41,18 +41,29 @@ Le fichier de configuration inclut :
 
 - **Substitutions :**
   Définition des pins pour chaque bobine des moteurs.
-- **Déclaration des sorties GPIO :**
-  Configuration des sorties pour piloter les bobines.
+- **Déclaration du `stepper` ULN2003 :**
+  Pilotage direct du moteur pas à pas via le composant `stepper` d’ESPHome (mode HALF_STEP, vitesse/accélération réglables).
 - **Scripts de contrôle :**
-  Chaque script exécute la séquence de 8 demi-pas pour actionner le moteur (avec 512 demi-pas par défaut).
-  Pour éviter un blocage quand le nombre de pas est très élevé, la distribution est désormais découpée en petites tranches exécutées récursivement.
-  Chaque tranche met à jour les composants avec `component.update` afin de conserver l'état `pump1_manual_dose_active` cohérent durant toute l'exécution.
-  Le script attend désormais la fin du mouvement du moteur avec `wait_until` pour éviter les boucles infinies lorsque la vitesse est trop lente.
+  La distribution est découpée en **chunks** pour éviter les blocages quand le nombre de pas est élevé.
+  Chaque chunk attend la fin du mouvement avec `wait_until` et relance la tranche suivante, puis finalise la dose.
 - **Switches Template :**
   Permettent de lancer les scripts via Home Assistant.
 
 > **Attention :**
-> La boucle avec `delay()` dans les scripts peut bloquer temporairement l’exécution d’ESPHome. Pour une utilisation en production, envisagez une approche non bloquante (par exemple, via des timers ou un composant personnalisé).
+> Les scripts utilisent des `wait_until` et des délais courts pour sécuriser l'exécution. Ajustez les vitesses si le moteur manque de couple.
+
+## Câblage
+
+Par défaut, la configuration utilise les GPIO suivants pour le driver ULN2003 :
+
+| Bobine ULN2003 | GPIO ESP32 |
+|---------------|-----------|
+| IN1 (A)       | GPIO13    |
+| IN2 (B)       | GPIO14    |
+| IN3 (C)       | GPIO26    |
+| IN4 (D)       | GPIO27    |
+
+Adaptez ces broches si votre câblage est différent.
 
 ## Modes de Fonctionnement et Paramétrage
 
@@ -403,4 +414,3 @@ Pour proposer des améliorations, ouvrez une [issue](https://github.com/Twinsen6
 
 Ce projet est distribué sous la licence [Non-Commercial](LICENSE).
 This project is distributed under the [Non-Commercial](LICENSE) license.
-

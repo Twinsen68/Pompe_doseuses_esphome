@@ -451,7 +451,7 @@ globals:
   - id: pump1_chunk_size
     type: int
     restore_value: false
-    initial_value: '2400'
+    initial_value: '300'
   # Position cible du mouvement en cours
   - id: pump1_chunk_target
     type: int
@@ -469,12 +469,12 @@ globals:
   - id: pump1_stepper_speed_saved
     type: int
     restore_value: false
-    initial_value: '900'
+    initial_value: '700'
   # Vitesse actuellement appliquée au moteur
   - id: pump1_current_speed
     type: int
     restore_value: false
-    initial_value: '900'
+    initial_value: '700'
   # Position cible utilisée pour l'amorçage rapide
   - id: pump1_fast_target
     type: int
@@ -640,12 +640,12 @@ text_sensor:
 stepper:
   - platform: uln2003
     id: pump1_stepper
-    pin_a: GPIO13
-    pin_b: GPIO14
-    pin_c: GPIO26
-    pin_d: GPIO27
-    max_speed: 1500 steps/s
-    acceleration: 200 steps/s^2
+    pin_a: GPIO12
+    pin_b: GPIO13
+    pin_c: GPIO14
+    pin_d: GPIO15
+    max_speed: 1000 steps/s
+    acceleration: 300 steps/s^2
     sleep_when_done: true
 
 ################################################
@@ -1609,7 +1609,37 @@ script:
   - id: run_pump1_step_chunk
     mode: restart
     then:
-      - while:
+      - lambda: |-
+          if (id(pump1_steps_remaining) <= 0) {
+            char buffer[40];
+            auto now = id(my_time).now();
+            float dose_ml = id(pump1_dose_ml);
+            sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, dose_ml);
+            id(pump1_distributed_today) += dose_ml;
+            id(pump1_used_today) += dose_ml;
+            id(pump1_volume_remaining) = std::max(0.0f, id(pump1_volume_remaining) - dose_ml);
+            id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+            id(pump1_last_dose_log) = buffer;
+            id(pump1_last_dose_text).update();
+            id(pump1_manual_dose_active) = false;
+            id(pump1_status).publish_state("Prêt");
+            ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
+            return;
+          }
+          int chunk = id(pump1_steps_remaining) > 30 ? 30 : id(pump1_steps_remaining);
+          int lvl = id(pump1_speed_level);
+          int speed = 700;
+          if (lvl == 0) speed = 500;
+          else if (lvl == 2) speed = 900;
+          id(pump1_stepper).set_max_speed(speed);
+          id(pump1_current_speed) = speed;
+          id(pump1_current_chunk) = chunk;
+          id(pump1_steps_remaining) -= chunk;
+          id(pump1_chunk_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
+      - stepper.set_target:
+          id: pump1_stepper
+          target: !lambda 'return id(pump1_chunk_target);'
+      - wait_until:
           condition:
             lambda: |-
               return id(pump1_manual_dose_active) && id(pump1_steps_remaining) > 0;
@@ -1679,9 +1709,9 @@ script:
     then:
       - lambda: |-
           int lvl = id(pump1_speed_level);
-          int speed = 900;
-          if (lvl == 0) speed = 600;
-          else if (lvl == 2) speed = 1200;
+          int speed = 700;
+          if (lvl == 0) speed = 500;
+          else if (lvl == 2) speed = 900;
           id(pump1_stepper).set_max_speed(speed);
           id(pump1_current_speed) = speed;
       - stepper.set_target:
@@ -1697,11 +1727,18 @@ script:
   - id: calibration_pump1_steps
     mode: restart
     then:
-      - script.execute: calibration_pump1_step_chunk
-  - id: calibration_pump1_step_chunk
-    mode: restart
-    then:
-      - while:
+      - lambda: |-
+          int lvl = id(pump1_speed_level);
+          int speed = 700;
+          if (lvl == 0) speed = 500;
+          else if (lvl == 2) speed = 900;
+          id(pump1_stepper).set_max_speed(speed);
+          id(pump1_current_speed) = speed;
+          id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_calibration_steps_remaining);
+      - stepper.set_target:
+          id: pump1_stepper
+          target: !lambda 'return id(pump1_calibration_target);'
+      - wait_until:
           condition:
             lambda: |-
               return id(pump1_calibration_steps_remaining) > 0;

@@ -640,10 +640,10 @@ text_sensor:
 stepper:
   - platform: uln2003
     id: pump1_stepper
-    pin_a: GPIO12
-    pin_b: GPIO13
-    pin_c: GPIO14
-    pin_d: GPIO15
+    pin_a: GPIO13
+    pin_b: GPIO14
+    pin_c: GPIO26
+    pin_d: GPIO27
     step_mode: HALF_STEP
     max_speed: 600 steps/s
     acceleration: 200 steps/s^2

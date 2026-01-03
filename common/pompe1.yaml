@@ -1569,19 +1569,33 @@ script:
     then:
       - lambda: |-
           int lvl = id(pump1_speed_level);
-          int speed = 900;
-          int chunk = 2400;
+
+          int speed = 600;
+          int chunk = 32;
+
           if (lvl == 0) {
+            // Vitesse optimale / fiable
             speed = 600;
-            chunk = 2400;
+            chunk = 32;
+
+          } else if (lvl == 1) {
+            // Vitesse rapide mais stable
+            speed = 800;
+            chunk = 64;
+
           } else if (lvl == 2) {
-            speed = 1200;
-            chunk = 2400;
+            // Vitesse maximale acceptable (limite moteur)
+            speed = 1000;
+            chunk = 64;
           }
           id(pump1_stepper).set_max_speed(speed);
           id(pump1_current_speed) = speed;
           id(pump1_chunk_size) = chunk;
-          ESP_LOGD("pump", "Profil vitesse: niveau=%d speed=%d chunk=%d", lvl, speed, chunk);
+          ESP_LOGD(
+            "pump",
+            "Profil vitesse: niveau=%d speed=%d steps/s chunk=%d",
+            lvl, speed, chunk
+          );
   - id: finalize_pump1_manual_dose
     mode: restart
     then:

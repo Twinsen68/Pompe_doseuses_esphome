@@ -1570,13 +1570,13 @@ script:
       - lambda: |-
           int lvl = id(pump1_speed_level);
           int speed = 900;
-          int chunk = 600;
+          int chunk = 2400;
           if (lvl == 0) {
             speed = 600;
-            chunk = 300;
+            chunk = 2400;
           } else if (lvl == 2) {
             speed = 1200;
-            chunk = 900;
+            chunk = 2400;
           }
           id(pump1_stepper).set_max_speed(speed);
           id(pump1_current_speed) = speed;

@@ -1599,6 +1599,7 @@ script:
           id(pump1_manual_dose_active) = false;
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
+      - stepper.deenergize: pump1_stepper
   - id: run_pump1_steps
     mode: restart
     then:
@@ -1663,6 +1664,7 @@ script:
                 id(pump1_manual_dose_active) = false;
                 id(pump1_status).publish_state("Erreur");
                 ESP_LOGW("pump", "⚠️ Mouvement non terminé (timeout). Distribution interrompue.");
+            - stepper.deenergize: pump1_stepper
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:
@@ -1768,6 +1770,7 @@ script:
       - wait_until:
           condition:
             lambda: 'return id(pump1_stepper).current_position >= id(pump1_fast_target);'
+      - stepper.deenergize: pump1_stepper
       - lambda: |-
           id(pump1_stepper).set_max_speed(id(pump1_stepper_speed_saved));
           id(pump1_current_speed) = id(pump1_stepper_speed_saved);

@@ -1642,7 +1642,7 @@ script:
       - wait_until:
           condition:
             lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
-          timeout: 5s
+          timeout: 10s
       - if:
           condition:
             lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
@@ -1732,7 +1732,7 @@ script:
             - wait_until:
                 condition:
                   lambda: 'return id(pump1_stepper).current_position >= id(pump1_calibration_target);'
-                timeout: 5s
+                timeout: 10s
             - if:
                 condition:
                   lambda: 'return id(pump1_stepper).current_position >= id(pump1_calibration_target);'

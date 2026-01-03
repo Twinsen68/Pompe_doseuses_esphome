@@ -336,7 +336,7 @@ Cette option permet de mieux identifier les pompes et leurs fonctions spécifiqu
 
 ### Calibration et enregistrement du facteur
 
-Lors de la calibration, la pompe effectue par défaut **60 000 pas**, soit environ une minute de fonctionnement. Vous pouvez augmenter ce nombre (par exemple à 120 000 pas pour deux minutes) via le paramètre **"Pompe 1 - Nombre de pas pendant la calibration"** afin d'obtenir un volume plus important.
+Lors de la calibration, la pompe effectue par défaut **120 000 pas**, soit environ deux minutes de fonctionnement. Vous pouvez augmenter ce nombre (par exemple à 180 000 pas pour trois minutes) via le paramètre **"Pompe 1 - Nombre de pas pendant la calibration"** afin d'obtenir un volume plus important.
 
 Mesurez ensuite le volume réellement délivré (ex. dans une seringue graduée) et saisissez cette valeur dans le champ **"Pompe X - Volume mesuré (ml)"**.
 

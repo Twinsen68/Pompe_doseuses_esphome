@@ -313,9 +313,11 @@ Cette option permet de mieux identifier les pompes et leurs fonctions spécifiqu
 
 ### Calibration et enregistrement du facteur
 
-Lors de la calibration, vous pouvez mesurer le volume réellement délivré (ex. dans une seringue graduée), puis saisir cette valeur dans le champ **"Pompe X - Volume mesuré (ml)"**.
+Lors de la calibration, la pompe effectue par défaut **60 000 pas**, soit environ une minute de fonctionnement. Vous pouvez augmenter ce nombre (par exemple à 120 000 pas pour deux minutes) via le paramètre **"Pompe 1 - Nombre de pas pendant la calibration"** afin d'obtenir un volume plus important.
 
-Ensuite, appuyez sur **"Valider Calibration Pompe X"** pour enregistrer le nouveau facteur (ml/pas), automatiquement calculé.
+Mesurez ensuite le volume réellement délivré (ex. dans une seringue graduée) et saisissez cette valeur dans le champ **"Pompe X - Volume mesuré (ml)"**.
+
+Appuyez enfin sur **"Valider Calibration Pompe X"** pour enregistrer le nouveau facteur (ml/pas), calculé automatiquement.
 
 Ce facteur sera utilisé dans tous les modes pour déterminer la quantité à distribuer.
 

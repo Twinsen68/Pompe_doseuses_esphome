@@ -88,7 +88,7 @@ globals:
   - id: pump1_calibration_steps
     type: int
     restore_value: true
-    initial_value: '10000'  # Nombre de pas pendant la calibration (par défaut : 10 000 pas pour une meilleure précision)
+    initial_value: '60000'  # Nombre de pas pendant la calibration (environ 1 minute de fonctionnement)
   - id: pump1_calibration_factor
     type: float
     restore_value: true
@@ -447,6 +447,11 @@ globals:
     type: int
     restore_value: false
     initial_value: '0'
+  # Taille maximale d'un chunk de déplacement
+  - id: pump1_chunk_size
+    type: int
+    restore_value: false
+    initial_value: '300'
   # Position cible du mouvement en cours
   - id: pump1_chunk_target
     type: int
@@ -497,10 +502,6 @@ sensor:
         return id(pump1_daily_quantity);
     web_server:
       sorting_group_id: sorting_group_general
-  - platform: uptime
-    name: Uptime
-    id: uptime_sensor
-    update_interval: 10s
   - platform: template
     name: "Pompe 1 - Volume utilisé (aujourd'hui)"
     id: pump1_used_today_sensor
@@ -1553,6 +1554,11 @@ select:
           if (x == "Lent") id(pump1_speed_level) = 0;
           else if (x == "Moyen") id(pump1_speed_level) = 1;
           else if (x == "Rapide") id(pump1_speed_level) = 2;
+          int speed = 900;
+          if (id(pump1_speed_level) == 0) speed = 600;
+          else if (id(pump1_speed_level) == 2) speed = 1200;
+          id(pump1_stepper).set_max_speed(speed);
+          id(pump1_current_speed) = speed;
           ESP_LOGD("pump", "Niveau de vitesse mis à %d", id(pump1_speed_level));
     web_server:
       sorting_group_id: sorting_group_general
@@ -1561,6 +1567,23 @@ select:
 #####################################
 # Ce script exécute le moteur pour délivrer un volume dose_ml calculé
 script:
+  - id: finalize_pump1_manual_dose
+    mode: restart
+    then:
+      - lambda: |-
+          char buffer[40];
+          auto now = id(my_time).now();
+          float dose_ml = id(pump1_dose_ml);
+          sprintf(buffer, "%04d-%02d-%02d %02d:%02d - %.1f ml", now.year, now.month, now.day_of_month, now.hour, now.minute, dose_ml);
+          id(pump1_distributed_today) += dose_ml;
+          id(pump1_used_today) += dose_ml;
+          id(pump1_volume_remaining) = std::max(0.0f, id(pump1_volume_remaining) - dose_ml);
+          id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+          id(pump1_last_dose_log) = buffer;
+          id(pump1_last_dose_text).update();
+          id(pump1_manual_dose_active) = false;
+          id(pump1_status).publish_state("Prêt");
+          ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
   - id: run_pump1_steps
     mode: restart
     then:
@@ -1618,9 +1641,47 @@ script:
           target: !lambda 'return id(pump1_chunk_target);'
       - wait_until:
           condition:
-            lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
-      - component.update: pump1_volume_remaining_sensor
-      - script.execute: run_pump1_step_chunk
+            lambda: |-
+              return id(pump1_manual_dose_active) && id(pump1_steps_remaining) > 0;
+          then:
+            - lambda: |-
+                int chunk = id(pump1_steps_remaining) > id(pump1_chunk_size)
+                    ? id(pump1_chunk_size)
+                    : id(pump1_steps_remaining);
+                int lvl = id(pump1_speed_level);
+                int speed = 900;
+                if (lvl == 0) speed = 600;
+                else if (lvl == 2) speed = 1200;
+                id(pump1_stepper).set_max_speed(speed);
+                id(pump1_current_speed) = speed;
+                id(pump1_current_chunk) = chunk;
+                id(pump1_steps_remaining) -= chunk;
+                id(pump1_chunk_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
+            - stepper.set_target:
+                id: pump1_stepper
+                target: !lambda 'return id(pump1_chunk_target);'
+            - wait_until:
+                condition:
+                  lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
+                timeout: 5s
+            - if:
+                condition:
+                  lambda: 'return id(pump1_stepper).current_position >= id(pump1_chunk_target);'
+                then:
+                  - component.update: pump1_volume_remaining_sensor
+                  - delay: 10ms
+                else:
+                  - lambda: |-
+                      id(pump1_steps_remaining) = 0;
+                      id(pump1_manual_dose_active) = false;
+                      id(pump1_status).publish_state("Erreur");
+                      ESP_LOGW("pump", "⚠️ Mouvement non terminé (timeout). Distribution interrompue.");
+      - if:
+          condition:
+            lambda: |-
+              return id(pump1_manual_dose_active) && id(pump1_steps_remaining) <= 0;
+          then:
+            - script.execute: finalize_pump1_manual_dose
   - id: refresh_daily_quantity_sensor
     mode: queued
     then:
@@ -1679,12 +1740,49 @@ script:
           target: !lambda 'return id(pump1_calibration_target);'
       - wait_until:
           condition:
-            lambda: 'return id(pump1_stepper).current_position >= id(pump1_calibration_target);'
-      # - stepper.deenergize: pump1_stepper
-      - lambda: |-
-          id(pump1_status).publish_state("Prêt");
-          ESP_LOGI("pump", "✅ Calibration terminée.");
-      - delay: 10ms
+            lambda: |-
+              return id(pump1_calibration_steps_remaining) > 0;
+          then:
+            - lambda: |-
+                int chunk = id(pump1_calibration_steps_remaining) > id(pump1_chunk_size)
+                    ? id(pump1_chunk_size)
+                    : id(pump1_calibration_steps_remaining);
+                int lvl = id(pump1_speed_level);
+                int speed = 900;
+                if (lvl == 0) speed = 600;
+                else if (lvl == 2) speed = 1200;
+                id(pump1_stepper).set_max_speed(speed);
+                id(pump1_current_speed) = speed;
+                id(pump1_current_chunk) = chunk;
+                id(pump1_calibration_steps_remaining) -= chunk;
+                id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
+            - stepper.set_target:
+                id: pump1_stepper
+                target: !lambda 'return id(pump1_calibration_target);'
+            - wait_until:
+                condition:
+                  lambda: 'return id(pump1_stepper).current_position >= id(pump1_calibration_target);'
+                timeout: 5s
+            - if:
+                condition:
+                  lambda: 'return id(pump1_stepper).current_position >= id(pump1_calibration_target);'
+                then:
+                  - delay: 10ms
+                else:
+                  - lambda: |-
+                      id(pump1_calibration_steps_remaining) = 0;
+                      id(pump1_status).publish_state("Erreur");
+                      ESP_LOGW("pump", "⚠️ Mouvement non terminé (timeout). Calibration interrompue.");
+      - if:
+          condition:
+            lambda: |-
+              return id(pump1_calibration_steps_remaining) <= 0;
+          then:
+            # - stepper.deenergize: pump1_stepper
+            - lambda: |-
+                id(pump1_status).publish_state("Prêt");
+                ESP_LOGI("pump", "✅ Calibration terminée.");
+            - delay: 10ms
   #-------------------------------------
   # SCRIPT D'AMORÇAGE : vitesse rapide
   #-------------------------------------

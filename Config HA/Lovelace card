@@ -482,7 +482,6 @@ cards:
         name: BSSID WiFi
       - entity: sensor.wifi_ssid
         name: SSID WiFi
-      - entity: sensor.i2c_devices_connected
         name: Périphériques I2C
       - entity: sensor.adresse_ip_esp32
         name: Adresse IP

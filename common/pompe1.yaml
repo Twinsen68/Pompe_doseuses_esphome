@@ -1625,11 +1625,14 @@ script:
             id(pump1_dose_ml)
           );
           ESP_LOGI("pump", "✅ Distribution manuelle terminée.");
+          id(pump1_stepper).set_sleep_when_done(true);
+          id(pump1_stepper).set_target(id(pump1_stepper).current_position);
   - id: run_pump1_steps
     mode: restart
     then:
       - script.execute: apply_pump1_speed_profile
       - lambda: |-
+          id(pump1_stepper).set_sleep_when_done(false);
           if (id(pump1_volume_remaining) <= 0) {
             ESP_LOGW("pump", "⚠️ Volume insuffisant, distribution annulée.");
             id(pump1_status).publish_state("Réservoir vide");
@@ -1726,6 +1729,7 @@ script:
     then:
       - script.execute: apply_pump1_speed_profile
       - lambda: |-
+          id(pump1_stepper).set_sleep_when_done(false);
           id(pump1_abort_requested) = false;
           ESP_LOGI("pump", "▶️ Calibration démarrée : %d pas", id(pump1_calibration_steps_remaining));
           id(pump1_current_speed) = std::max(id(pump1_current_speed), 700);
@@ -1746,6 +1750,8 @@ script:
           if (id(pump1_calibration_steps_remaining) <= 0) {
             id(pump1_status).publish_state("Prêt");
             ESP_LOGI("pump", "✅ Calibration terminée.");
+            id(pump1_stepper).set_sleep_when_done(true);
+            id(pump1_stepper).set_target(id(pump1_stepper).current_position);
             return;
           }
           int chunk = id(pump1_calibration_steps_remaining) > id(pump1_chunk_size)
@@ -1992,6 +1998,8 @@ button:
             id(pump1_manual_dose_active) = false;
             id(pump1_status).publish_state("Interrompu");
             ESP_LOGW("pump", "⛔ Arrêt demandé (distribution ou calibration).");
+            id(pump1_stepper).set_sleep_when_done(true);
+            id(pump1_stepper).set_target(id(pump1_stepper).current_position);
     web_server:
       sorting_group_id: sorting_group_mode0
   - platform: template

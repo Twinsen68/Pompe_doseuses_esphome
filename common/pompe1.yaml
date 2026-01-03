@@ -644,9 +644,10 @@ stepper:
     pin_b: GPIO13
     pin_c: GPIO14
     pin_d: GPIO15
-    max_speed: 1000 steps/s
-    acceleration: 300 steps/s^2
-    sleep_when_done: true
+    step_mode: HALF_STEP
+    max_speed: 600 steps/s
+    acceleration: 200 steps/s^2
+    sleep_when_done: false
 
 ################################################
 #     COMPOSANTS NUMBER & SELECT (UI)          #
@@ -1618,9 +1619,9 @@ script:
               ? id(pump1_chunk_size)
               : id(pump1_steps_remaining);
           int lvl = id(pump1_speed_level);
-          int speed = 700;
-          if (lvl == 0) speed = 500;
-          else if (lvl == 2) speed = 900;
+          int speed = 500;
+          if (lvl == 0) speed = 350;
+          else if (lvl == 2) speed = 650;
           id(pump1_stepper).set_max_speed(speed);
           id(pump1_current_speed) = speed;
           id(pump1_current_chunk) = chunk;

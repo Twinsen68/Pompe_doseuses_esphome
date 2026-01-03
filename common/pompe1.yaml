@@ -88,7 +88,7 @@ globals:
   - id: pump1_calibration_steps
     type: int
     restore_value: true
-    initial_value: '60000'  # Nombre de pas pendant la calibration (environ 1 minute de fonctionnement)
+    initial_value: '120000'  # Nombre de pas pendant la calibration (environ 2 minutes de fonctionnement)
   - id: pump1_calibration_factor
     type: float
     restore_value: true

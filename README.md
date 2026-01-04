@@ -555,6 +555,34 @@ Un exemple de carte est disponible dans `Config HA/Lovelace card`. Cette carte r
 
 Copiez le contenu dans une carte manuelle pour obtenir une interface prête à l'emploi.
 
+### Présentation de l’interface Lovelace
+
+Cette interface met en avant les **fonctions dynamiques** pilotées par le code : affichage conditionnel, calculs automatiques et modes adaptatifs. L’objectif est d’expliquer comment la carte réagit aux valeurs et aux modes, sans dépendre d’illustrations.
+
+#### Informations de synthèse (mise à jour en temps réel)
+- **Nom du produit** : modifiable à la volée, et reflété immédiatement dans la carte.
+- **Dernière distribution** : horodatage + volume de la dernière dose déclenchée.
+- **Progression journalière** : ratio *dose réalisée / dose planifiée* recalculé automatiquement.
+- **Ajouts du jour** : total cumulé incluant les ajouts non programmés.
+- **Volume restant** : recalculé à partir de la capacité et des volumes consommés.
+- **État de la pompe** : statut, Wi-Fi et température interne remontés en continu.
+
+#### Sélection du mode de distribution (logique et calculs associés)
+- **Mode 0 – Dose manuelle** : le slider définit la quantité d’un ajout immédiat, sans planification.
+- **Mode 1 – 24 doses** : la quantité journalière est automatiquement divisée en 24 doses (1 par heure).
+- **Mode 2 – 12 doses** : la quantité journalière est automatiquement divisée en 12 doses (toutes les 2 heures).
+- **Mode 3 – Périodes** : jusqu’à 6 périodes, **affichées dynamiquement** quand les champs sont renseignés. La dose journalière est répartie sur le total de doses définies dans les périodes actives.
+- **Mode 4 – Minuteur** : jusqu’à 6 ajouts **indépendants**, avec des volumes définis par dose. Le total quotidien est recalculé à partir des quantités programmées.
+
+#### Réglages communs (toujours disponibles)
+- **Activation / arrêt** : contrôle immédiat de l’état de la pompe.
+- **Calibration** : enregistrement du facteur ml/pas et validation de la mesure.
+- **Amorçage / réservoir** : actions de maintenance et remise à niveau des compteurs.
+- **Vitesse / test / remise à zéro** : actions de service accessibles quel que soit le mode.
+
+#### Autonomie opérationnelle
+Les pompes restent **autonomes** : elles continuent à distribuer même si Home Assistant est indisponible. Chaque module peut exposer sa propre page de configuration via le serveur web intégré.
+
 ---
 ## Contributions
 

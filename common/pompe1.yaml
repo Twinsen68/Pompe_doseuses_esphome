@@ -469,6 +469,10 @@ globals:
     type: int
     restore_value: false
     initial_value: '0'
+  - id: pump1_calibration_steps_done
+    type: int
+    restore_value: false
+    initial_value: '0'
   # Sauvegarde temporaire de la vitesse du stepper pour amorçage
   - id: pump1_stepper_speed_saved
     type: int
@@ -1725,6 +1729,16 @@ script:
       - lambda: |-
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Amorçage terminé.");
+          float priming_ml = id(pump1_priming_steps_remaining) * id(pump1_calibration_factor);
+          if (priming_ml > 0) {
+            id(pump1_used_today) += priming_ml;
+            id(pump1_volume_remaining) =
+                std::max(0.0f, id(pump1_volume_remaining) - priming_ml);
+            id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+            id(pump1_used_today_sensor).publish_state(id(pump1_used_today));
+            ESP_LOGI("pump", "📉 Amorçage: -%.2f ml du réservoir (hors distribution).", priming_ml);
+          }
+          id(pump1_priming_steps_remaining) = 0;
       - delay: 10ms
       - switch.turn_off: pump1_priming_switch
   - id: calibration_pump1_steps
@@ -1735,6 +1749,7 @@ script:
       - lambda: |-
           id(pump1_stepper).set_sleep_when_done(false);
           id(pump1_abort_requested) = false;
+          id(pump1_calibration_steps_done) = 0;
           ESP_LOGI("pump", "▶️ Calibration démarrée : %d pas", id(pump1_calibration_steps_remaining));
           id(pump1_current_speed) = std::max(id(pump1_current_speed), 700);
           id(pump1_stepper).set_max_speed(id(pump1_current_speed));
@@ -1749,9 +1764,31 @@ script:
             id(pump1_abort_requested) = false;
             id(pump1_calibration_steps_remaining) = 0;
             id(pump1_status).publish_state("Interrompu");
+            if (id(pump1_calibration_steps_done) > 0) {
+              float calibration_ml =
+                  id(pump1_calibration_steps_done) * id(pump1_calibration_factor);
+              id(pump1_used_today) += calibration_ml;
+              id(pump1_volume_remaining) = std::max(
+                  0.0f, id(pump1_volume_remaining) - calibration_ml);
+              id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+              id(pump1_used_today_sensor).publish_state(id(pump1_used_today));
+              ESP_LOGI("pump", "📉 Calibration interrompue: -%.2f ml du réservoir.", calibration_ml);
+              id(pump1_calibration_steps_done) = 0;
+            }
             return;
           }
           if (id(pump1_calibration_steps_remaining) <= 0) {
+            if (id(pump1_calibration_steps_done) > 0) {
+              float calibration_ml =
+                  id(pump1_calibration_steps_done) * id(pump1_calibration_factor);
+              id(pump1_used_today) += calibration_ml;
+              id(pump1_volume_remaining) = std::max(
+                  0.0f, id(pump1_volume_remaining) - calibration_ml);
+              id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+              id(pump1_used_today_sensor).publish_state(id(pump1_used_today));
+              ESP_LOGI("pump", "📉 Calibration: -%.2f ml du réservoir (hors distribution).", calibration_ml);
+              id(pump1_calibration_steps_done) = 0;
+            }
             id(pump1_status).publish_state("Calibration terminée, mesurer le volume et valider");
             ESP_LOGI("pump", "✅ Calibration terminée, mesurer le volume et valider.");
             id(pump1_motor_power).turn_off();
@@ -1765,6 +1802,7 @@ script:
               : id(pump1_calibration_steps_remaining);
           id(pump1_current_chunk) = chunk;
           id(pump1_calibration_steps_remaining) -= chunk;
+          id(pump1_calibration_steps_done) += chunk;
           id(pump1_calibration_target) = id(pump1_stepper).current_position + id(pump1_current_chunk);
       - stepper.set_target:
           id: pump1_stepper
@@ -1798,6 +1836,16 @@ script:
           id(pump1_current_speed) = id(pump1_stepper_speed_saved);
           id(pump1_status).publish_state("Prêt");
           ESP_LOGI("pump", "✅ Amorçage terminé.");
+          float priming_ml = id(pump1_priming_steps_remaining) * id(pump1_calibration_factor);
+          if (priming_ml > 0) {
+            id(pump1_used_today) += priming_ml;
+            id(pump1_volume_remaining) =
+                std::max(0.0f, id(pump1_volume_remaining) - priming_ml);
+            id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+            id(pump1_used_today_sensor).publish_state(id(pump1_used_today));
+            ESP_LOGI("pump", "📉 Amorçage: -%.2f ml du réservoir (hors distribution).", priming_ml);
+          }
+          id(pump1_priming_steps_remaining) = 0;
       - delay: 10ms
       - switch.turn_off: pump1_priming_switch
       - lambda: |-

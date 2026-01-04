@@ -83,9 +83,10 @@ flowchart LR
 La configuration est découpée en modules pour faciliter la maintenance et la duplication des pompes :
 
 - `install.yaml` : point d'entrée minimal à coller dans ESPHome.
-- `pompe_doseuses_config.yaml` : assemble les modules via `packages`.
+- `pompedoseuses_config.yaml` : assemble les modules via `packages`.
 - `common/device_base.yaml` : base ESP32 (Wi-Fi, web_server, capteurs système, LED, etc.).
 - `common/pompe_doseuses.yaml` : métadonnées et infos de diagnostic (version, GitHub).
+- `common/debug.yaml` : métriques de debug (heap, loop time, reset reason, etc.).
 - `common/pompe1.yaml` : logique complète d'une pompe (modes, calibration, scripts, UI).
 
 Vous pouvez dupliquer `common/pompe1.yaml` (ex. `pompe2.yaml`) et ajouter le package correspondant pour gérer plusieurs pompes.

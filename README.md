@@ -485,6 +485,53 @@ La pompe maintient des informations de suivi (volume restant, volume distribué/
 Pensez à mettre à jour la **capacité du réservoir** pour un calcul cohérent.
 
 ---
+## Détection de blocage moteur (limites)
+
+### a) Pourquoi le système ne peut pas savoir si le moteur décroche
+Le pilotage du **moteur pas à pas** via le driver **ULN2003** est en **open-loop** : le firmware envoie des impulsions, mais ne mesure **aucun retour**. Il n’y a :
+
+- **pas de capteur de position**,
+- **pas d’encodeur**,
+- **pas de retour d’effort**.
+
+Donc si le moteur décroche (tube pincé, galet bloqué, viscosité, etc.), le firmware “croit” quand même avoir avancé, car il a bien envoyé les impulsions. C’est une limite structurelle de ce type de montage.
+
+### b) Mesure de courant : utile, mais souvent insuffisante avec ULN2003 + 28BYJ
+Il est possible d’ajouter une **mesure de courant** sur le **5 V moteurs** (INA219/INA226, ou shunt + ADC). Cela peut aider à détecter :
+
+- **moteur débranché** (courant ≈ 0),
+- **court-circuit / problème driver** (courant anormal),
+- **blocage franc** si cela provoque une variation de courant suffisante.
+
+Cependant, avec ce type de moteur/driver, le courant est surtout **résistif** (bobines). Un blocage mécanique ne fait pas forcément varier le courant de manière significative, donc ce n’est **pas une détection fiable à 100 %**.
+
+#### Proposition de code (détection d’anomalies de courant)
+Le projet inclut un package optionnel `common/current_monitoring.yaml` qui ajoute un capteur INA219 et un **binaire de diagnostic** pour signaler un courant **trop faible** (moteur débranché) ou **trop élevé** (court-circuit / blocage franc).
+
+Activez-le en ajoutant le package dans votre configuration :
+
+```yaml
+packages:
+  device_base: !include common/device_base.yaml
+  pompe_doseuses: !include common/pompe_doseuses.yaml
+  debug: !include common/debug.yaml
+  pompe1: !include common/pompe1.yaml
+  current_monitoring: !include common/current_monitoring.yaml
+```
+
+Vous pouvez ajuster les seuils et les pins I2C via les substitutions :
+
+```yaml
+substitutions:
+  motor_current_i2c_sda: GPIO21
+  motor_current_i2c_scl: GPIO22
+  motor_current_ina219_address: "0x40"
+  motor_current_shunt_ohms: "0.1"
+  motor_current_min_ma: "20"
+  motor_current_max_ma: "700"
+```
+
+---
 ## Home Assistant : carte Lovelace
 
 Un exemple de carte est disponible dans `Config HA/Lovelace card`. Cette carte regroupe :

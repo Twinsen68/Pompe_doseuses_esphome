@@ -1,0 +1,68 @@
+substitutions:
+  motor_current_i2c_sda: GPIO21
+  motor_current_i2c_scl: GPIO22
+  motor_current_ina219_address: "0x40"
+  motor_current_shunt_ohms: "0.1"
+  motor_current_min_ma: "20"
+  motor_current_max_ma: "700"
+
+i2c:
+  sda: ${motor_current_i2c_sda}
+  scl: ${motor_current_i2c_scl}
+  scan: true
+
+sensor:
+  - platform: ina219
+    address: ${motor_current_ina219_address}
+    shunt_resistance: ${motor_current_shunt_ohms}
+    update_interval: 1s
+    current:
+      name: "Pompe 1 - Courant moteur"
+      id: pump1_motor_current_ma
+      unit_of_measurement: "mA"
+      accuracy_decimals: 0
+      filters:
+        - throttle: 2s
+      web_server:
+        sorting_group_id: sorting_group_general
+    power:
+      name: "Pompe 1 - Puissance moteur"
+      unit_of_measurement: "W"
+      accuracy_decimals: 2
+      web_server:
+        sorting_group_id: sorting_group_general
+    bus_voltage:
+      name: "Pompe 1 - Tension moteur"
+      unit_of_measurement: "V"
+      accuracy_decimals: 2
+      web_server:
+        sorting_group_id: sorting_group_general
+
+binary_sensor:
+  - platform: template
+    name: "Pompe 1 - Anomalie courant moteur"
+    id: pump1_motor_current_fault
+    device_class: problem
+    entity_category: diagnostic
+    update_interval: 1s
+    lambda: |-
+      const bool motor_running =
+        id(pump1_steps_remaining) > 0 ||
+        id(pump1_calibration_steps_remaining) > 0 ||
+        id(pump1_priming_steps_remaining) > 0;
+      if (!motor_running) {
+        return false;
+      }
+      if (isnan(id(pump1_motor_current_ma).state)) {
+        return false;
+      }
+      const float current = id(pump1_motor_current_ma).state;
+      if (current < ${motor_current_min_ma}) {
+        return true;
+      }
+      if (current > ${motor_current_max_ma}) {
+        return true;
+      }
+      return false;
+    web_server:
+      sorting_group_id: sorting_group_general

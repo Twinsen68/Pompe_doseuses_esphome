@@ -573,10 +573,24 @@ Cette interface met en avant les **fonctions dynamiques** pilotées par le code 
 <img width="581" height="352" alt="Capture d’écran 2026-01-04 à 17 42 30" src="https://github.com/user-attachments/assets/e1b4ccb1-e8e0-4ba4-9712-3677bd21abd3" />
 
 - **Mode 0 – Dose manuelle** : le slider définit la quantité d’un ajout immédiat, sans planification.
+<img width="569" height="223" alt="Capture d’écran 2026-01-04 à 17 57 47" src="https://github.com/user-attachments/assets/7aa083f0-6e89-4d19-9893-43e4aadd21c3" />
+
+
 - **Mode 1 – 24 doses** : la quantité journalière est automatiquement divisée en 24 doses (1 par heure).
+<img width="569" height="240" alt="Capture d’écran 2026-01-04 à 17 55 37" src="https://github.com/user-attachments/assets/e6c1b716-a313-4b91-802a-535720a9f8da" />
+
+
 - **Mode 2 – 12 doses** : la quantité journalière est automatiquement divisée en 12 doses (toutes les 2 heures).
+<img width="572" height="231" alt="Capture d’écran 2026-01-04 à 17 54 40" src="https://github.com/user-attachments/assets/3a215570-06b6-4189-a7a4-ce3aef469269" />
+
+
 - **Mode 3 – Périodes** : jusqu’à 6 périodes, **affichées dynamiquement** quand les champs sont renseignés. La dose journalière est répartie sur le total de doses définies dans les périodes actives.
+<img width="563" height="811" alt="Capture d’écran 2026-01-04 à 17 51 36" src="https://github.com/user-attachments/assets/ca9d1879-fbad-4142-8c63-685605c2ce22" />
+
+  Les priodes suivantes s'affichent dynamiquement si les données sont configurées pour la période
 - **Mode 4 – Minuteur** : jusqu’à 6 ajouts **indépendants**, avec des volumes définis par dose. Le total quotidien est recalculé à partir des quantités programmées.
+<img width="574" height="538" alt="Capture d’écran 2026-01-04 à 17 50 01" src="https://github.com/user-attachments/assets/0370fc17-65ae-4640-8edd-8ebb7b362dee" />
+  Les minuteurs suivants s'affichent dynamiquement si les données sont configurées pour le minuteur précédent
 
 #### Réglages communs (toujours disponibles)
 <img width="574" height="297" alt="Capture d’écran 2026-01-04 à 17 43 05" src="https://github.com/user-attachments/assets/3f7caa6f-9368-4283-915d-42ce6e776a43" />

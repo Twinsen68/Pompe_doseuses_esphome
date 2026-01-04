@@ -120,6 +120,18 @@ Par défaut, la configuration utilise les GPIO suivants pour le driver ULN2003 :
 
 Adaptez ces broches si votre câblage est différent.
 
+## Alimentation propre (fortement recommandé)
+
+L’installation désactive la détection de brownout (`-DBROWNOUT_DISABLE` dans `install.yaml`). En cas d’effondrement momentané de l’alimentation (plusieurs moteurs qui commutent en même temps), l’ESP32 peut alors devenir instable au lieu de redémarrer proprement. **Une alimentation propre est donc essentielle**.
+
+À minima, mettez en place ces bonnes pratiques :
+
+- **Alimentation 5 V dédiée pour les moteurs :** ne pas alimenter les ULN/moteurs depuis le 5 V de l’ESP/USB.
+- **Masse commune obligatoire :** relier la masse de l’alim moteurs à celle de l’ESP (indispensable pour la référence des signaux).
+- **Marge de courant confortable :** viser large (ex. **5 V / 3 A** pour 3–4 pompes).
+- **Découplage :** ajouter un condensateur électrolytique **470–1000 µF** sur le 5 V moteurs près des cartes ULN, + **100 nF** près de chaque driver si possible.
+- **Démarrages décalés :** éviter les démarrages simultanés si l’alim est petite en décalant les offsets/horaires de dose entre pompes.
+
 ## Modes de Fonctionnement et Paramétrage
 
 Ce projet permet de contrôler et configurer les pompes doseuses via plusieurs modes de distribution. Voici un aperçu détaillé des différentes options disponibles, avec des explications approfondies et des conseils d'utilisation.

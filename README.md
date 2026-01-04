@@ -387,7 +387,7 @@ Cette option permet de mieux identifier les pompes et leurs fonctions spécifiqu
 
 ### Calibration et enregistrement du facteur
 
-Lors de la calibration, la pompe effectue par défaut **120 000 pas**, soit environ deux minutes de fonctionnement. Vous pouvez augmenter ce nombre (par exemple à 180 000 pas pour trois minutes) via le paramètre **"Pompe 1 - Nombre de pas pendant la calibration"** afin d'obtenir un volume plus important.
+Lors de la calibration, la pompe effectue par défaut **120 000 pas** configurés, et le script utilise **2× ce nombre** (soit **240 000 pas** en HALF_STEP), soit environ deux minutes de fonctionnement. Vous pouvez augmenter ce nombre (par exemple à 180 000 pas, soit 360 000 pas effectifs) via le paramètre **"Pompe 1 - Nombre de pas pendant la calibration"** afin d'obtenir un volume plus important.
 
 Mesurez ensuite le volume réellement délivré (ex. dans une seringue graduée) et saisissez cette valeur dans le champ **"Pompe X - Volume mesuré (ml)"**.
 
@@ -445,7 +445,7 @@ This switch allows you to control the pump directly from the ESPHome web interfa
 Un switch dédié permet de lancer rapidement l'amorçage de la pompe pour remplir les tuyaux :
 
 - **Paramètre associé** : `Amorcer Pompe 1 (Priming)`
-- **Principe** : active temporairement le moteur pendant quelques secondes.
+- **Principe** : active temporairement le moteur pendant quelques secondes. Par défaut, l'amorçage vise **2 ml** en se basant sur le facteur de calibration ; si le facteur est inconnu, un **mode par défaut (≈ 2500 pas)** est utilisé.
 - **Utilisation** : à déclencher après installation ou maintenance pour éviter les bulles d'air.
 - **Note** : le volume déplacé par l'amorçage est déduit du réservoir (volume utilisé) mais n'est pas comptabilisé comme volume distribué dans le bac.
 
@@ -461,6 +461,10 @@ Un bouton permet d'interrompre une distribution en cours :
 
 - **Bouton** : `Stopper distribution Pompe 1`
 - **Fonctionnement** : arrête immédiatement la séquence active et remet la pompe à l'état "Prêt".
+
+### Remplissage et remise à zéro des compteurs
+- **Remplir réservoir** : le bouton `Remplir réservoir Pompe 1` remet le volume restant à la capacité configurée.
+- **Réinitialiser Historique** : le bouton `Réinitialiser Historique Pompe 1` remet à zéro les compteurs **Volume utilisé (aujourd’hui)** et **Volume distribué (aujourd’hui)**, ainsi que le texte **Dernière dose**.
 
 ### Réglage de la vitesse
 Un sélecteur "Pompe 1 - Vitesse" est maintenant disponible dans ESPHome et Home Assistant.
@@ -487,6 +491,7 @@ La pompe maintient des informations de suivi (volume restant, volume distribué/
 
 - **Volume restant** (basé sur la capacité du réservoir et la consommation).
 - **Volume distribué aujourd'hui**.
+- **Volume utilisé aujourd'hui** (inclut amorçage, calibration, tests).
 - **Dernière dose** (horodatage texte).
 - **Rappel** : l'amorçage et la calibration déduisent du réservoir sans augmenter le volume distribué.
 

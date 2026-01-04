@@ -1,7 +1,7 @@
 type: vertical-stack
 cards:
   - type: custom:mushroom-title-card
-    title: 🧪 Pompe Doseuse Récifale – Pompe 1
+    title: 🧪 Pompe Doseuse 1
     alignment: justify
   - type: custom:mushroom-entity-card
     entity: text.pompes_doseuses_recifales_pompe_1_nom_du_produit
@@ -11,61 +11,41 @@ cards:
     fill_container: true
     primary_info: state
     secondary_info: name
+  - type: custom:mushroom-select-card
+    entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
+    name: Mode
+    icon: mdi:format-list-bulleted
+    icon_color: lime
   - type: custom:mushroom-chips-card
     chips:
-      - type: menu
       - type: entity
         entity: sensor.pompes_doseuses_recifales_pompe_1_derniere_dose
         icon: mdi:wave
         icon_color: teal
       - type: template
-        content: >-
-          {% set mode =
-          states('select.pompes_doseuses_recifales_pompe_1_mode_de_distribution')
-          %}
-           {% set total = states('sensor.pompes_doseuses_recifales_volume_quotidien_pompe_1_ml')|float(0)
-          if mode == 'Mode 4: Minuteur'
-
-          else
-          states('number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml')|float(0)%}
-
-
-
-
-          {{states('sensor.pompes_doseuses_recifales_pompe_1_volume_utilise_aujourd_hui')|float(0)
-          }}
-
-
-          / {{ total }} ml
+        content: |2-
+                    {% set mode = states('select.pompes_doseuses_recifales_pompe_1_mode_de_distribution') %}
+                    {% set doses = [
+                      states('number.pompes_doseuses_recifales_periode_1_doses')|float(0),
+                      states('number.pompes_doseuses_recifales_periode_2_doses')|float(0),
+                      states('number.pompes_doseuses_recifales_periode_3_doses')|float(0),
+                      states('number.pompes_doseuses_recifales_periode_4_doses')|float(0),
+                      states('number.pompes_doseuses_recifales_periode_5_doses')|float(0),
+                      states('number.pompes_doseuses_recifales_periode_6_doses')|float(0)
+                    ] %}
+                    {% set total = states('sensor.pompes_doseuses_recifales_volume_quotidien_pompe_1_ml')|float(0)
+                      if mode == 'Mode 4: Minuteur'
+                      else (0 if mode == 'Mode 3: Périodes' and (doses | sum) == 0
+                        else states('number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml')|float(0))
+                    %}
+                    {{ states('sensor.pompes_doseuses_recifales_pompe_1_volume_utilise_aujourd_hui')|float(0) }}
+                    / {{ total }} ml
         icon: mdi:wave-undercurrent
         icon_color: teal
       - type: entity
         entity: sensor.pompes_doseuses_recifales_pompe_1_volume_distribue_aujourd_hui
         icon: mdi:waves
         icon_color: teal
-      - type: template
-        icon: |2-
-            {% set v = states('sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml')|float(0) %}
-            {% set cap = 1000 %}
-            {% if v > cap*5/6 %} mdi:hexagon-outline
-            {% elif v > cap*4/6 %} mdi:hexagon-slice-5
-            {% elif v > cap*3/6 %} mdi:hexagon-slice-4
-            {% elif v > cap*2/6 %} mdi:hexagon-slice-3
-            {% elif v > cap*1/6 %} mdi:hexagon-slice-2
-            {% elif v > 0 %} mdi:hexagon-slice-1
-            {% else %} mdi:hexagon-slice-6
-            {% endif %}
-        icon_color: |2-
-            {% set v = states('sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml')|float(0) %}
-            {% if v > 500 %} green
-            {% elif v > 250 %} orange
-            {% else %} red
-            {% endif %}
-        entity: sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml
-        content: >-
-          {{
-          states('sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml')|int
-          }} ml Restants
       - type: template
         icon: |2-
                   {% set s = states('sensor.pompes_doseuses_recifales_pompe_1_statut') %}
@@ -125,30 +105,97 @@ cards:
           {{ states('sensor.pompes_doseuses_recifales_force_du_signal_wifi')|int
           }}%
                     · {{ states('sensor.pompes_doseuses_recifales_temperature_interne')|int }}°C
-  - type: grid
-    columns: 3
-    square: false
+      - type: template
+        icon: |2-
+                      {% set v = states('sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml')|float(0) %}
+                      {% set cap = states('number.pompes_doseuses_recifales_pompe_1_capacite_reservoir_ml')|float(0) %}
+                      {% set safe_cap = cap if cap > 0 else 1 %}
+                      {% if v > safe_cap*5/6 %} mdi:hexagon-outline
+                      {% elif v > safe_cap*4/6 %} mdi:hexagon-slice-5
+                      {% elif v > safe_cap*3/6 %} mdi:hexagon-slice-4
+                      {% elif v > safe_cap*2/6 %} mdi:hexagon-slice-3
+                      {% elif v > safe_cap*1/6 %} mdi:hexagon-slice-2
+                      {% elif v > 0 %} mdi:hexagon-slice-1
+                      {% else %} mdi:hexagon-slice-6
+                      {% endif %}
+        icon_color: |2-
+                      {% set v = states('sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml')|float(0) %}
+                      {% set cap = states('number.pompes_doseuses_recifales_pompe_1_capacite_reservoir_ml')|float(0) %}
+                      {% set safe_cap = cap if cap > 0 else 1 %}
+                      {% if v > safe_cap*0.5 %} green
+                      {% elif v > safe_cap*0.25 %} orange
+                      {% else %} red
+                      {% endif %}
+        entity: sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml
+        content: >-
+          {{
+          states('sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml')|int
+          }}
+                    ml Restants
+    alignment: center
+  - type: vertical-stack
     cards:
-      - type: custom:mushroom-number-card
-        entity: number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml
-        name: Quotidien (ml)
-        icon: mdi:beaker
-        icon_color: green
-      - type: custom:mushroom-number-card
-        entity: number.pompes_doseuses_recifales_pompe_1_offset_minute
-        name: Offset min
-        icon: mdi:clock-edit-outline
-        icon_color: light-green
-      - type: custom:mushroom-select-card
-        entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
-        name: Mode
-        icon: mdi:format-list-bulleted
-        icon_color: lime
-      - type: custom:mushroom-select-card
-        entity: select.pompes_doseuses_recifales_pompe_1_vitesse
-        name: Vitesse
-        icon: mdi:speedometer
-        icon_color: cyan
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
+            state: "Mode 3: Périodes"
+        card:
+          type: grid
+          square: false
+          columns: 1
+          cards:
+            - type: custom:mushroom-number-card
+              entity: number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml
+              name: Quotidien (ml)
+              icon: mdi:beaker
+              icon_color: green
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
+            state_not: "Mode 3: Périodes"
+          - condition: state
+            entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
+            state_not: "Mode 4: Minuteur"
+          - condition: state
+            entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
+            state_not: "Mode 0: Dose manuelle"
+        card:
+          type: grid
+          square: false
+          columns: 2
+          cards:
+            - type: custom:mushroom-number-card
+              entity: number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml
+              name: Quotidien (ml)
+              icon: mdi:beaker
+              icon_color: green
+            - type: custom:mushroom-number-card
+              entity: number.pompes_doseuses_recifales_pompe_1_offset_minute
+              name: Offset min
+              icon: mdi:clock-edit-outline
+              icon_color: light-green
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
+            state: "Mode 0: Dose manuelle"
+        card:
+          type: grid
+          square: false
+          columns: 2
+          cards:
+            - type: custom:mushroom-number-card
+              entity: number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml
+              name: Quotidien (ml)
+              icon: mdi:beaker
+              icon_color: green
+            - type: custom:mushroom-entity-card
+              entity: button.pompes_doseuses_recifales_doser_manuellement_pompe_1
+              name: Dose manuelle
+              icon: mdi:plus-circle-multiple-outline
+              icon_color: light-blue
   - type: custom:state-switch
     entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
     default: Autre
@@ -156,8 +203,6 @@ cards:
       "Mode 3: Périodes":
         type: vertical-stack
         cards:
-          - type: custom:mushroom-title-card
-            title: 🗓️ Périodes de Distribution
           - type: custom:mushroom-title-card
             subtitle: 🕒 Période 1
           - type: grid
@@ -543,8 +588,6 @@ cards:
                   entity: number.pompes_doseuses_recifales_minuteur_dose_6_quantity_ml
                   name: Qté (ml) 6
                   icon_color: green
-  - type: custom:mushroom-title-card
-    title: ⚙️ Actions & Maintenance
   - type: grid
     columns: 3
     square: false
@@ -553,7 +596,16 @@ cards:
         entity: switch.pompes_doseuses_recifales_activation_pompe_1
         name: Activer
         icon: mdi:play
-        icon_color: green
+        icon_color: blue
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+      - type: custom:mushroom-entity-card
+        entity: button.pompes_doseuses_recifales_lancer_calibration_pompe_1
+        name: Calibration
+        icon: mdi:tune
+        icon_color: yellow
         tap_action:
           action: toggle
         hold_action:
@@ -568,39 +620,42 @@ cards:
         hold_action:
           action: more-info
       - type: custom:mushroom-entity-card
-        entity: switch.pompes_doseuses_recifales_mode_test_simulation
-        name: Test
-        icon: mdi:flask-outline
-        icon_color: orange
+        icon: mdi:plus-circle-multiple-outline
+        icon_color: light-blue
         tap_action:
           action: toggle
         hold_action:
           action: more-info
-      - type: custom:mushroom-entity-card
-        entity: button.pompes_doseuses_recifales_lancer_calibration_pompe_1
-        name: Calibration
-        icon: mdi:tune
-        icon_color: purple
-        tap_action:
-          action: toggle
-        hold_action:
-          action: more-info
+        entity: button.pompes_doseuses_recifales_doser_manuellement_pompe_1
+        name: Dose manuelle
       - type: custom:mushroom-entity-card
         entity: button.pompes_doseuses_recifales_valider_calibration_pompe_1
         name: Valider Calib.
         icon: mdi:check
-        icon_color: green
+        icon_color: amber
         tap_action:
           action: toggle
         hold_action:
           action: toggle
+      - type: custom:mushroom-entity-card
+        entity: button.pompes_doseuses_recifales_remplir_reservoir_pompe_1
+        name: Remplir réservoir
+        icon: mdi:bottle-tonic-plus
+        icon_color: light-green
+        hold_action:
+          action: more-info
+        tap_action:
+          action: toggle
+      - type: custom:mushroom-select-card
+        entity: select.pompes_doseuses_recifales_pompe_1_vitesse
+        name: Vitesse
+        icon: mdi:speedometer
+        icon_color: cyan
       - type: custom:mushroom-number-card
         entity: number.pompes_doseuses_recifales_pompe_1_volume_mesure_ml
         name: Volume calibration (ml)
         icon: mdi:beaker-check
         icon_color: orange
-        tap_action:
-          action: toggle
         hold_action:
           action: more-info
       - type: custom:mushroom-number-card
@@ -609,28 +664,10 @@ cards:
         icon: mdi:bottle-tonic
         icon_color: green
         tap_action:
-          action: toggle
+          action: more-info
         hold_action:
           action: more-info
         display_mode: slider
-      - type: custom:mushroom-entity-card
-        entity: button.pompes_doseuses_recifales_remplir_reservoir_pompe_1
-        name: Remplir réservoir
-        icon: mdi:bottle-tonic-plus
-        icon_color: green
-        tap_action:
-          action: toggle
-        hold_action:
-          action: more-info
-      - type: custom:mushroom-entity-card
-        icon: mdi:plus-circle-multiple-outline
-        icon_color: deep-purple
-        tap_action:
-          action: toggle
-        hold_action:
-          action: more-info
-        entity: button.pompes_doseuses_recifales_doser_manuellement_pompe_1
-        name: Dose manuelle
       - type: custom:mushroom-entity-card
         entity: button.pompes_doseuses_recifales_stopper_distribution_pompe_1
         name: Stopper distribution
@@ -645,6 +682,15 @@ cards:
         name: Réinitialiser Historique
         icon: mdi:history
         icon_color: brown
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+      - type: custom:mushroom-entity-card
+        entity: switch.pompes_doseuses_recifales_mode_test_simulation
+        name: Test
+        icon: mdi:flask-outline
+        icon_color: orange
         tap_action:
           action: toggle
         hold_action:

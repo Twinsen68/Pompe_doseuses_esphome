@@ -1854,6 +1854,10 @@ script:
               ESP_LOGI("pump", "📉 Calibration interrompue: -%.2f ml du réservoir.", calibration_ml);
               id(pump1_calibration_steps_done) = 0;
             }
+            id(pump1_stepper).set_sleep_when_done(true);
+            id(pump1_stepper).set_target(id(pump1_stepper).current_position);
+            id(pump1_motor_power).turn_off();
+            ESP_LOGI("pump", "🔌 Moteur désalimenté (calibration interrompue).");
             return;
           }
           if (id(pump1_calibration_steps_remaining) <= 0) {
@@ -1872,10 +1876,10 @@ script:
             id(pump1_status).publish_state("Calibr. distribuée");
             ESP_LOGI("pump", "✅ Fin de calibration.");
             ESP_LOGI("pump", "✅ Calibration terminée, mesurer le volume et valider.");
-            id(pump1_motor_power).turn_off();
-            ESP_LOGI("pump", "🔌 Moteur désalimenté (fin calibration).");
             id(pump1_stepper).set_sleep_when_done(true);
             id(pump1_stepper).set_target(id(pump1_stepper).current_position);
+            id(pump1_motor_power).turn_off();
+            ESP_LOGI("pump", "🔌 Moteur désalimenté (fin calibration).");
             return;
           }
           int chunk = id(pump1_calibration_steps_remaining) > id(pump1_chunk_size)

@@ -613,6 +613,17 @@ Les pompes restent **autonomes** : elles continuent à distribuer même si Home 
 Les contributions et suggestions sont les bienvenues !
 Pour proposer des améliorations, ouvrez une [issue](https://github.com/Twinsen68/Pompe_doseuses_esphome/issues) ou soumettez une pull request.
 
+## ❤️ Soutenir le projet
+
+Si ce projet vous est utile et que vous souhaitez contribuer à son maintien
+ou à son évolution :
+
+👉 https://paypal.me/rgoudez
+
+Merci pour votre soutien.
+
+[![Donate PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/rgoudez)
+
 ## License
 
 Ce projet est distribué sous la licence [Non-Commercial](LICENSE).

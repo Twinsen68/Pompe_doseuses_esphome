@@ -182,7 +182,7 @@ La pompe doseuse permet de choisir parmi plusieurs modes de distribution grâce 
 #### **Valeurs Disponibles :**
 | Mode | Fonctionnement |
 |------|---------------|
-| **Mode 0** | Dose unique à une heure définie |
+| **Mode 0** | Dose manuelle (bouton uniquement) |
 | **Mode 1** | 24 doses réparties sur la journée (une par heure) |
 | **Mode 2** | 12 doses toutes les 2 heures |
 | **Mode 3** | Répartition sur des périodes personnalisées |
@@ -196,14 +196,14 @@ select:
     id: pump1_distribution_select
     icon: mdi:format-list-bulleted
     options:
-      - "Mode 0: Dose unique"
+      - "Mode 0: Dose manuelle"
       - "Mode 1: 24 doses"
       - "Mode 2: 12 doses"
       - "Mode 3: Périodes"
       - "Mode 4: Minuteur"
     lambda: |-
       int mode = id(pump1_distribution_mode);
-      if (mode == 0) return std::string("Mode 0: Dose unique");
+      if (mode == 0) return std::string("Mode 0: Dose manuelle");
       else if (mode == 1) return std::string("Mode 1: 24 doses");
       else if (mode == 2) return std::string("Mode 2: 12 doses");
       else if (mode == 3) return std::string("Mode 3: Périodes");
@@ -211,7 +211,7 @@ select:
       return {};
     set_action:
       - lambda: |-
-          if (x == "Mode 0: Dose unique") id(pump1_distribution_mode) = 0;
+          if (x == "Mode 0: Dose manuelle") id(pump1_distribution_mode) = 0;
           else if (x == "Mode 1: 24 doses") id(pump1_distribution_mode) = 1;
           else if (x == "Mode 2: 12 doses") id(pump1_distribution_mode) = 2;
           else if (x == "Mode 3: Périodes") id(pump1_distribution_mode) = 3;
@@ -224,7 +224,7 @@ Ce sélecteur permet de basculer facilement entre les différents modes et garan
 #### **Répartition selon le Mode de Distribution :**
 | Mode | Répartition des doses |
 |------|-----------------------|
-| **Mode 0** (Dose unique) | 100 ml en une seule fois |
+| **Mode 0** (Dose manuelle) | Dose déclenchée uniquement via le bouton |
 | **Mode 1** (24 doses) | 100 ml / 24 → 4,16 ml par heure |
 | **Mode 2** (12 doses) | 100 ml / 12 → 8,33 ml toutes les 2h |
 | **Mode 3** (Périodes personnalisées) | Quantité répartie sur les plages horaires définies |
@@ -232,20 +232,16 @@ Ce sélecteur permet de basculer facilement entre les différents modes et garan
 
 ---
 
-#### 1. **Mode 0 : Dose unique** (Distribution ponctuelle)
-   - **Principe** : Une seule dose est distribuée lors de l'activation.
-   - **Horaire configurable** : L’heure de la distribution est définie par les paramètres `Pompe X - Heure de dose (heure)` et `Pompe X - Heure de dose (minute)`, accessibles depuis Home Assistant ou l'interface Web ESPHome.
-   - **Utilisation recommandée** : Pour ajouter une dose manuelle sans automatisation.
-   - **Paramètres à configurer** :
-     - `Pompe X - Heure de dose (heure)`: définit l'heure de distribution (ex: `12` pour midi).
-     - `Pompe X - Heure de dose (minute)`: définit la minute de distribution (ex: `30` pour 12h30).
-     - `Pompe X - Volume quotidien (ml)`: quantité à distribuer en une seule fois.
+#### 1. **Mode 0 : Dose manuelle** (Bouton uniquement)
+   - **Principe** : La dose est déclenchée uniquement via le bouton `Doser manuellement Pompe X`.
+   - **Aucune planification** : aucune distribution automatique n’est faite en mode 0.
+   - **Utilisation recommandée** : Pour une distribution ponctuelle contrôlée par l’utilisateur.
+   - **Paramètre à configurer** :
+     - `Pompe X - Volume quotidien (ml)`: quantité à distribuer à chaque appui.
    - **Exemple d'utilisation** : Vous souhaitez ajouter une dose de 10 ml de solution nutritive immédiatement.
    - **Exemple de configuration** :
-     - `Pompe X - Heure de dose (heure) = 14`
-     - `Pompe X - Heure de dose (minute) = 45`
-     - `Pompe X - Volume quotidien (ml) = 50`
-     - **Résultat** : La pompe distribuera **50 ml à 14h45**, puis plus rien jusqu'au lendemain.
+     - `Pompe X - Volume quotidien (ml) = 10`
+     - **Résultat** : La pompe distribuera **10 ml** à l’appui du bouton.
 
 #### 2. **Mode 1 : 24 Doses (1 dose par heure)**
    - **Principe** : Répartition homogène de 24 doses sur 24 heures.

@@ -93,6 +93,14 @@ globals:
     type: float
     restore_value: true
     initial_value: '0.0098'  # Facteur = calibration_value / calibration_steps (ml par pas)
+  - id: pump1_calibration_volume_estimate
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+  - id: pump1_calibration_volume_adjusted
+    type: bool
+    restore_value: false
+    initial_value: 'false'
   # Variable utilisée pour stocker temporairement le volume à dose (en ml) lors d’un dosage
   - id: pump1_dose_ml
     type: float
@@ -1818,6 +1826,8 @@ script:
           id(pump1_stepper).set_sleep_when_done(false);
           id(pump1_abort_requested) = false;
           id(pump1_calibration_steps_done) = 0;
+          id(pump1_calibration_volume_estimate) = 0.0f;
+          id(pump1_calibration_volume_adjusted) = false;
           ESP_LOGI("pump", "▶️ Calibration démarrée : %d pas", id(pump1_calibration_steps_remaining));
           id(pump1_current_speed) = std::max(id(pump1_current_speed), 700);
           id(pump1_stepper).set_max_speed(id(pump1_current_speed));
@@ -1835,6 +1845,7 @@ script:
             if (id(pump1_calibration_steps_done) > 0) {
               float calibration_ml =
                   id(pump1_calibration_steps_done) * id(pump1_calibration_factor);
+              id(pump1_calibration_volume_estimate) = calibration_ml;
               id(pump1_used_today) += calibration_ml;
               id(pump1_volume_remaining) = std::max(
                   0.0f, id(pump1_volume_remaining) - calibration_ml);
@@ -1849,6 +1860,7 @@ script:
             if (id(pump1_calibration_steps_done) > 0) {
               float calibration_ml =
                   id(pump1_calibration_steps_done) * id(pump1_calibration_factor);
+              id(pump1_calibration_volume_estimate) = calibration_ml;
               id(pump1_used_today) += calibration_ml;
               id(pump1_volume_remaining) = std::max(
                   0.0f, id(pump1_volume_remaining) - calibration_ml);
@@ -2080,6 +2092,20 @@ button:
             float value = id(pump1_calibration_value);
             float factor = value / steps;
             id(pump1_calibration_factor) = factor;
+            if (!id(pump1_calibration_volume_adjusted)) {
+              float delta = value - id(pump1_calibration_volume_estimate);
+              if (fabsf(delta) > 0.0001f) {
+                float new_remaining = id(pump1_volume_remaining) - delta;
+                float capacity = id(pump1_reservoir_capacity);
+                id(pump1_volume_remaining) = std::min(capacity, std::max(0.0f, new_remaining));
+                id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+                id(pump1_used_today) = std::max(0.0f, id(pump1_used_today) + delta);
+                id(pump1_used_today_sensor).publish_state(id(pump1_used_today));
+                ESP_LOGI("pump", "📉 Ajustement calibration: delta=%.2f ml (volume restant ajusté).", delta);
+              }
+              id(pump1_calibration_volume_adjusted) = true;
+              id(pump1_calibration_volume_estimate) = value;
+            }
             id(pump1_last_calibration) = id(my_time).now().timestamp;
             id(pump1_status).publish_state("Prêt");
             ESP_LOGW("pump", "Calibration validée: volume=%.2f ml, pas=%d, facteur=%.6f ml/step", value, steps, factor);

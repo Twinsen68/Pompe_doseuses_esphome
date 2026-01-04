@@ -20,9 +20,22 @@ cards:
         icon_color: teal
       - type: template
         content: |2-
-
-                    {{ states('sensor.pompes_doseuses_recifales_pompe_1_volume_utilise_aujourd_hui')|float(0) }}
-                    / {{ states('number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml')|float(0) }} ml
+          {% set mode = states('select.pompes_doseuses_recifales_pompe_1_mode_de_distribution') %}
+          {% set doses = [
+            states('number.pompes_doseuses_recifales_periode_1_doses')|float(0),
+            states('number.pompes_doseuses_recifales_periode_2_doses')|float(0),
+            states('number.pompes_doseuses_recifales_periode_3_doses')|float(0),
+            states('number.pompes_doseuses_recifales_periode_4_doses')|float(0),
+            states('number.pompes_doseuses_recifales_periode_5_doses')|float(0),
+            states('number.pompes_doseuses_recifales_periode_6_doses')|float(0)
+          ] %}
+          {% set total = states('sensor.pompes_doseuses_recifales_volume_quotidien_pompe_1_ml')|float(0)
+            if mode == 'Mode 4: Minuteur'
+            else (0 if mode == 'Mode 3: Périodes' and (doses | sum) == 0
+              else states('number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml')|float(0))
+          %}
+          {{ states('sensor.pompes_doseuses_recifales_pompe_1_volume_utilise_aujourd_hui')|float(0) }}
+          / {{ total }} ml
         icon: mdi:wave-undercurrent
         icon_color: teal
       - type: entity

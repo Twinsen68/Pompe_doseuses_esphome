@@ -1,11 +1,29 @@
 type: vertical-stack
 cards:
+  - type: custom:mushroom-title-card
+    title: 🧪 Pompe Doseuse Récifale – Pompe 1
+    alignment: justify
+  - type: custom:mushroom-entity-card
+    entity: text.pompes_doseuses_recifales_pompe_1_nom_du_produit
+    name: Nom du produit
+    icon: mdi:flask
+    icon_color: teal
+    fill_container: true
+    primary_info: state
+    secondary_info: name
   - type: custom:mushroom-chips-card
     chips:
       - type: menu
       - type: entity
         entity: sensor.pompes_doseuses_recifales_pompe_1_derniere_dose
         icon: mdi:wave
+        icon_color: teal
+      - type: template
+        content: |2-
+
+                    {{ states('sensor.pompes_doseuses_recifales_pompe_1_volume_utilise_aujourd_hui')|float(0) }}
+                    / {{ states('number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml')|float(0) }} ml
+        icon: mdi:wave-undercurrent
         icon_color: teal
       - type: entity
         entity: sensor.pompes_doseuses_recifales_pompe_1_volume_distribue_aujourd_hui
@@ -34,41 +52,65 @@ cards:
           {{
           states('sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml')|int
           }} ml Restants
-  - type: custom:mushroom-title-card
-    title: 🧪 Pompe Doseuse Récifale – Pompe 1
-    alignment: justify
-  - type: custom:mushroom-entity-card
-    entity: text.pompes_doseuses_recifales_pompe_1_nom_du_produit
-    name: Nom du produit
-    icon: mdi:flask
-    icon_color: teal
-    fill_container: true
-    primary_info: state
-    secondary_info: name
-  - type: grid
-    columns: 3
-    square: false
-    cards:
-      - type: custom:mushroom-number-card
-        entity: number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml
-        name: Quotidien (ml)
-        icon: mdi:beaker
-        icon_color: green
-      - type: custom:mushroom-number-card
-        entity: number.pompes_doseuses_recifales_pompe_1_offset_minute
-        name: Offset min
-        icon: mdi:clock-edit-outline
-        icon_color: light-green
-      - type: custom:mushroom-select-card
-        entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
-        name: Mode
-        icon: mdi:format-list-bulleted
-        icon_color: lime
-      - type: custom:mushroom-select-card
-        entity: select.pompes_doseuses_recifales_pompe_1_vitesse
-        name: Vitesse
-        icon: mdi:speedometer
-        icon_color: cyan
+      - type: template
+        icon: |2-
+                  {% set s = states('sensor.pompes_doseuses_recifales_pompe_1_statut') %}
+                  {% if s == 'Distribution en cours…' %}
+                    mdi:fan-speed-3
+                  {% elif s == 'Amorçage en cours…' %}
+                    mdi:fan-speed-2
+                  {% elif s == 'Calibration en cours…' %}
+                    mdi:fan-speed-1
+                  {% elif s == 'Réservoir vide' %}
+                    mdi:fan-off
+                  {% elif s == 'Erreur' %}
+                    mdi:fan-alert
+                  {% elif s == 'Interrompu' %}
+                    mdi:fan-remove
+                  {% else %}
+                    mdi:fan
+                  {% endif %}
+        icon_color: |2-
+                  {% set s = states('sensor.pompes_doseuses_recifales_pompe_1_statut') %}
+                  {% if s == 'Distribution en cours…' %}
+                    blue
+                  {% elif s == 'Amorçage en cours…' %}
+                    orange
+                  {% elif s == 'Calibration en cours…' %}
+                    yellow
+                  {% elif s == 'Réservoir vide' %}
+                    red
+                  {% elif s == 'Erreur' %}
+                    red
+                  {% elif s == 'Interrompu' %}
+                    grey
+                  {% else %}
+                    green
+                  {% endif %}
+        entity: sensor.pompes_doseuses_recifales_pompe_1_statut
+        content: "        {{ states('sensor.pompes_doseuses_recifales_pompe_1_statut') }}"
+      - type: template
+        icon: >-
+          {% set signal =
+          states('sensor.pompes_doseuses_recifales_force_du_signal_wifi')|float(0)
+          %}
+                      {% if signal >= 75 %} mdi:wifi-strength-4
+                      {% elif signal >= 50 %} mdi:wifi-strength-3
+                      {% elif signal >= 25 %} mdi:wifi-strength-2
+                      {% elif signal > 0 %} mdi:wifi-strength-1
+                      {% else %} mdi:wifi-strength-outline
+                      {% endif %}
+        icon_color: |2-
+           {% set signal = states('sensor.pompes_doseuses_recifales_force_du_signal_wifi')|float(0) %}
+                      {% if signal >= 75 %} green
+                      {% elif signal >= 50 %} light-green
+                      {% elif signal >= 25 %} orange
+                      {% else %} red
+                      {% endif %}
+        content: >-
+          {{ states('sensor.pompes_doseuses_recifales_force_du_signal_wifi')|int
+          }}%
+                    · {{ states('sensor.pompes_doseuses_recifales_temperature_interne')|int }}°C
   - type: custom:state-switch
     entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
     default: Autre
@@ -327,6 +369,30 @@ cards:
                 name: Qté (ml) 6
                 icon: mdi:counter
                 icon_color: green
+  - type: grid
+    columns: 3
+    square: false
+    cards:
+      - type: custom:mushroom-number-card
+        entity: number.pompes_doseuses_recifales_pompe_1_volume_quotidien_ml
+        name: Quotidien (ml)
+        icon: mdi:beaker
+        icon_color: green
+      - type: custom:mushroom-number-card
+        entity: number.pompes_doseuses_recifales_pompe_1_offset_minute
+        name: Offset min
+        icon: mdi:clock-edit-outline
+        icon_color: light-green
+      - type: custom:mushroom-select-card
+        entity: select.pompes_doseuses_recifales_pompe_1_mode_de_distribution
+        name: Mode
+        icon: mdi:format-list-bulleted
+        icon_color: lime
+      - type: custom:mushroom-select-card
+        entity: select.pompes_doseuses_recifales_pompe_1_vitesse
+        name: Vitesse
+        icon: mdi:speedometer
+        icon_color: cyan
   - type: custom:mushroom-title-card
     title: ⚙️ Actions & Maintenance
   - type: grid
@@ -433,60 +499,3 @@ cards:
           action: toggle
         hold_action:
           action: more-info
-  - type: custom:mushroom-title-card
-    title: 📊 Suivi & Statut
-  - type: entities
-    entities:
-      - entity: sensor.pompes_doseuses_recifales_pompe_1_derniere_dose
-        name: Dernière dose
-      - entity: sensor.pompes_doseuses_recifales_pompe_1_volume_distribue_aujourd_hui
-        name: Distribué (jour)
-      - entity: sensor.pompes_doseuses_recifales_pompe_1_volume_utilise_aujourd_hui
-        name: Utilisé (jour)
-      - entity: number.pompes_doseuses_recifales_pompe_1_volume_mesure_ml
-        name: Volume mesuré (ml)
-      - entity: sensor.pompes_doseuses_recifales_volume_quotidien_pompe_1_ml
-        name: Quotidien (ml)
-      - entity: sensor.pompes_doseuses_recifales_pompe_1_volume_restant_ml
-        name: Volume restant (ml)
-      - entity: sensor.pompes_doseuses_recifales_pompe_1_statut
-        name: Statut Pompe
-      - entity: sensor.pompes_doseuses_recifales_mode_0_dose_unique
-      - entity: sensor.pompes_doseuses_recifales_mode_1_24_doses_jour
-      - entity: sensor.pompes_doseuses_recifales_mode_2_12_doses_jour
-      - entity: sensor.pompes_doseuses_recifales_mode_3_periodes_personnalisees
-      - entity: sensor.pompes_doseuses_recifales_mode_4_minuteurs
-  - type: custom:mushroom-title-card
-    title: 💻 Infos Techniques ESPHome
-  - type: entities
-    entities:
-      - entity: sensor.pompes_doseuses_recifales_adresse_mac
-        name: Adresse MAC
-      - entity: sensor.pompes_doseuses_recifales_github
-        name: Version GitHub
-      - entity: sensor.pompes_doseuses_recifales_pompe_doseuses_version
-        name: Version Firmware
-      - entity: sensor.pompes_doseuses_recifales_uptime
-        name: Uptime
-      - entity: sensor.pompes_doseuses_recifales_reset_reason
-        name: Reset Reason
-      - entity: sensor.pompes_doseuses_recifales_heap_free
-        name: Heap Free
-      - entity: sensor.pompes_doseuses_recifales_heap_max_block
-        name: Heap Max Block
-      - entity: sensor.pompes_doseuses_recifales_loop_time
-        name: Loop Time
-      - entity: sensor.pompes_doseuses_recifales_wifi_bssid
-        name: BSSID WiFi
-      - entity: sensor.pompes_doseuses_recifales_wifi_ssid
-        name: SSID WiFi
-      - entity: sensor.pompes_doseuses_recifales_i2c_devices_connected
-        name: Périphériques I2C
-      - entity: sensor.pompes_doseuses_recifales_adresse_ip_esp32
-        name: Adresse IP
-      - entity: sensor.pompes_doseuses_recifales_temperature_interne
-        name: Température interne
-      - entity: sensor.pompes_doseuses_recifales_force_du_signal_wifi
-        name: Force du signal WiFi
-      - entity: sensor.pompes_doseuses_recifales_device_info
-        name: Device Info

@@ -1857,7 +1857,8 @@ script:
               ESP_LOGI("pump", "📉 Calibration: -%.2f ml du réservoir (hors distribution).", calibration_ml);
               id(pump1_calibration_steps_done) = 0;
             }
-            id(pump1_status).publish_state("Calibration terminée, mesurer le volume et valider");
+            id(pump1_status).publish_state("Calibr. distribuée");
+            ESP_LOGI("pump", "✅ Fin de calibration.");
             ESP_LOGI("pump", "✅ Calibration terminée, mesurer le volume et valider.");
             id(pump1_motor_power).turn_off();
             ESP_LOGI("pump", "🔌 Moteur désalimenté (fin calibration).");

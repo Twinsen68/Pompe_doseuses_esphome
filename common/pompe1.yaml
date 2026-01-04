@@ -1646,6 +1646,10 @@ script:
             id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
             return;
           }
+          if (id(pump1_calibration_steps_remaining) > 0) {
+            ESP_LOGW("pump", "⚠️ Calibration en cours, distribution annulée.");
+            return;
+          }
           if (id(pump1_manual_dose_active)) {
             ESP_LOGW("pump", "⚠️ Une distribution est déjà en cours, exécution ignorée.");
             return;
@@ -1997,6 +2001,10 @@ button:
     on_press:
       then:
         - lambda: |-
+            if (id(pump1_manual_dose_active)) {
+              ESP_LOGW("pump", "⚠️ Calibration ignorée : une distribution est en cours.");
+              return;
+            }
             ESP_LOGI("pump", "Lancement de la calibration (mode asynchrone)...");
             id(pump1_status).publish_state("Calibration en cours…");
             // Lance la calibration sur le nombre de pas configuré

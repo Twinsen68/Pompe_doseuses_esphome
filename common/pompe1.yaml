@@ -1959,7 +1959,11 @@ switch:
           id(pump1_status).publish_state("Amorçage en cours…");
           // Amorçage: viser 2 ml en fonction du facteur de calibration
           float factor = id(pump1_calibration_factor);
-          int priming_steps = factor > 0.0f ? (int) ceilf(2.0f / factor) : 2500;
+          bool has_calibration = id(pump1_last_calibration) > 0 && factor > 0.0f;
+          if (!has_calibration) {
+            ESP_LOGW("pump", "⚠️ Amorçage: calibration absente ou réinitialisée, utilisation du mode par défaut (2500 pas).");
+          }
+          int priming_steps = has_calibration ? (int) ceilf(2.0f / factor) : 2500;
           id(pump1_priming_steps_remaining) = priming_steps;
       - script.execute: priming_pump1_steps_fast
       - script.wait: priming_pump1_steps_fast

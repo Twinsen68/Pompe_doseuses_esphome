@@ -554,6 +554,7 @@ text:
     set_action:
       - lambda: |-
           id(pump1_product_name) = x;
+          id(pump1_product_name_text).publish_state(x);
           ESP_LOGD("pump", "Nom du produit mis à jour: %s", x.c_str());
 text_sensor:
   # Titres de regroupement visuels (faux sensors repliables)
@@ -679,6 +680,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_calibration_value) = x;
+          id(pump1_calibration_value_num).publish_state(x);
           ESP_LOGD("pump", "Nouveau volume mesuré pour calibration : %.2f ml", id(pump1_calibration_value));
     web_server:
       sorting_group_id: sorting_group_calibration
@@ -698,6 +700,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_daily_quantity) = x;
+          id(pump1_daily_quantity_num).publish_state(x);
           ESP_LOGD("pump", "Nouveau volume quotidien: %.1f ml", id(pump1_daily_quantity));
       - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
@@ -715,6 +718,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_reservoir_capacity) = x;
+          id(pump1_reservoir_capacity_num).publish_state(x);
           ESP_LOGI("pump", "Capacité du réservoir mise à jour: %.0f ml", x);
   # ╔════════════════════════════════════════╗
   # ║   MODE 1 - Répartition sur 24 doses    ║
@@ -734,6 +738,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_dose_offset_minute) = (int)x;
+          id(pump1_dose_offset_minute_num).publish_state(x);
           ESP_LOGD("pump", "Nouvel offset minute: %d", id(pump1_dose_offset_minute));
     web_server:
       sorting_group_id: sorting_group_mode1
@@ -759,6 +764,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period1_start_hour) = (int)x;
+          id(pump1_period1_start_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 1 - Start Hour = %d", id(pump1_period1_start_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -775,6 +781,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period1_start_minute) = (int)x;
+          id(pump1_period1_start_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 1 - Start Minute = %d", id(pump1_period1_start_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -791,6 +798,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period1_end_hour) = (int)x;
+          id(pump1_period1_end_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 1 - End Hour = %d", id(pump1_period1_end_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -806,6 +814,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period1_end_minute) = (int)x;
+          id(pump1_period1_end_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 1 - End Minute = %d", id(pump1_period1_end_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -821,6 +830,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period1_doses) = (int)x;
+          id(pump1_period1_doses_num).publish_state(x);
           ESP_LOGD("pump", "Période 1 - Doses = %d", id(pump1_period1_doses));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -837,6 +847,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period2_start_hour) = (int)x;
+          id(pump1_period2_start_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 2 - Start Hour = %d", id(pump1_period2_start_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -852,6 +863,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period2_start_minute) = (int)x;
+          id(pump1_period2_start_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 2 - Start Minute = %d", id(pump1_period2_start_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -867,6 +879,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period2_end_hour) = (int)x;
+          id(pump1_period2_end_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 2 - End Hour = %d", id(pump1_period2_end_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -882,6 +895,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period2_end_minute) = (int)x;
+          id(pump1_period2_end_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 2 - End Minute = %d", id(pump1_period2_end_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -897,6 +911,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period2_doses) = (int)x;
+          id(pump1_period2_doses_num).publish_state(x);
           ESP_LOGD("pump", "Période 2 - Doses = %d", id(pump1_period2_doses));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -913,6 +928,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period3_start_hour) = (int)x;
+          id(pump1_period3_start_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 3 - Start Hour = %d", id(pump1_period3_start_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -928,6 +944,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period3_start_minute) = (int)x;
+          id(pump1_period3_start_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 3 - Start Minute = %d", id(pump1_period3_start_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -943,6 +960,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period3_end_hour) = (int)x;
+          id(pump1_period3_end_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 3 - End Hour = %d", id(pump1_period3_end_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -958,6 +976,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period3_end_minute) = (int)x;
+          id(pump1_period3_end_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 3 - End Minute = %d", id(pump1_period3_end_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -973,6 +992,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period3_doses) = (int)x;
+          id(pump1_period3_doses_num).publish_state(x);
           ESP_LOGD("pump", "Période 3 - Doses = %d", id(pump1_period3_doses));
     web_server:
       sorting_group_id: sorting_group_mode3      
@@ -989,6 +1009,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period4_start_hour) = (int)x;
+          id(pump1_period4_start_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 4 - Start Hour = %d", id(pump1_period4_start_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1004,6 +1025,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period4_start_minute) = (int)x;
+          id(pump1_period4_start_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 4 - Start Minute = %d", id(pump1_period4_start_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1019,6 +1041,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period4_end_hour) = (int)x;
+          id(pump1_period4_end_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 4 - End Hour = %d", id(pump1_period4_end_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1034,6 +1057,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period4_end_minute) = (int)x;
+          id(pump1_period4_end_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 4 - End Minute = %d", id(pump1_period4_end_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1049,6 +1073,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period4_doses) = (int)x;
+          id(pump1_period4_doses_num).publish_state(x);
           ESP_LOGD("pump", "Période 4 - Doses = %d", id(pump1_period4_doses));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1065,6 +1090,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period5_start_hour) = (int)x;
+          id(pump1_period5_start_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 5 - Start Hour = %d", id(pump1_period5_start_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1080,6 +1106,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period5_start_minute) = (int)x;
+          id(pump1_period5_start_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 5 - Start Minute = %d", id(pump1_period5_start_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1095,6 +1122,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period5_end_hour) = (int)x;
+          id(pump1_period5_end_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 5 - End Hour = %d", id(pump1_period5_end_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1110,6 +1138,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period5_end_minute) = (int)x;
+          id(pump1_period5_end_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 5 - End Minute = %d", id(pump1_period5_end_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1125,6 +1154,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period5_doses) = (int)x;
+          id(pump1_period5_doses_num).publish_state(x);
           ESP_LOGD("pump", "Période 5 - Doses = %d", id(pump1_period5_doses));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1141,6 +1171,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period6_start_hour) = (int)x;
+          id(pump1_period6_start_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 6 - Start Hour = %d", id(pump1_period6_start_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1156,6 +1187,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period6_start_minute) = (int)x;
+          id(pump1_period6_start_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 6 - Start Minute = %d", id(pump1_period6_start_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1171,6 +1203,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period6_end_hour) = (int)x;
+          id(pump1_period6_end_hour_num).publish_state(x);
           ESP_LOGD("pump", "Période 6 - End Hour = %d", id(pump1_period6_end_hour));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1186,6 +1219,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period6_end_minute) = (int)x;
+          id(pump1_period6_end_minute_num).publish_state(x);
           ESP_LOGD("pump", "Période 6 - End Minute = %d", id(pump1_period6_end_minute));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1201,6 +1235,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_period6_doses) = (int)x;
+          id(pump1_period6_doses_num).publish_state(x);
           ESP_LOGD("pump", "Période 6 - Doses = %d", id(pump1_period6_doses));
     web_server:
       sorting_group_id: sorting_group_mode3
@@ -1223,6 +1258,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_1_hour) = (int)x;
+          id(pump1_minute_dose_1_hour_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 1 Hour = %d", id(pump1_minute_dose_1_hour));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1239,6 +1275,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_1_minute) = (int)x;
+          id(pump1_minute_dose_1_minute_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 1 Minute = %d", id(pump1_minute_dose_1_minute));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1255,6 +1292,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_1_quantity) = x;
+          id(pump1_minute_dose_1_quantity_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 1 Quantity = %.1f ml", id(pump1_minute_dose_1_quantity));
       - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
@@ -1275,6 +1313,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_2_hour) = (int)x;
+          id(pump1_minute_dose_2_hour_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 2 Hour = %d", id(pump1_minute_dose_2_hour));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1291,6 +1330,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_2_minute) = (int)x;
+          id(pump1_minute_dose_2_minute_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 2 Minute = %d", id(pump1_minute_dose_2_minute));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1307,6 +1347,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_2_quantity) = x;
+          id(pump1_minute_dose_2_quantity_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 2 Quantity = %.1f ml", id(pump1_minute_dose_2_quantity));
       - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
@@ -1326,6 +1367,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_3_hour) = (int)x;
+          id(pump1_minute_dose_3_hour_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 3 Hour = %d", id(pump1_minute_dose_3_hour));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1342,6 +1384,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_3_minute) = (int)x;
+          id(pump1_minute_dose_3_minute_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 3 Minute = %d", id(pump1_minute_dose_3_minute));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1358,6 +1401,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_3_quantity) = x;
+          id(pump1_minute_dose_3_quantity_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 3 Quantity = %.1f ml", id(pump1_minute_dose_3_quantity));
       - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
@@ -1376,6 +1420,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_4_hour) = (int)x;
+          id(pump1_minute_dose_4_hour_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 4 Hour = %d", id(pump1_minute_dose_4_hour));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1392,6 +1437,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_4_minute) = (int)x;
+          id(pump1_minute_dose_4_minute_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 4 Minute = %d", id(pump1_minute_dose_4_minute));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1408,6 +1454,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_4_quantity) = x;
+          id(pump1_minute_dose_4_quantity_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 4 Quantity = %.1f ml", id(pump1_minute_dose_4_quantity));
       - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
@@ -1426,6 +1473,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_5_hour) = (int)x;
+          id(pump1_minute_dose_5_hour_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 5 Hour = %d", id(pump1_minute_dose_5_hour));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1442,6 +1490,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_5_minute) = (int)x;
+          id(pump1_minute_dose_5_minute_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 5 Minute = %d", id(pump1_minute_dose_5_minute));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1458,6 +1507,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_5_quantity) = x;
+          id(pump1_minute_dose_5_quantity_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 5 Quantity = %.1f ml", id(pump1_minute_dose_5_quantity));
       - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
@@ -1476,6 +1526,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_6_hour) = (int)x;
+          id(pump1_minute_dose_6_hour_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 6 Hour = %d", id(pump1_minute_dose_6_hour));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1492,6 +1543,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_6_minute) = (int)x;
+          id(pump1_minute_dose_6_minute_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 6 Minute = %d", id(pump1_minute_dose_6_minute));
     web_server:
       sorting_group_id: sorting_group_mode4
@@ -1508,6 +1560,7 @@ number:
     set_action:
       - lambda: |-
           id(pump1_minute_dose_6_quantity) = x;
+          id(pump1_minute_dose_6_quantity_num).publish_state(x);
           ESP_LOGD("pump", "Minuteur Dose 6 Quantity = %.1f ml", id(pump1_minute_dose_6_quantity));
       - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
@@ -1541,6 +1594,7 @@ select:
           else if (x == "Mode 2: 12 doses") id(pump1_distribution_mode) = 2;
           else if (x == "Mode 3: Périodes") id(pump1_distribution_mode) = 3;
           else if (x == "Mode 4: Minuteur") id(pump1_distribution_mode) = 4;
+          id(pump1_distribution_select).publish_state(x);
           ESP_LOGD("pump", "Nouveau mode = %d", id(pump1_distribution_mode));
       - script.execute: update_computed_daily_quantity
       - script.execute: refresh_daily_quantity_sensor
@@ -1563,6 +1617,7 @@ select:
           if (x == "Lent") id(pump1_speed_level) = 0;
           else if (x == "Moyen") id(pump1_speed_level) = 1;
           else if (x == "Rapide") id(pump1_speed_level) = 2;
+          id(pump1_speed_select).publish_state(x);
           ESP_LOGD("pump", "Niveau de vitesse mis à %d", id(pump1_speed_level));
       - script.execute: apply_pump1_speed_profile
     web_server:
@@ -1927,10 +1982,12 @@ switch:
     turn_on_action:
       - lambda: |-
           id(pump1_enabled) = true;
+          id(pump1_enable_switch).publish_state(true);
           ESP_LOGD("pump", "Pompe activée !");
     turn_off_action:
       - lambda: |-
           id(pump1_enabled) = false;
+          id(pump1_enable_switch).publish_state(false);
           ESP_LOGD("pump", "Pompe désactivée !");
     web_server:
       sorting_group_id: sorting_group_general  # ou diagnostic, misc, etc.
@@ -1967,10 +2024,12 @@ switch:
     turn_on_action:
       - lambda: |-
           id(pump1_test_mode) = true;
+          id(pump1_test_mode_switch).publish_state(true);
           ESP_LOGW("pump", "Mode test activé : vitesse accélérée");
     turn_off_action:
       - lambda: |-
           id(pump1_test_mode) = false;
+          id(pump1_test_mode_switch).publish_state(false);
           ESP_LOGI("pump", "Mode test désactivé");
     web_server:
       sorting_group_id: sorting_group_general

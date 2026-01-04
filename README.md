@@ -560,6 +560,7 @@ Copiez le contenu dans une carte manuelle pour obtenir une interface prête à l
 Cette interface met en avant les **fonctions dynamiques** pilotées par le code : affichage conditionnel, calculs automatiques et modes adaptatifs. L’objectif est d’expliquer comment la carte réagit aux valeurs et aux modes, sans dépendre d’illustrations.
 
 #### Informations de synthèse (mise à jour en temps réel)
+<img width="570" height="214" alt="Capture d’écran 2026-01-04 à 17 41 19" src="https://github.com/user-attachments/assets/a7bc9c2b-6f7d-4cfb-87fe-568eafb2fe91" />
 - **Nom du produit** : modifiable à la volée, et reflété immédiatement dans la carte.
 - **Dernière distribution** : horodatage + volume de la dernière dose déclenchée.
 - **Progression journalière** : ratio *dose réalisée / dose planifiée* recalculé automatiquement.
@@ -568,6 +569,7 @@ Cette interface met en avant les **fonctions dynamiques** pilotées par le code 
 - **État de la pompe** : statut, Wi-Fi et température interne remontés en continu.
 
 #### Sélection du mode de distribution (logique et calculs associés)
+<img width="581" height="352" alt="Capture d’écran 2026-01-04 à 17 42 30" src="https://github.com/user-attachments/assets/e1b4ccb1-e8e0-4ba4-9712-3677bd21abd3" />
 - **Mode 0 – Dose manuelle** : le slider définit la quantité d’un ajout immédiat, sans planification.
 - **Mode 1 – 24 doses** : la quantité journalière est automatiquement divisée en 24 doses (1 par heure).
 - **Mode 2 – 12 doses** : la quantité journalière est automatiquement divisée en 12 doses (toutes les 2 heures).
@@ -575,12 +577,16 @@ Cette interface met en avant les **fonctions dynamiques** pilotées par le code 
 - **Mode 4 – Minuteur** : jusqu’à 6 ajouts **indépendants**, avec des volumes définis par dose. Le total quotidien est recalculé à partir des quantités programmées.
 
 #### Réglages communs (toujours disponibles)
+<img width="574" height="297" alt="Capture d’écran 2026-01-04 à 17 43 05" src="https://github.com/user-attachments/assets/3f7caa6f-9368-4283-915d-42ce6e776a43" />
+
 - **Activation / arrêt** : contrôle immédiat de l’état de la pompe.
 - **Calibration** : enregistrement du facteur ml/pas et validation de la mesure.
 - **Amorçage / réservoir** : actions de maintenance et remise à niveau des compteurs.
 - **Vitesse / test / remise à zéro** : actions de service accessibles quel que soit le mode.
 
 #### Autonomie opérationnelle
+<img width="1639" height="1651" alt="Capture d’écran 2026-01-04 à 17 43 51" src="https://github.com/user-attachments/assets/45986605-8755-4d2c-8d4d-827afec12aba" />
+
 Les pompes restent **autonomes** : elles continuent à distribuer même si Home Assistant est indisponible. Chaque module peut exposer sa propre page de configuration via le serveur web intégré.
 
 ---

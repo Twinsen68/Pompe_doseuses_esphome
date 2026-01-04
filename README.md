@@ -387,6 +387,8 @@ Appuyez enfin sur **"Valider Calibration Pompe X"** pour enregistrer le nouveau 
 
 Ce facteur sera utilisé dans tous les modes pour déterminer la quantité à distribuer.
 
+> ℹ️ Les volumes utilisés lors de l'amorçage et de la calibration sont déduits du réservoir et comptés comme "volume utilisé", mais **ne sont pas ajoutés** au "volume distribué".
+
 > ⚠️ Le lancement de la calibration est bloqué si le switch "Amorcer" est actif.
 > Ces actions sont exclusives afin d’éviter les conflits moteurs.
 
@@ -437,6 +439,7 @@ Un switch dédié permet de lancer rapidement l'amorçage de la pompe pour rempl
 - **Paramètre associé** : `Amorcer Pompe 1 (Priming)`
 - **Principe** : active temporairement le moteur pendant quelques secondes.
 - **Utilisation** : à déclencher après installation ou maintenance pour éviter les bulles d'air.
+- **Note** : le volume déplacé par l'amorçage est déduit du réservoir (volume utilisé) mais n'est pas comptabilisé comme volume distribué dans le bac.
 
 ### Dose manuelle
 Un bouton permet d'injecter manuellement la quantité configurée :
@@ -477,6 +480,7 @@ La pompe maintient des informations de suivi (volume restant, volume distribué/
 - **Volume restant** (basé sur la capacité du réservoir et la consommation).
 - **Volume distribué aujourd'hui**.
 - **Dernière dose** (horodatage texte).
+- **Rappel** : l'amorçage et la calibration déduisent du réservoir sans augmenter le volume distribué.
 
 Pensez à mettre à jour la **capacité du réservoir** pour un calcul cohérent.
 

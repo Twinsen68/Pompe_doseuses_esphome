@@ -1957,8 +1957,10 @@ switch:
       - lambda: |-
           ESP_LOGD("pump", "Amorçage (Priming) de la pompe 1 : remplissage des tuyaux");
           id(pump1_status).publish_state("Amorçage en cours…");
-          // Pour 5 secondes d’amorçage, calculons le nombre de pas : 5s = 5000ms / 2ms par pas = 2500 pas
-          id(pump1_priming_steps_remaining) = 2500;
+          // Amorçage: viser 2 ml en fonction du facteur de calibration
+          float factor = id(pump1_calibration_factor);
+          int priming_steps = factor > 0.0f ? (int) ceilf(2.0f / factor) : 2500;
+          id(pump1_priming_steps_remaining) = priming_steps;
       - script.execute: priming_pump1_steps_fast
       - script.wait: priming_pump1_steps_fast
       - switch.turn_off: pump1_priming_switch

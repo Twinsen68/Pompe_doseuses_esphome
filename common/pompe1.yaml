@@ -1833,6 +1833,29 @@ script:
           id(pump1_stepper).set_max_speed(id(pump1_current_speed));
           id(pump1_status).publish_state("Calibration en cours…");
       - script.execute: run_pump1_calibration_chunk
+  - id: finalize_pump1_calibration
+    mode: restart
+    then:
+      - lambda: |-
+          if (id(pump1_calibration_steps_done) > 0) {
+            float calibration_ml =
+                id(pump1_calibration_steps_done) * id(pump1_calibration_factor);
+            id(pump1_calibration_volume_estimate) = calibration_ml;
+            id(pump1_used_today) += calibration_ml;
+            id(pump1_volume_remaining) = std::max(
+                0.0f, id(pump1_volume_remaining) - calibration_ml);
+            id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
+            id(pump1_used_today_sensor).publish_state(id(pump1_used_today));
+            ESP_LOGI("pump", "📉 Calibration: -%.2f ml du réservoir (hors distribution).", calibration_ml);
+            id(pump1_calibration_steps_done) = 0;
+          }
+          id(pump1_status).publish_state("Calibr. distribuée");
+          ESP_LOGI("pump", "✅ Fin de calibration.");
+          ESP_LOGI("pump", "✅ Calibration terminée, mesurer le volume et valider.");
+          id(pump1_stepper).set_sleep_when_done(true);
+          id(pump1_stepper).set_target(id(pump1_stepper).current_position);
+          id(pump1_motor_power).turn_off();
+          ESP_LOGI("pump", "🔌 Moteur désalimenté (fin calibration).");
   - id: run_pump1_calibration_chunk
     mode: restart
     then:
@@ -1861,25 +1884,7 @@ script:
             return;
           }
           if (id(pump1_calibration_steps_remaining) <= 0) {
-            if (id(pump1_calibration_steps_done) > 0) {
-              float calibration_ml =
-                  id(pump1_calibration_steps_done) * id(pump1_calibration_factor);
-              id(pump1_calibration_volume_estimate) = calibration_ml;
-              id(pump1_used_today) += calibration_ml;
-              id(pump1_volume_remaining) = std::max(
-                  0.0f, id(pump1_volume_remaining) - calibration_ml);
-              id(pump1_volume_remaining_sensor).publish_state(id(pump1_volume_remaining));
-              id(pump1_used_today_sensor).publish_state(id(pump1_used_today));
-              ESP_LOGI("pump", "📉 Calibration: -%.2f ml du réservoir (hors distribution).", calibration_ml);
-              id(pump1_calibration_steps_done) = 0;
-            }
-            id(pump1_status).publish_state("Calibr. distribuée");
-            ESP_LOGI("pump", "✅ Fin de calibration.");
-            ESP_LOGI("pump", "✅ Calibration terminée, mesurer le volume et valider.");
-            id(pump1_stepper).set_sleep_when_done(true);
-            id(pump1_stepper).set_target(id(pump1_stepper).current_position);
-            id(pump1_motor_power).turn_off();
-            ESP_LOGI("pump", "🔌 Moteur désalimenté (fin calibration).");
+            id(finalize_pump1_calibration).execute();
             return;
           }
           int chunk = id(pump1_calibration_steps_remaining) > id(pump1_chunk_size)
@@ -1900,6 +1905,8 @@ script:
             lambda: 'return id(pump1_calibration_steps_remaining) > 0 && !id(pump1_abort_requested);'
           then:
             - script.execute: run_pump1_calibration_chunk
+          else:
+            - script.execute: finalize_pump1_calibration
   #-------------------------------------
   # SCRIPT D'AMORÇAGE : vitesse rapide
   #-------------------------------------

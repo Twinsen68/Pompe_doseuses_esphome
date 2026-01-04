@@ -587,9 +587,10 @@ Cette interface met en avant les **fonctions dynamiques** pilotées par le code 
 - **Mode 3 – Périodes** : jusqu’à 6 périodes, **affichées dynamiquement** quand les champs sont renseignés. La dose journalière est répartie sur le total de doses définies dans les périodes actives.
 <img width="563" height="811" alt="Capture d’écran 2026-01-04 à 17 51 36" src="https://github.com/user-attachments/assets/ca9d1879-fbad-4142-8c63-685605c2ce22" />
 
-  Les priodes suivantes s'affichent dynamiquement si les données sont configurées pour la période
+  Les périodes suivantes s'affichent dynamiquement si les données sont configurées pour la période
 - **Mode 4 – Minuteur** : jusqu’à 6 ajouts **indépendants**, avec des volumes définis par dose. Le total quotidien est recalculé à partir des quantités programmées.
 <img width="574" height="538" alt="Capture d’écran 2026-01-04 à 17 50 01" src="https://github.com/user-attachments/assets/0370fc17-65ae-4640-8edd-8ebb7b362dee" />
+
   Les minuteurs suivants s'affichent dynamiquement si les données sont configurées pour le minuteur précédent
 
 #### Réglages communs (toujours disponibles)

@@ -55,6 +55,8 @@ cards:
                     mdi:fan-speed-2
                   {% elif s == 'Calibration en cours…' %}
                     mdi:fan-speed-1
+                  {% elif s == 'Calibr. distribuée' %}
+                    mdi:beaker-check
                   {% elif s == 'Réservoir vide' %}
                     mdi:fan-off
                   {% elif s == 'Erreur' %}
@@ -72,6 +74,8 @@ cards:
                     orange
                   {% elif s == 'Calibration en cours…' %}
                     yellow
+                  {% elif s == 'Calibr. distribuée' %}
+                    teal
                   {% elif s == 'Réservoir vide' %}
                     red
                   {% elif s == 'Erreur' %}

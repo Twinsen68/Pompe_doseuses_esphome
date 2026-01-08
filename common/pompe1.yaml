@@ -413,13 +413,13 @@ globals:
   # Volume total utilisé par la pompe (y compris tests, amorçage, etc.)
   - id: pump1_used_today
     type: float
-    restore_value: false
+    restore_value: true
     initial_value: '0.0'
   
   # Volume effectivement injecté dans l’aquarium (hors calibration/amorçage)
   - id: pump1_distributed_today
     type: float
-    restore_value: false
+    restore_value: true
     initial_value: '0.0'
   - id: pump1_minuteur_ready
     type: bool
@@ -427,7 +427,7 @@ globals:
     initial_value: 'false'
   - id: pump1_last_dose_log
     type: std::string
-    restore_value: false
+    restore_value: true
     initial_value: '"Jamais"'
   # Mode de test 
   - id: pump1_test_mode

@@ -419,7 +419,7 @@ globals:
   # Volume effectivement injecté dans l’aquarium (hors calibration/amorçage)
   - id: pump1_distributed_today
     type: float
-    restore_value: false
+    restore_value: true
     initial_value: '0.0'
   - id: pump1_minuteur_ready
     type: bool

@@ -427,7 +427,7 @@ globals:
     initial_value: 'false'
   - id: pump1_last_dose_log
     type: std::string
-    restore_value: false
+    restore_value: true
     initial_value: '"Jamais"'
   # Mode de test 
   - id: pump1_test_mode
@@ -2291,7 +2291,8 @@ interval:
               int end = end_hours[i] * 60 + end_minutes[i];
               int n = doses[i];
               if (n <= 0 || end <= start) continue;
-              if (now_min >= start && now_min <= end) {
+              // Fin de période exclusive pour garantir exactement N doses
+              if (now_min >= start && now_min < end) {
                 int interval = (end - start) / n;
                 if (interval <= 0) interval = 1;
                 if (((now_min - start) % interval) == 0 && last_minute[i] != now_min) {

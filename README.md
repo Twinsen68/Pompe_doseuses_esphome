@@ -85,11 +85,48 @@ La configuration est découpée en modules pour faciliter la maintenance et la d
 - `install.yaml` : point d'entrée minimal à coller dans ESPHome.
 - `pompedoseuses_config.yaml` : assemble les modules via `packages`.
 - `common/device_base.yaml` : base ESP32 (Wi-Fi, web_server, capteurs système, LED, etc.).
-- `common/pompe_doseuses.yaml` : métadonnées et infos de diagnostic (version, GitHub).
+- `common/pompe_doseuses.yaml` : métadonnées et infos de diagnostic (version, GitHub). (Utilise les substitutions globales définies dans `common/device_base.yaml`.)
 - `common/debug.yaml` : métriques de debug (heap, loop time, reset reason, etc.).
 - `common/pompe1.yaml` : logique complète d'une pompe (modes, calibration, scripts, UI).
 
-Vous pouvez dupliquer `common/pompe1.yaml` (ex. `pompe2.yaml`) et ajouter le package correspondant pour gérer plusieurs pompes.
+Vous pouvez dupliquer `common/pompe1.yaml` (ex. `pompe2.yaml`) et ajouter le package correspondant pour gérer plusieurs pompes. Chaque pompe passe désormais ses variables via `vars` afin d’éviter les conflits de substitutions entre packages. Ces variables pilotent automatiquement les IDs (`${pump_id}_...`), les libellés (`${pump_name}`) et les broches du driver ULN2003.
+
+### Deux pompes sur **le même ESP** = **un seul appareil** dans ESPHome
+
+Même avec deux pompes, vous ne verrez **qu’un seul projet/appareil** dans ESPHome puisque c’est le **même ESP**. On ajoute simplement un **deuxième package** dans la même config.
+
+Exemple de `pompedoseuses_config.yaml` avec deux pompes (même ESP) :
+
+```yaml
+packages:
+  device_base: !include common/device_base.yaml
+  pompe_doseuses: !include common/pompe_doseuses.yaml
+  debug: !include common/debug.yaml
+  pompe1:
+    !include
+      file: common/pompe1.yaml
+      vars:
+        pump_id: "pump1"
+        pump_name: "Pompe 1"
+        pump_pin_a: GPIO13
+        pump_pin_b: GPIO14
+        pump_pin_c: GPIO26
+        pump_pin_d: GPIO27
+  pompe2:
+    !include
+      file: common/pompe1.yaml
+      vars:
+        pump_id: "pump2"
+        pump_name: "Pompe 2"
+        pump_pin_a: GPIO18
+        pump_pin_b: GPIO19
+        pump_pin_c: GPIO23
+        pump_pin_d: GPIO25
+```
+
+### Deux projets ESPHome (deux appareils physiques)
+
+Si vous voulez **deux projets** visibles dans ESPHome, il faut **deux ESP** (ou deux configs séparées). Créez un second YAML principal (ex. `pompedoseuses_config_pompe2.yaml`) avec un `name`/`friendly_name` différent dans `common/device_base.yaml` (via substitutions) pour que l’appareil soit unique.
 
 ## Configuration
 

@@ -1,14 +1,6 @@
-substitutions:
-  name: "pompe_doseuses"  # Nom technique de l'appareil
-  friendly_name: "pompe_doseuses"  # Nom convivial affiché dans l'interface utilisateur
-  comment: "pompe_doseuses ESP32 - controleur d'aquarium récifal"  # Description précise de l'appareil
-  project_name: "Twinsen68.pompe_doseuses"  # Nom du projet pour identification ESPHome
-  sorting_group_name: "pompe_doseuses "  # Préfixe du groupe dans l'interface web
-  import: "false"  # Activation/désactivation de l'importation complète de la configuration
-
 dashboard_import:
   package_import_url: github://Twinsen68/pompe_doseuses/pompe_doseuses_config.yaml@main  # URL du fichier à importer depuis GitHub
-  import_full_config: "${import}"  # Option pour importer toute la configuration ou partiellement
+  import_full_config: "false"  # Option pour importer toute la configuration ou partiellement
 
 text_sensor: 
   - platform: template  # Capteur texte indiquant la version actuelle de pompe_doseuses

@@ -89,7 +89,19 @@ La configuration est découpée en modules pour faciliter la maintenance et la d
 - `common/debug.yaml` : métriques de debug (heap, loop time, reset reason, etc.).
 - `common/pompe1.yaml` : logique complète d'une pompe (modes, calibration, scripts, UI).
 
-Vous pouvez dupliquer `common/pompe1.yaml` (ex. `pompe2.yaml`) et ajouter le package correspondant pour gérer plusieurs pompes.
+Vous pouvez dupliquer `common/pompe1.yaml` (ex. `pompe2.yaml`) et ajouter le package correspondant pour gérer plusieurs pompes. Chaque pompe dispose désormais de substitutions pour éviter de renommer manuellement tous les IDs et libellés :
+
+```yaml
+substitutions:
+  pump_id: "pump2"
+  pump_name: "Pompe 2"
+  pump_pin_a: GPIO18
+  pump_pin_b: GPIO19
+  pump_pin_c: GPIO23
+  pump_pin_d: GPIO25
+```
+
+Ces substitutions pilotent automatiquement les IDs (`${pump_id}_...`), les libellés (`${pump_name}`) et les broches du driver ULN2003.
 
 ## Configuration
 

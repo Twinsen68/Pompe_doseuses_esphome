@@ -5,6 +5,7 @@ substitutions:
   project_name: "esphome.esp32"  # Nom du projet pour identification ESPHome
   app_version: "1.0"  # Version de l'application pour suivi des mises à jour
   logger: "DEBUG"  # Niveau de journalisation (DEBUG, INFO, etc.)
+  name_add_mac_suffix: "true"  # Ajoute automatiquement l'adresse MAC au nom
 
   sorting_group_name: ""  # Préfixe optionnel pour les groupes de tri
   sorting_group_misc_weight: '97'  # Poids de tri du groupe "Misc. Sensors"
@@ -20,7 +21,7 @@ esphome:
   min_version: 2024.6.0  # Version minimale requise d'ESPHome
   name: "${name}"  # Utilisation de la substitution du nom technique
   friendly_name: "${friendly_name}"  # Utilisation de la substitution du nom convivial
-  name_add_mac_suffix: true  # Ajoute automatiquement l'adresse MAC au nom
+  name_add_mac_suffix: ${name_add_mac_suffix}  # Ajoute automatiquement l'adresse MAC au nom
   comment: "${comment}"  # Commentaire utilisé depuis les substitutions
   project:
     name: "${project_name}"  # Nom du projet ESPHome

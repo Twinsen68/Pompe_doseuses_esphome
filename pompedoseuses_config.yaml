@@ -2,4 +2,13 @@ packages:  # Inclut des fichiers YAML externes pour modularité et réutilisatio
   device_base: !include common/device_base.yaml  # Contient les configurations de base du périphérique.
   pompe_doseuses: !include common/pompe_doseuses.yaml  # Fichier spécifique au projet reefmonitor.
   debug: !include common/debug.yaml  # Inclut une configuration pour le débogage (logs détaillés, etc.).
-  pompe1: !include common/pompe1.yaml
+  pompe1:
+    !include
+      file: common/pompe1.yaml
+      vars:
+        pump_id: "pump1"
+        pump_name: "Pompe 1"
+        pump_pin_a: GPIO13
+        pump_pin_b: GPIO14
+        pump_pin_c: GPIO26
+        pump_pin_d: GPIO27

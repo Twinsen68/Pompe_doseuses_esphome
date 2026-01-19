@@ -1,4 +1,14 @@
-esp32:  
+substitutions:
+  name: "pompe_doseuses_esphome"
+  friendly_name: "Pompes doseuses récifales"
+  comment: "pompe_doseuses ESP32 - controleur d'aquarium récifal"
+  project_name: "Twinsen68.pompe_doseuses"
+  app_version: "1.0"
+  logger: "DEBUG"
+  sorting_group_name: "pompe_doseuses "
+  name_add_mac_suffix: "false"
+
+esp32:
   board: esp32dev  # Spécifie le modèle de la carte ESP32 (ESP32 DevKit V1 ici).
   framework:
     type: arduino  # Utilisation du framework Arduino
@@ -10,19 +20,6 @@ packages:
     file: pompedoseuses_config.yaml
     ref: main
 
-esphome:  
-  name: pompe_doseuses_esphome
-  name_add_mac_suffix: false
-  friendly_name: "Pompes doseuses récifales"
-  platformio_options:
-    build_flags:
-      - -DBROWNOUT_DISABLE
-  on_boot:
-    priority: -100
-    then:
-      - lambda: |-
-          id(pump1_manual_dose_active) = false;
-          ESP_LOGW("pump", "Remise à zéro de pump1_manual_dose_active au boot !");
 api:
   encryption:
     key: tsHqLo48mLGhWo/qQQrZUFdsEwuZcC1/BlUOXWExy14=
@@ -30,12 +27,6 @@ api:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-
-logger:
-  level: DEBUG  # 
-ota:
-web_server:
-  port: 80
 
 time:
   - platform: sntp

@@ -363,6 +363,7 @@ La logique de distribution dans le Mode 3 utilise ces paramètres pour ne décle
 2. Chaque période est caractérisée par une **heure de début et une heure de fin**.
 3. L’utilisateur définit **le nombre de doses** à injecter pendant chaque période.
 4. La dose quotidienne totale est **répartie entre ces doses**.
+5. Le déclenchement des doses se base sur un **index de dose** calculé par rapport au temps écoulé dans la période (progression normalisée sur la durée). Cela garantit **exactement N doses** pour une période donnée, même si la durée ne tombe pas juste en minutes (ex. 20 ml en 5 doses n’aboutit plus à 6 doses). 
 
 #### **Exemple de configuration :**
 | Période  | Horaire           | Nombre de doses |

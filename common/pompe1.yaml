@@ -2281,7 +2281,7 @@ interval:
             bool enabled[6]    = {id(${pump_id}_period1_enabled), id(${pump_id}_period2_enabled),
                                    id(${pump_id}_period3_enabled), id(${pump_id}_period4_enabled),
                                    id(${pump_id}_period5_enabled), id(${pump_id}_period6_enabled)};
-            static int last_minute[6] = {-1, -1, -1, -1, -1, -1};
+            static int last_index[6] = {-1, -1, -1, -1, -1, -1};
 
             int now_min = current_hour * 60 + current_minute;
 
@@ -2301,12 +2301,13 @@ interval:
               if (n <= 0 || end <= start) continue;
               // Fin de période exclusive pour garantir exactement N doses
               if (now_min >= start && now_min < end) {
-                int interval = (end - start) / n;
-                if (interval <= 0) interval = 1;
-                if (((now_min - start) % interval) == 0 && last_minute[i] != now_min) {
-                  last_minute[i] = now_min;
+                int duration = end - start;
+                int elapsed = now_min - start;
+                int index = (elapsed * n) / duration;
+                if (index < n && index != last_index[i]) {
+                  last_index[i] = index;
                   id(${pump_id}_dose_ml) = ml_per_dose;
-                  ESP_LOGD("pump", "Dose période %d à %02d:%02d : %.2f ml", i + 1, current_hour, current_minute, id(${pump_id}_dose_ml));
+                  ESP_LOGD("pump", "Dose période %d (%d/%d) à %02d:%02d : %.2f ml", i + 1, index + 1, n, current_hour, current_minute, id(${pump_id}_dose_ml));
                   if (id(${pump_id}_test_mode)) {
                     ESP_LOGI("pump", "🧪 [Test] Simulation dose Mode 3 période %d", i + 1);
                     id(${pump_id}_distributed_today) += id(${pump_id}_dose_ml);

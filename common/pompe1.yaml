@@ -2090,8 +2090,29 @@ button:
             }
             ESP_LOGI("pump", "Lancement de la calibration (mode asynchrone)...");
             id(${pump_id}_status).publish_state("Calibration en cours…");
-            // Lance la calibration sur le nombre de pas configuré
+            // Ajuste dynamiquement la calibration pour viser 4-5 ml selon le facteur courant
+            float factor = id(${pump_id}_calibration_factor);
+            if (factor <= 0.0f) {
+              ESP_LOGW("pump", "⚠️ Calibration: facteur invalide, utilisation des pas configurés.");
+              id(${pump_id}_calibration_steps_remaining) = id(${pump_id}_calibration_steps) * 2;
+              return;
+            }
+            const float min_target_ml = 4.0f;
+            const float max_target_ml = 5.0f;
+            int min_steps = (int) ceilf(min_target_ml / factor);
+            int max_steps = (int) floorf(max_target_ml / factor);
+            int target_steps = 0;
+            if (max_steps >= min_steps && max_steps > 0) {
+              target_steps = std::max(min_steps, std::min(max_steps, (int) ceilf(4.5f / factor)));
+            } else {
+              ESP_LOGW("pump", "⚠️ Calibration: intervalle 4-5 ml impossible (facteur=%.6f), ajustement au plus proche.", factor);
+              target_steps = std::max(1, min_steps);
+            }
+            int base_steps = (int) ceilf(target_steps / 2.0f);
+            id(${pump_id}_calibration_steps) = std::max(1, base_steps);
             id(${pump_id}_calibration_steps_remaining) = id(${pump_id}_calibration_steps) * 2;
+            float estimated_ml = id(${pump_id}_calibration_steps_remaining) * factor;
+            ESP_LOGI("pump", "Calibration dynamique: %d pas (~%.2f ml).", id(${pump_id}_calibration_steps_remaining), estimated_ml);
         - script.execute: calibration_${pump_id}_steps
     web_server:
       sorting_group_id: sorting_group_calibration  # ou diagnostic, misc, etc.

@@ -426,7 +426,9 @@ Cette option permet de mieux identifier les pompes et leurs fonctions spécifiqu
 
 ### Calibration et enregistrement du facteur
 
-Lors de la calibration, la pompe effectue par défaut **120 000 pas** configurés, et le script utilise **2× ce nombre** (soit **240 000 pas** en HALF_STEP), soit environ deux minutes de fonctionnement. Vous pouvez augmenter ce nombre (par exemple à 180 000 pas, soit 360 000 pas effectifs) via le paramètre **"Pompe 1 - Nombre de pas pendant la calibration"** afin d'obtenir un volume plus important.
+Lors de la calibration, la pompe **calcule désormais dynamiquement** le nombre de pas pour viser un volume **compris entre 4 et 5 ml**, en s'appuyant sur le **dernier facteur de calibration (ml/pas)** connu. Concrètement, au moment du lancement, la logique estime combien de pas sont nécessaires pour atteindre ~4,5 ml et ajuste automatiquement le nombre de pas utilisés par le script (le run total reste basé sur **2× ce nombre**, en HALF_STEP). Cette approche garantit un volume suffisamment faible pour être mesuré précisément, tout en restant stable d'une calibration à l'autre.
+
+Si le facteur de calibration est invalide ou inconnu (≤ 0), le système retombe sur la valeur configurée **"Pompe 1 - Nombre de pas pendant la calibration"** (par défaut **120 000 pas**, soit **240 000 pas effectifs**) afin d'éviter un comportement bloquant.
 
 Mesurez ensuite le volume réellement délivré (ex. dans une seringue graduée) et saisissez cette valeur dans le champ **"Pompe X - Volume mesuré (ml)"**.
 
